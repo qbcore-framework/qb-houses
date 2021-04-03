@@ -77,7 +77,7 @@ end)
 
 RegisterNetEvent('qb-houses:client:EnterHouse')
 AddEventHandler('qb-houses:client:EnterHouse', function()
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
 
     if closesthouse ~= nil then
@@ -96,7 +96,7 @@ end)
 
 RegisterNetEvent('qb-houses:client:RequestRing')
 AddEventHandler('qb-houses:client:RequestRing', function()
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
 
     if closesthouse ~= nil then
@@ -167,8 +167,8 @@ end)
 
 RegisterNetEvent('qb-houses:client:createHouses')
 AddEventHandler('qb-houses:client:createHouses', function(price, tier)
-    local pos = GetEntityCoords(GetPlayerPed(-1))
-    local heading = GetEntityHeading(GetPlayerPed(-1))
+    local pos = GetEntityCoords(PlayerPedId())
+    local heading = GetEntityHeading(PlayerPedId())
     local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
     local street = GetStreetNameFromHashKey(s1)
     local coords = {
@@ -182,8 +182,8 @@ end)
 RegisterNetEvent('qb-houses:client:addGarage')
 AddEventHandler('qb-houses:client:addGarage', function()
     if closesthouse ~= nil then 
-        local pos = GetEntityCoords(GetPlayerPed(-1))
-        local heading = GetEntityHeading(GetPlayerPed(-1))
+        local pos = GetEntityCoords(PlayerPedId())
+        local heading = GetEntityHeading(PlayerPedId())
         local coords = {
             x = pos.x,
             y = pos.y,
@@ -198,7 +198,7 @@ end)
 
 RegisterNetEvent('qb-houses:client:toggleDoorlock')
 AddEventHandler('qb-houses:client:toggleDoorlock', function()
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     
     if(GetDistanceBetweenCoords(pos, Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z, true) < 1.5)then
@@ -236,7 +236,7 @@ end
 Citizen.CreateThread(function()
     while true do
 
-        local pos = GetEntityCoords(GetPlayerPed(-1), true)
+        local pos = GetEntityCoords(PlayerPedId(), true)
         local inRange = false
 
         if closesthouse ~= nil then
@@ -388,8 +388,8 @@ Citizen.CreateThread(function()
                                     end
                                     exports['qb-interior']:DespawnInterior(houseObj, function()
                                         TriggerEvent('qb-weathersync:client:EnableSync')
-                                        SetEntityCoords(GetPlayerPed(-1), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.5)
-                                        SetEntityHeading(GetPlayerPed(-1), Config.Houses[CurrentHouse].coords.enter.h)
+                                        SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.5)
+                                        SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
                                         inOwned = false
                                         inside = false
                                         TriggerServerEvent('qb-houses:server:LogoutLocation')
@@ -422,9 +422,9 @@ end)
 
 function openHouseAnim()
     loadAnimDict("anim@heists@keycard@") 
-    TaskPlayAnim( GetPlayerPed(-1), "anim@heists@keycard@", "exit", 5.0, 1.0, -1, 16, 0, 0, 0, 0 )
+    TaskPlayAnim( PlayerPedId(), "anim@heists@keycard@", "exit", 5.0, 1.0, -1, 16, 0, 0, 0, 0 )
     Citizen.Wait(400)
-    ClearPedTasks(GetPlayerPed(-1))
+    ClearPedTasks(PlayerPedId())
 end
 
 RegisterNetEvent('qb-houses:client:RingDoor')
@@ -440,7 +440,7 @@ function GetClosestPlayer()
     local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
-    local coords = GetEntityCoords(GetPlayerPed(-1))
+    local coords = GetEntityCoords(PlayerPedId())
 
     for i=1, #closestPlayers, 1 do
         if closestPlayers[i] ~= PlayerId() then
@@ -462,7 +462,7 @@ AddEventHandler('qb-houses:client:giveHouseKey', function(data)
     local player, distance = GetClosestPlayer()
     if player ~= -1 and distance < 2.5 and closesthouse ~= nil then
         local playerId = GetPlayerServerId(player)
-        local housedist = GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1)), Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z)
+        local housedist = GetDistanceBetweenCoords(GetEntityCoords(PlayerPedId()), Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z)
         
         if housedist < 10 then
             TriggerServerEvent('qb-houses:server:giveHouseKey', playerId, closesthouse)
@@ -479,7 +479,7 @@ end)
 RegisterNetEvent('qb-houses:client:removeHouseKey')
 AddEventHandler('qb-houses:client:removeHouseKey', function(data)
     if closesthouse ~= nil then 
-        local housedist = GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1)), Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z)
+        local housedist = GetDistanceBetweenCoords(GetEntityCoords(PlayerPedId()), Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z)
         if housedist < 5 then
             QBCore.Functions.TriggerCallback('qb-houses:server:getHouseOwner', function(result)
                 if QBCore.Functions.GetPlayerData().citizenid == result then
@@ -507,7 +507,7 @@ end)
 
 RegisterNetEvent('qb-houses:client:SpawnInApartment')
 AddEventHandler('qb-houses:client:SpawnInApartment', function(house)
-    local pos = GetEntityCoords(GetPlayerPed(-1))
+    local pos = GetEntityCoords(PlayerPedId())
     if rangDoorbell ~= nil then
         if(GetDistanceBetweenCoords(pos, Config.Houses[house].coords.enter.x, Config.Houses[house].coords.enter.y, Config.Houses[house].coords.enter.z, true) > 5)then
             return
@@ -525,11 +525,11 @@ function loadAnimDict(dict)
 end 
 
 function HouseKeysMenu()
-    ped = GetPlayerPed(-1);
+    ped = PlayerPedId();
     MenuTitle = "Sleutels"
     ClearMenu()
     QBCore.Functions.TriggerCallback('qb-houses:server:getHouseKeyHolders', function(holders)
-        ped = GetPlayerPed(-1);
+        ped = PlayerPedId();
         MenuTitle = "Sleutelhouders:"
         ClearMenu()
         if holders == nil or next(holders) == nil then
@@ -547,13 +547,13 @@ end
 function changeOutfit()
 	Wait(200)
     loadAnimDict("clothingshirt")    	
-	TaskPlayAnim(GetPlayerPed(-1), "clothingshirt", "try_shirt_positive_d", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
+	TaskPlayAnim(PlayerPedId(), "clothingshirt", "try_shirt_positive_d", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
 	Wait(3100)
-	TaskPlayAnim(GetPlayerPed(-1), "clothingshirt", "exit", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
+	TaskPlayAnim(PlayerPedId(), "clothingshirt", "exit", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
 end
 
 function optionMenu(citizenData)
-    ped = GetPlayerPed(-1);
+    ped = PlayerPedId();
     MenuTitle = "What now?"
     ClearMenu()
     Menu.addButton("Verwijder sleutel", "removeHouseKey", citizenData) 
@@ -677,8 +677,8 @@ function leaveOwnedHouse(house)
             TriggerEvent('qb-weathersync:client:EnableSync')
             Citizen.Wait(250)
             DoScreenFadeIn(250)
-            SetEntityCoords(GetPlayerPed(-1), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
-            SetEntityHeading(GetPlayerPed(-1), Config.Houses[CurrentHouse].coords.enter.h)
+            SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
+            SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
             TriggerEvent('qb-weed:client:leaveHouse')
             TriggerServerEvent('qb-houses:server:SetInsideMeta', house, false)
             CurrentHouse = nil
@@ -742,8 +742,8 @@ function leaveNonOwnedHouse(house)
             TriggerEvent('qb-weathersync:client:EnableSync')
             Citizen.Wait(250)
             DoScreenFadeIn(250)
-            SetEntityCoords(GetPlayerPed(-1), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
-            SetEntityHeading(GetPlayerPed(-1), Config.Houses[CurrentHouse].coords.enter.h)
+            SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
+            SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
             inOwned = false
             TriggerEvent('qb-weed:client:leaveHouse')
             TriggerServerEvent('qb-houses:server:SetInsideMeta', house, false)
@@ -800,7 +800,7 @@ function FrontDoorCam(coords)
     SetCamActive(cam, true)
     RenderScriptCams(true, true, 500, true, true)
     FrontCam = true
-    FreezeEntityPosition(GetPlayerPed(-1), true)
+    FreezeEntityPosition(PlayerPedId(), true)
     Citizen.Wait(500)
     DoScreenFadeIn(150)
     SendNUIMessage({
@@ -824,7 +824,7 @@ function FrontDoorCam(coords)
                 })
                 Citizen.Wait(500)
                 RenderScriptCams(false, true, 500, true, true)
-                FreezeEntityPosition(GetPlayerPed(-1), false)
+                FreezeEntityPosition(PlayerPedId(), false)
                 SetCamActive(cam, false)
                 DestroyCam(cam, true)
                 ClearTimecycleModifier("scanline_cam_cheap")
@@ -945,7 +945,7 @@ AddEventHandler('qb-houses:client:viewHouse', function(houseprice, brokerfee, ba
 end)
 
 function SetClosestHouse()
-    local pos = GetEntityCoords(GetPlayerPed(-1), true)
+    local pos = GetEntityCoords(PlayerPedId(), true)
     local current = nil
     local dist = nil
     if not inside then
@@ -997,7 +997,7 @@ end
 
 RegisterNetEvent('qb-houses:client:setLocation')
 AddEventHandler('qb-houses:client:setLocation', function(data)
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local coords = {x = pos.x, y = pos.y, z = pos.z}
 
@@ -1020,7 +1020,7 @@ end)
 
 RegisterNetEvent('qb-houses:client:refreshLocations')
 AddEventHandler('qb-houses:client:refreshLocations', function(house, location, type)
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
 
     if closesthouse == house then
@@ -1039,7 +1039,7 @@ end)
 local RamsDone = 0
 
 function DoRamAnimation(bool)
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
     local dict = "missheistfbi3b_ig7"
     local anim = "lift_fibagent_loop"
 
@@ -1060,7 +1060,7 @@ end
 
 RegisterNetEvent('qb-houses:client:HomeInvasion')
 AddEventHandler('qb-houses:client:HomeInvasion', function()
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local Skillbar = exports['qb-skillbar']:GetSkillbarObject()
 
@@ -1132,7 +1132,7 @@ end)
 
 RegisterNetEvent('qb-houses:client:ResetHouse')
 AddEventHandler('qb-houses:client:ResetHouse', function()
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
 
     if closesthouse ~= nil then
         if Config.Houses[closesthouse].IsRammed == nil then
