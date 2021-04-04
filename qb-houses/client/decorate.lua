@@ -101,7 +101,8 @@ Citizen.CreateThread(function()
 		Citizen.Wait(7)
 		if DecoMode then
 			local camPos = GetCamCoord(MainCamera)
-			if GetDistanceBetweenCoords(camPos.x, camPos.y, camPos.z, Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z, false) > 50.0 then
+			local dist = #(vector3(camPos.x, camPos.y, camPos.z) - vector3(Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z))
+			if dist > 50.0 then
 				DisableEditMode()
 				closeDecorateUI()
 				QBCore.Functions.Notify("You have gone out of range!")
