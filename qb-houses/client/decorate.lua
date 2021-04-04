@@ -28,22 +28,22 @@ Citizen.CreateThread(function()
 		Citizen.Wait(7)
 		if DecoMode then
 			DisableAllControlActions(0)
-			EnableControlAction(0, Keys["W"], true)
-			EnableControlAction(0, Keys["S"], true)
-			EnableControlAction(0, Keys["T"], true)
-			EnableControlAction(0, Keys["LEFTSHIFT"], true)
-			EnableControlAction(0, Keys["LEFTALT"], true)
-			EnableControlAction(0, Keys["F1"], true)
-            EnableControlAction(0, Keys["F2"], true)
-            EnableControlAction(0, Keys["F3"], true)
-			EnableControlAction(0, Keys["ENTER"], true)
-			EnableControlAction(0, Keys["LEFT"], true)
-			EnableControlAction(0, Keys["RIGHT"], true)
-			EnableControlAction(0, Keys["TOP"], true)
-			EnableControlAction(0, Keys["DOWN"], true)
-			EnableControlAction(0, Keys["PAGEUP"], true)
-            EnableControlAction(0, Keys["PAGEDOWN"], true)
-            EnableControlAction(0, Keys["BACKSPACE"], true)
+			EnableControlAction(0, 32, true) -- W
+			EnableControlAction(0, 33, true) -- S
+			EnableControlAction(0, 245, true) -- T
+			EnableControlAction(0, 21, true) -- Left Shift
+			EnableControlAction(0, 19, true) -- Left Alt
+			EnableControlAction(0, 288, true) -- F1
+            EnableControlAction(0, 289, true) -- F2
+            EnableControlAction(0, 170, true) -- F3
+			EnableControlAction(0, 191, true) -- Enter
+			EnableControlAction(0, 174, true) -- Left Arrow
+			EnableControlAction(0, 175, true) -- Right Arrow
+			EnableControlAction(0, 27, true) -- Up Arrow
+			EnableControlAction(0, 173, true) -- Down Arrow
+			EnableControlAction(0, 10, true) -- Page Up
+            EnableControlAction(0, 11, true) -- Page Down
+            EnableControlAction(0, 194, true) -- Backspace
 
 			DisplayRadar(false)
 
@@ -59,15 +59,15 @@ Citizen.CreateThread(function()
                 else
                     CheckObjMovementInput()
                 end
-                if IsControlJustReleased(0, Keys["F3"]) then
+                if IsControlJustReleased(0, 170) then -- F3
                     rotateActive = not rotateActive
 				end
-				if IsControlJustReleased(0, Keys["LEFTALT"]) then
+				if IsControlJustReleased(0, 19) then -- Left Alt
 					PlaceObjectOnGroundProperly(SelectedObj)
 					local groundPos = GetEntityCoords(SelectedObj)
 					SelObjPos.z = groundPos.z
                 end
-				if IsControlJustReleased(0, Keys["ENTER"]) then
+				if IsControlJustReleased(0, 191) then -- Enter
 					SetNuiFocus(true, true)
 					cursorEnabled = not cursorEnabled
 					if not isEdit then
@@ -85,7 +85,7 @@ Citizen.CreateThread(function()
 					end
 				end
 			else
-				if IsControlJustPressed(0, Keys["F5"]) then
+				if IsControlJustPressed(0, 166) then -- F5
 					if not cursorEnabled then
 						SetNuiFocus(true, true)
 					end
@@ -433,27 +433,27 @@ function CheckObjMovementInput()
     local yVect = speeds[curSpeed]
     local zVect = speeds[curSpeed]
 
-    if IsControlPressed( 1, Keys["TOP"]) or IsDisabledControlPressed(1, Keys["TOP"]) then
+    if IsControlPressed( 1, 27) or IsDisabledControlPressed(1, 27) then -- Up Arrow
     	SelObjPos.x = SelObjPos.x + xVect
     end
 
-    if IsControlPressed( 1, Keys["DOWN"]) or IsDisabledControlPressed(1, Keys["DOWN"]) then
+    if IsControlPressed( 1, 173) or IsDisabledControlPressed(1, 173) then -- Down Arrow
     	SelObjPos.x = SelObjPos.x - xVect
     end
 
-    if IsControlPressed( 1, Keys["LEFT"]) or IsDisabledControlPressed(1, Keys["LEFT"]) then
+    if IsControlPressed( 1, 174) or IsDisabledControlPressed(1, 174) then -- Left Arrow
     	SelObjPos.y = SelObjPos.y + yVect
     end
 
-    if IsControlPressed( 1, Keys["RIGHT"]) or IsDisabledControlPressed(1, Keys["RIGHT"]) then
+    if IsControlPressed( 1, 175) or IsDisabledControlPressed(1, 175) then -- Right Arrow
     	SelObjPos.y = SelObjPos.y - yVect
     end
 
-    if IsControlPressed( 1, Keys["PAGEUP"]) or IsDisabledControlPressed(1, Keys["PAGEUP"]) then
+    if IsControlPressed( 1, 10) or IsDisabledControlPressed(1, 10) then -- Page Up
     	SelObjPos.z = SelObjPos.z + zVect
     end
 
-    if IsControlPressed( 1, Keys["PAGEDOWN"]) or IsDisabledControlPressed(1, Keys["PAGEDOWN"]) then
+    if IsControlPressed( 1, 11) or IsDisabledControlPressed(1, 11) then -- Page Down
     	SelObjPos.z = SelObjPos.z - zVect
     end
 
@@ -465,27 +465,27 @@ function CheckObjRotationInput()
     local yVect = speeds[curSpeed] * 5.5
     local zVect = speeds[curSpeed] * 5.5
 
-	if IsControlPressed( 1, Keys["TOP"]) or IsDisabledControlPressed(1, Keys["TOP"]) then
+	if IsControlPressed( 1, 27) or IsDisabledControlPressed(1, 27) then -- Up Arrow
     	SelObjRot.x = SelObjRot.x + xVect
     end
 
-    if IsControlPressed( 1, Keys["DOWN"]) or IsDisabledControlPressed(1, Keys["DOWN"]) then
+    if IsControlPressed( 1, 173) or IsDisabledControlPressed(1, 173) then -- Down Arrow
     	SelObjRot.x = SelObjRot.x - xVect
     end
 
-    if IsControlPressed( 1, Keys["LEFT"]) or IsDisabledControlPressed(1, Keys["LEFT"]) then
+    if IsControlPressed( 1, 174) or IsDisabledControlPressed(1, 174) then -- Left Arrow
     	SelObjRot.z = SelObjRot.z + zVect
     end
 
-    if IsControlPressed( 1, Keys["RIGHT"]) or IsDisabledControlPressed(1, Keys["RIGHT"]) then
+    if IsControlPressed( 1, 175) or IsDisabledControlPressed(1, 175) then -- Right Arrow
     	SelObjRot.z = SelObjRot.z - zVect
     end
 
-    if IsControlPressed( 1, Keys["PAGEUP"]) or IsDisabledControlPressed(1, Keys["PAGEUP"]) then
+    if IsControlPressed( 1, 10) or IsDisabledControlPressed(1, 10) then -- Page Up
     	SelObjRot.y = SelObjRot.y + yVect
     end
 
-    if IsControlPressed( 1, Keys["PAGEDOWN"]) or IsDisabledControlPressed(1, Keys["PAGEDOWN"]) then
+    if IsControlPressed( 1, 11) or IsDisabledControlPressed(1, 11) then -- Page Down
     	SelObjRot.y = SelObjRot.y - yVect
     end
 
@@ -506,7 +506,7 @@ end
 function CheckMovementInput()
 	local rotation = GetCamRot(MainCamera, 2)
 
-	if IsControlJustReleased(0, Keys["LEFTSHIFT"]) then
+	if IsControlJustReleased(0, 21) then -- Left Shift
 		curSpeed = curSpeed + 1
 		if curSpeed > getTableLength(speeds) then
 			curSpeed = 1
@@ -518,13 +518,13 @@ function CheckMovementInput()
     local yVect = speeds[curSpeed] * math.cos( degToRad( rotation.z ) )
     local zVect = speeds[curSpeed] * math.tan( degToRad( rotation.x ) - degToRad( rotation.y ))
 
-    if IsControlPressed( 1, Keys["W"]) or IsDisabledControlPressed(1, Keys["W"]) then
+    if IsControlPressed( 1, 32) or IsDisabledControlPressed(1, 32) then -- W
     	curPos.x = curPos.x + xVect
         curPos.y = curPos.y + yVect
         curPos.z = curPos.z + zVect
     end
 
-    if IsControlPressed( 1, Keys["S"]) or IsDisabledControlPressed(1, Keys["S"]) then
+    if IsControlPressed( 1, 33) or IsDisabledControlPressed(1, 33) then -- S
     	curPos.x = curPos.x - xVect
         curPos.y = curPos.y - yVect
         curPos.z = curPos.z - zVect

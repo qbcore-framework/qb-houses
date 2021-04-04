@@ -1,15 +1,3 @@
-local Keys = {
-    ["ESC"] = 322, ["F1"] = 288, ["F2"] = 289, ["F3"] = 170, ["F5"] = 166, ["F6"] = 167, ["F7"] = 168, ["F8"] = 169, ["F9"] = 56, ["F10"] = 57, 
-    ["~"] = 243, ["1"] = 157, ["2"] = 158, ["3"] = 160, ["4"] = 164, ["5"] = 165, ["6"] = 159, ["7"] = 161, ["8"] = 162, ["9"] = 163, ["-"] = 84, ["="] = 83, ["BACKSPACE"] = 177, 
-    ["TAB"] = 37, ["Q"] = 44, ["W"] = 32, ["E"] = 38, ["R"] = 45, ["T"] = 245, ["Y"] = 246, ["U"] = 303, ["P"] = 199, ["["] = 39, ["]"] = 40, ["ENTER"] = 18,
-    ["CAPS"] = 137, ["A"] = 34, ["S"] = 8, ["D"] = 9, ["F"] = 23, ["G"] = 47, ["H"] = 74, ["K"] = 311, ["L"] = 182,
-    ["LEFTSHIFT"] = 21, ["Z"] = 20, ["X"] = 73, ["C"] = 26, ["V"] = 0, ["B"] = 29, ["N"] = 249, ["M"] = 244, [","] = 82, ["."] = 81,
-    ["LEFTCTRL"] = 36, ["LEFTALT"] = 19, ["SPACE"] = 22, ["RIGHTCTRL"] = 70, 
-    ["HOME"] = 213, ["PAGEUP"] = 10, ["PAGEDOWN"] = 11, ["DELETE"] = 178,
-    ["LEFT"] = 174, ["RIGHT"] = 175, ["TOP"] = 27, ["DOWN"] = 173,
-    ["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
-}
-
 inside = false
 closesthouse = nil
 hasKey = false
@@ -806,7 +794,7 @@ function FrontDoorCam(coords)
             SetTimecycleModifier("scanline_cam_cheap")
             SetTimecycleModifierStrength(1.0)
 
-            if IsControlJustPressed(1, Keys["BACKSPACE"]) then
+            if IsControlJustPressed(1, 194) then -- Backspace
                 DoScreenFadeOut(150)
                 SendNUIMessage({
                     type = "frontcam",
@@ -827,26 +815,26 @@ function FrontDoorCam(coords)
             local getCameraRot = GetCamRot(cam, 2)
 
             -- ROTATE UP
-            if IsControlPressed(0, Keys["W"]) then
+            if IsControlPressed(0, 32) then -- W
                 if getCameraRot.x <= 0.0 then
                     SetCamRot(cam, getCameraRot.x + 0.7, 0.0, getCameraRot.z, 2)
                 end
             end
 
             -- ROTATE DOWN
-            if IsControlPressed(0, Keys["S"]) then
+            if IsControlPressed(0, 33) then -- S
                 if getCameraRot.x >= -50.0 then
                     SetCamRot(cam, getCameraRot.x - 0.7, 0.0, getCameraRot.z, 2)
                 end
             end
 
             -- ROTATE LEFT
-            if IsControlPressed(0, Keys["A"]) then
+            if IsControlPressed(0, 34) then -- A
                 SetCamRot(cam, getCameraRot.x, 0.0, getCameraRot.z + 0.7, 2)
             end
 
             -- ROTATE RIGHT
-            if IsControlPressed(0, Keys["D"]) then
+            if IsControlPressed(0, 35) then -- D
                 SetCamRot(cam, getCameraRot.x, 0.0, getCameraRot.z - 0.7, 2)
             end
 
