@@ -225,14 +225,9 @@ Citizen.CreateThread(function()
 
         local pos = GetEntityCoords(PlayerPedId(), true)
         local inRange = false
-        local dist = #(pos - vector3(Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z))
-        local dist2 = #(pos - vector3(Config.Houses[closesthouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[closesthouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[closesthouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z))
-        local dist3 = #(pos - vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z))
-        local stashdist = #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z))
-        local outfitdist = #(pos - vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z))
-        local logoutdist = #(pos - vector3(logoutLocation.x, logoutLocation.y, logoutLocation.z))
 
         if closesthouse ~= nil then
+            local dist = #(pos - vector3(Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z))
             if dist < 30 then
                 inRange = true
                 if hasKey then
@@ -246,6 +241,7 @@ Citizen.CreateThread(function()
                     end
 
                     if CurrentDoorBell ~= 0 then
+                        local dist2 = #(pos - vector3(Config.Houses[closesthouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[closesthouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[closesthouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z))
                         if dist2 < 1.5 then
                             DrawText3Ds(Config.Houses[closesthouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[closesthouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[closesthouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z + 0.35, '~g~G~w~ - To open the door')
                             if IsControlJustPressed(0, 47) then -- G
@@ -256,6 +252,7 @@ Citizen.CreateThread(function()
                     end
                     -- EXIT HOUSE
                     if inside then
+                        local dist3 = #(pos - vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z))
                         if not entering then
                             if POIOffsets ~= nil then
                                 if POIOffsets.exit ~= nil then
@@ -322,6 +319,7 @@ Citizen.CreateThread(function()
                 local StashObject = nil
                 -- STASH
                 if inside then
+                    local stashdist = #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z))
                     if CurrentHouse ~= nil then
                         if stashLocation ~= nil then
                             if stashdist < 1.5 then
@@ -338,6 +336,7 @@ Citizen.CreateThread(function()
                 end
 
                 if inside then
+                    local outfitdist = #(pos - vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z))
                     if CurrentHouse ~= nil then
                         if outfitLocation ~= nil then
                             if outfitdist < 1.5 then
@@ -353,6 +352,7 @@ Citizen.CreateThread(function()
                 end
 
                 if inside then
+                    local logoutdist = #(pos - vector3(logoutLocation.x, logoutLocation.y, logoutLocation.z))
                     if CurrentHouse ~= nil then
                         if logoutLocation ~= nil then
                             if logoutdist < 1.5 then
