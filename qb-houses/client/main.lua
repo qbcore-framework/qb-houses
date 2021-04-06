@@ -930,7 +930,7 @@ function SetClosestHouse()
         for id, house in pairs(Config.Houses) do
             if current ~= nil then
                 local distcheck = #(pos - vector3(Config.Houses[id].coords.enter.x, Config.Houses[id].coords.enter.y, Config.Houses[id].coords.enter.z))
-                if distcheck < dist)then
+                if distcheck < dist then
                     current = id
                     dist = distcheck
                 end
