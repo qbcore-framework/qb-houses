@@ -984,10 +984,10 @@ AddEventHandler('qb-houses:client:setLocation', function(data)
                 TriggerServerEvent('qb-houses:server:setLocation', coords, closesthouse, 3)
             end
         else
-            QBCore.Functions.Notify('Je bent niet de eigenaar van het huis..', 'error')
+            QBCore.Functions.Notify('You Do Not Own This House', 'error')
         end
     else    
-        QBCore.Functions.Notify('You are not in a house..', 'error')
+        QBCore.Functions.Notify('You Are Not In A House', 'error')
     end
 end)
 
