@@ -427,11 +427,6 @@ AddEventHandler('qb-houses:server:giveHouseKey', function(target, house)
 	end
 end)
 
-RegisterServerEvent('test:test')
-AddEventHandler('test:test', function(msg)
-	print(msg)
-end)
-
 RegisterServerEvent('qb-houses:server:setLocation')
 AddEventHandler('qb-houses:server:setLocation', function(coords, house, type)
 	local src = source

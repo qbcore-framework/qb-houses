@@ -594,9 +594,6 @@ function enterOwnedHouse(house)
     Citizen.Wait(100)
     houseObj = data[1]
     POIOffsets = data[2]
-    print(POIOffsets)
-    print(data[2])
-    print(POIOffsets.exit.x)
     entering = true
     TriggerServerEvent('qb-houses:server:SetInsideMeta', house, true)
     Citizen.Wait(500)
