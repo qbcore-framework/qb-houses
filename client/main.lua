@@ -324,9 +324,10 @@ Citizen.CreateThread(function()
                                     TriggerServerEvent("inventory:server:OpenInventory", "stash", CurrentHouse)
                                     TriggerEvent("inventory:client:SetCurrentStash", CurrentHouse)
                                 end
-                            elseif #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z)) < 3 then
-                                DrawText3Ds(stashLocation.x, stashLocation.y, stashLocation.z, 'Stash')
                             end
+--[[                             elseif #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z)) < 3 then
+                                DrawText3Ds(stashLocation.x, stashLocation.y, stashLocation.z, 'Stash')
+                            end ]]
                         end
                     end
                 end

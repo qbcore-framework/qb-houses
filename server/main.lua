@@ -368,7 +368,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getSavedOutfits', function(sou
 	end
 end)
 
-QBCore.Commands.Add("decorate", "Decoreer je huisie :)", {}, false, function(source, args)
+QBCore.Commands.Add("decorate", "Decorate Interior", {}, false, function(source, args)
 	TriggerClientEvent("qb-houses:client:decorate", source)
 end)
 
@@ -443,7 +443,7 @@ AddEventHandler('qb-houses:server:setLocation', function(coords, house, type)
 	TriggerClientEvent('qb-houses:client:refreshLocations', -1, house, json.encode(coords), type)
 end)
 
-QBCore.Commands.Add("createhouse", "Create a house as a real estate agent", {{name="price", help="Price of the house"},{name="tier", help="Name of the item(no label)"}}, true, function(source, args)
+QBCore.Commands.Add("createhouse", "Create House (Real Estate Only)", {{name="price", help="Price of the house"},{name="tier", help="Name of the item(no label)"}}, true, function(source, args)
 	local Player = QBCore.Functions.GetPlayer(source)
 	local price = tonumber(args[1])
 	local tier = tonumber(args[2])
@@ -452,7 +452,7 @@ QBCore.Commands.Add("createhouse", "Create a house as a real estate agent", {{na
 	end
 end)
 
-QBCore.Commands.Add("addgarage", "Add garage to the closest house", {}, false, function(source, args)
+QBCore.Commands.Add("addgarage", "Add House Garage (Real Estate Only)", {}, false, function(source, args)
 	local Player = QBCore.Functions.GetPlayer(source)
 	if Player.PlayerData.job.name == "realestate" then
 		TriggerClientEvent("qb-houses:client:addGarage", source)
@@ -579,14 +579,14 @@ AddEventHandler('qb-houses:server:SetHouseRammed', function(bool, house)
 	TriggerClientEvent('qb-houses:client:SetHouseRammed', -1, bool, house)
 end)
 
-QBCore.Commands.Add("enter", "Betreed huis", {}, false, function(source, args)
+QBCore.Commands.Add("enter", "Enter House", {}, false, function(source, args)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
  
     TriggerClientEvent('qb-houses:client:EnterHouse', src)
 end)
 
-QBCore.Commands.Add("ring", "Ring the doorbell at home", {}, false, function(source, args)
+QBCore.Commands.Add("ring", "Ring The Doorbell", {}, false, function(source, args)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
  
