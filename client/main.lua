@@ -32,12 +32,9 @@ QBCore = nil
 local inHoldersMenu = false
 
 Citizen.CreateThread(function() 
-    while true do
-        Citizen.Wait(10)
-        if QBCore == nil then
-            TriggerEvent("QBCore:GetObject", function(obj) QBCore = obj end)    
-            Citizen.Wait(200)
-        end
+    while QBCore == nil do
+        TriggerEvent("QBCore:GetObject", function(obj) QBCore = obj end)    
+        Citizen.Wait(200)
     end
 end)
 
@@ -222,7 +219,6 @@ end
 
 Citizen.CreateThread(function()
     while true do
-
         local pos = GetEntityCoords(PlayerPedId(), true)
         local inRange = false
 
