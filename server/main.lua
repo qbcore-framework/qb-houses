@@ -480,7 +480,7 @@ AddEventHandler('qb-houses:server:SetInsideMeta', function(insideId, bool)
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-phone_new:server:GetPlayerHouses', function(source, cb)
+QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(source, cb)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyHouses = {}
@@ -523,7 +523,7 @@ function escape_sqli(source)
     return source:gsub( "['\"]", replacements ) -- or string.gsub( source, "['\"]", replacements )
 end
 
-QBCore.Functions.CreateCallback('qb-phone_new:server:MeosGetPlayerHouses', function(source, cb, input)
+QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(source, cb, input)
 	local src = source
 	if input ~= nil then
 		local search = escape_sqli(input)
