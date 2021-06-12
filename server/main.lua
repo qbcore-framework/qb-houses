@@ -482,36 +482,44 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyHouses = {}
-	local keyholders = {}
 
 	QBCore.Functions.ExecuteSql(false, "SELECT * FROM `player_houses` WHERE `citizenid` = '"..Player.PlayerData.citizenid.."'", function(result)
-		if result[1] ~= nil then
+		if result ~= nil and result[1] ~= nil then
 			for k, v in pairs(result) do
-				v.keyholders = json.decode(v.keyholders)
-				if v.keyholders ~= nil and next(v.keyholders) then
-					for f, data in pairs(v.keyholders) do
-						QBCore.Functions.ExecuteSql(false, "SELECT * FROM `players` WHERE `citizenid` = '"..data.."'", function(keyholderdata)
-							if keyholderdata[1] ~= nil then
-								keyholders[f] = keyholderdata[1]
-							end
-						end)
-					end
-				else
-					keyholders[1] = Player.PlayerData
-				end
-
 				table.insert(MyHouses, {
 					name = v.house,
-					keyholders = keyholders,
-					owner = v.citizenid,
+					keyholders = {},
+					owner = Player.PlayerData.citizenid,
 					price = Config.Houses[v.house].price,
 					label = Config.Houses[v.house].adress,
 					tier = Config.Houses[v.house].tier,
 					garage = Config.Houses[v.house].garage,
 				})
+
+				if v.keyholders ~= "null" then
+					v.keyholders = json.decode(v.keyholders)
+					if v.keyholders ~= nil then
+						for f, data in pairs(v.keyholders) do
+							QBCore.Functions.ExecuteSql(false, "SELECT * FROM `players` WHERE `citizenid` = '"..data.."'", function(keyholderdata)
+								if keyholderdata[1] ~= nil then
+									keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
+									table.insert(MyHouses[k].keyholders, keyholderdata[1])
+								end
+							end)
+						end
+					else
+						MyHouses[k].keyholders[1] = Player.PlayerData
+					end
+				else
+					MyHouses[k].keyholders[1] = Player.PlayerData
+				end
 			end
 				
-			cb(MyHouses)
+			SetTimeout(100, function()
+				cb(MyHouses)
+			end)
+		else
+			cb({})
 		end
 	end)
 end)
