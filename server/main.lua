@@ -541,6 +541,35 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 	end)
 end)
 
+QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source, cb)
+	local src = source
+	local Player = QBCore.Functions.GetPlayer(src)
+	local MyKeys = {}
+
+	QBCore.Functions.ExecuteSql(false, "SELECT * FROM `player_houses`", function(result)
+		for k, v in pairs(result) do
+			if v.keyholders ~= "null" then
+				v.keyholders = json.decode(v.keyholders)
+				for s, p in pairs(v.keyholders) do
+					if p == Player.PlayerData.citizenid and (v.citizenid ~= Player.PlayerData.citizenid) then
+						table.insert(MyKeys, {
+							HouseData = Config.Houses[v.house]
+						})
+					end
+				end
+			end
+
+			if v.citizenid == Player.PlayerData.citizenid then
+				table.insert(MyKeys, {
+					HouseData = Config.Houses[v.house]
+				})
+			end
+		end
+
+		cb(MyKeys)
+	end)
+end)
+
 function escape_sqli(source)
     local replacements = { ['"'] = '\\"', ["'"] = "\\'" }
     return source:gsub( "['\"]", replacements ) -- or string.gsub( source, "['\"]", replacements )
