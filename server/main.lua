@@ -556,7 +556,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 					v.keyholders = json.decode(v.keyholders)
 					if v.keyholders ~= nil then
 						for f, data in pairs(v.keyholders) do
-							QBCore.Functions.ExecuteSql(false, {['a'] = data} "SELECT * FROM `players` WHERE `citizenid` = @a", function(keyholderdata)
+							QBCore.Functions.ExecuteSql(false, {['a'] = data}, "SELECT * FROM `players` WHERE `citizenid` = @a", function(keyholderdata)
 								if keyholderdata[1] ~= nil then
 									keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
 									table.insert(MyHouses[k].keyholders, keyholderdata[1])
