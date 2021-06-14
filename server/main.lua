@@ -4,7 +4,7 @@ TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
 
 Citizen.CreateThread(function()
 	local HouseGarages = {}
-	QBCore.Functions.ExecuteSql(false, "SELECT * FROM `houselocations`", function(result)
+	QBCore.Functions.ExecuteSql(false, nil, "SELECT * FROM `houselocations`", function(result)
 		if result[1] ~= nil then
 			for k, v in pairs(result) do
 				local owned = false
@@ -52,7 +52,16 @@ AddEventHandler('qb-houses:server:addNewHouse', function(street, coords, price, 
 	local houseCount = GetHouseStreetCount(street)
 	local name = street:lower() .. tostring(houseCount)
 	local label = street .. " " .. tostring(houseCount)
-	QBCore.Functions.ExecuteSql(false, "INSERT INTO `houselocations` (`name`, `label`, `coords`, `owned`, `price`, `tier`) VALUES ('"..name.."', '"..label.."', '"..json.encode(coords).."', 0,"..price..", "..tier..")")
+	QBCore.Functions.ExecuteSql(
+		false, 
+		{
+			['a'] = name,
+			['b'] = label,
+			['c'] = json.encode(coords),
+			['d'] = price,
+			['e'] = tier
+		}, 
+		"INSERT INTO `houselocations` (`name`, `label`, `coords`, `owned`, `price`, `tier`) VALUES (@a, @b, @c, 0, @d, @e)")
 	Config.Houses[name] = {
 		coords = coords,
 		owned = false,
@@ -70,7 +79,13 @@ end)
 RegisterServerEvent('qb-houses:server:addGarage')
 AddEventHandler('qb-houses:server:addGarage', function(house, coords)
 	local src = source
-	QBCore.Functions.ExecuteSql(false, "UPDATE `houselocations` SET `garage` = '"..json.encode(coords).."' WHERE `name` = '"..house.."'")
+	QBCore.Functions.ExecuteSql(
+		false, 
+		{
+			['a'] = json.encode(coords),
+			['b'] = house
+		}, 
+		"UPDATE `houselocations` SET `garage` = @a WHERE `name` = @b")
 	local garageInfo = {
 		label = Config.Houses[house].adress,
 		takeVehicle = coords,
@@ -104,8 +119,18 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
 		houseowneridentifier[house] = pData.PlayerData.steam
 		houseownercid[house] = pData.PlayerData.citizenid
 		housekeyholders[house] = {[1] = pData.PlayerData.citizenid}
-		QBCore.Functions.ExecuteSql(false, "INSERT INTO `player_houses` (`house`, `identifier`, `citizenid`, `keyholders`) VALUES ('"..house.."', '"..pData.PlayerData.steam.."', '"..pData.PlayerData.citizenid.."', '"..json.encode(housekeyholders[house]).."')")
-		QBCore.Functions.ExecuteSql(true, "UPDATE `houselocations` SET `owned` = 1 WHERE `name` = '"..house.."'")
+		QBCore.Functions.ExecuteSql(
+			false, 
+			{
+				['a'] = house,
+				['b'] = pData.PlayerData.steam,
+				['c'] = pData.PlayerData.citizenid,
+				['d'] = json.encode(housekeyholders[house])
+			}, 
+			"INSERT INTO `player_houses` (`house`, `identifier`, `citizenid`, `keyholders`) VALUES (@a, @b, @c, @d)")
+		QBCore.Functions.ExecuteSql(true, {
+			['a'] = house
+		}, "UPDATE `houselocations` SET `owned` = 1 WHERE `name` = @a")
 		TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
 		pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
 	else
@@ -165,7 +190,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
 	if housekeyholders[house] ~= nil then 
 		for i = 1, #housekeyholders[house], 1 do
 			if Player.PlayerData.citizenid ~= housekeyholders[house][i] then
-				QBCore.Functions.ExecuteSql(false, "SELECT `charinfo` FROM `players` WHERE `citizenid` = '"..housekeyholders[house][i].."'", function(result)
+				QBCore.Functions.ExecuteSql(false, {['a'] = housekeyholders[house][i]}, "SELECT `charinfo` FROM `players` WHERE `citizenid` = @a", function(result)
 					if result[1] ~= nil then 
 						local charinfo = json.decode(result[1].charinfo)
 						table.insert(retval, {
@@ -217,7 +242,7 @@ AddEventHandler('qb-houses:server:giveKey', function(house, target)
 	local pData = QBCore.Functions.GetPlayer(target)
 
 	table.insert(housekeyholders[house], pData.PlayerData.citizenid)
-	QBCore.Functions.ExecuteSql(false, "UPDATE `player_houses` SET `keyholders` = '"..json.encode(housekeyholders[house]).."' WHERE `house` = '"..house.."'")
+	QBCore.Functions.ExecuteSql(false, {['a'] = json.encode(housekeyholders[house]), ['b'] = house}, "UPDATE `player_houses` SET `keyholders` = @a WHERE `house` = @b")
 end)
 
 RegisterServerEvent('qb-houses:server:removeHouseKey')
@@ -233,11 +258,11 @@ AddEventHandler('qb-houses:server:removeHouseKey', function(house, citizenData)
 	end
 	housekeyholders[house] = newHolders
 	TriggerClientEvent('QBCore:Notify', src, citizenData.firstname .. " " .. citizenData.lastname .. "'s sleutels zijn verwijderd..", 'error', 3500)
-	QBCore.Functions.ExecuteSql(false, "UPDATE `player_houses` SET `keyholders` = '"..json.encode(housekeyholders[house]).."' WHERE `house` = '"..house.."'")
+	QBCore.Functions.ExecuteSql(false, {['a'] = json.encode(housekeyholders[house]), ['b'] = house}, "UPDATE `player_houses` SET `keyholders` = @a WHERE `house` = @b")
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, cb, NewCid, house)
-	QBCore.Functions.ExecuteSql(false, "SELECT * FROM `players` WHERE `citizenid` = '"..NewCid.."'", function(result)
+	QBCore.Functions.ExecuteSql(false, {['a'] = NewCid}, "SELECT * FROM `players` WHERE `citizenid` = @a", function(result)
 		if result[1] ~= nil then
 			local HouseName = house.name
 			housekeyholders[HouseName] = {}
@@ -245,7 +270,15 @@ QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, 
 			houseownercid[HouseName] = NewCid
 			houseowneridentifier[HouseName] = result[1].steam
 
-			QBCore.Functions.ExecuteSql(false, "UPDATE `player_houses` SET citizenid='"..NewCid.."', keyholders='"..json.encode(housekeyholders[HouseName]).."', identifier='"..result[1].steam.."' WHERE `house` = '"..HouseName.."'")
+			QBCore.Functions.ExecuteSql(
+				false,  
+				{
+					['a'] = NewCid,
+					['b'] = json.encode(housekeyholders[HouseName]),
+					['c'] = result[1].steam,
+					['d'] = HouseName
+				}, 
+				"UPDATE `player_houses` SET citizenid=@a, keyholders=@b, identifier=@c WHERE `house` = @d")
 			cb(true)
 		else
 			cb(false)
@@ -304,13 +337,13 @@ end)
 RegisterServerEvent('qb-houses:server:savedecorations')
 AddEventHandler('qb-houses:server:savedecorations', function(house, decorations)
 	local src = source
-	QBCore.Functions.ExecuteSql(false, "UPDATE `player_houses` SET `decorations` = '"..json.encode(decorations).."' WHERE `house` = '"..house.."'")
+	QBCore.Functions.ExecuteSql(false, {['a'] = json.encode(decorations), ['b'] = house}, "UPDATE `player_houses` SET `decorations` = @a WHERE `house` = @b")
 	TriggerClientEvent("qb-houses:server:sethousedecorations", -1, house, decorations)
 end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function(source, cb, house)
 	local retval = nil
-	QBCore.Functions.ExecuteSql(false, "SELECT * FROM `player_houses` WHERE `house` = '"..house.."'", function(result)
+	QBCore.Functions.ExecuteSql(false, {['a'] = house}, "SELECT * FROM `player_houses` WHERE `house` = @a", function(result)
 		if result[1] ~= nil then
 			if result[1].decorations ~= nil then
 				retval = json.decode(result[1].decorations)
@@ -322,7 +355,7 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseLocations', function(source, cb, house)
 	local retval = nil
-	QBCore.Functions.ExecuteSql(false, "SELECT * FROM `player_houses` WHERE `house` = '"..house.."'", function(result)
+	QBCore.Functions.ExecuteSql(false, {['a'] = house}, "SELECT * FROM `player_houses` WHERE `house` = @a", function(result)
 		if result[1] ~= nil then
 			retval = result[1]
 		end
@@ -352,7 +385,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getOwnedHouses', function(sour
 	local pData = QBCore.Functions.GetPlayer(src)
 
 	if pData then
-		exports['ghmattimysql']:execute('SELECT * FROM player_houses WHERE identifier = @identifier AND citizenid = @citizenid', {['@identifier'] = pData.PlayerData.steam, ['@citizenid'] = pData.PlayerData.citizenid}, function(houses)
+		QBCore.Functions.ExecuteSql(true, {['@identifier'] = pData.PlayerData.steam, ['@citizenid'] = pData.PlayerData.citizenid}, 'SELECT * FROM player_houses WHERE identifier = @identifier AND citizenid = @citizenid', function(houses)
 			local ownedHouses = {}
 
 			for i=1, #houses, 1 do
@@ -373,7 +406,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getSavedOutfits', function(sou
 	local pData = QBCore.Functions.GetPlayer(src)
 
 	if pData then
-		exports['ghmattimysql']:execute('SELECT * FROM player_outfits WHERE citizenid = @citizenid', {['@citizenid'] = pData.PlayerData.citizenid}, function(result)
+		QBCore.Functions.ExecuteSql(true, {['@citizenid'] = pData.PlayerData.citizenid}, 'SELECT * FROM player_outfits WHERE citizenid = @citizenid', function(result)
 			if result[1] ~= nil then
 				cb(result)
 			else
@@ -389,7 +422,7 @@ end)
 
 function GetHouseStreetCount(street)
 	local count = 1
-	QBCore.Functions.ExecuteSql(true, "SELECT * FROM `houselocations` WHERE `name` LIKE '%"..street.."%'", function(result)
+	QBCore.Functions.ExecuteSql(true, {['a']="%"..street.."%"}, "SELECT * FROM `houselocations` WHERE `name` LIKE @a", function(result)
 		if result[1] ~= nil then 
 			for i = 1, #result, 1 do
 				count = count + 1
@@ -405,7 +438,13 @@ AddEventHandler('qb-houses:server:LogoutLocation', function()
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyItems = Player.PlayerData.items
-	QBCore.Functions.ExecuteSql(true, "UPDATE `players` SET `inventory` = '"..QBCore.EscapeSqli(json.encode(MyItems)).."' WHERE `citizenid` = '"..Player.PlayerData.citizenid.."'")
+	QBCore.Functions.ExecuteSql(
+		true,
+		{
+			['a'] = json.encode(MyItems),
+			['b'] = Player.PlayerData.citizenid
+		}, 
+		"UPDATE `players` SET `inventory` = @a WHERE `citizenid` = @b")
 	QBCore.Player.Logout(src)
     TriggerClientEvent('qb-multicharacter:client:chooseChar', src)
 end)
@@ -424,7 +463,7 @@ AddEventHandler('qb-houses:server:giveHouseKey', function(target, house)
 				end
 			end		
 			table.insert(housekeyholders[house], tPlayer.PlayerData.citizenid)
-			QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `keyholders` = '"..json.encode(housekeyholders[house]).."' WHERE `house` = '"..house.."'")
+			QBCore.Functions.ExecuteSql(true, {['a'] = json.encode(housekeyholders[house]), ['b'] = house}, "UPDATE `player_houses` SET `keyholders` = @a WHERE `house` = @b")
 			TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
 			TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, 'You have the keys of '..Config.Houses[house].adress..' recieved!', 'success', 2500)
 		else
@@ -433,7 +472,7 @@ AddEventHandler('qb-houses:server:giveHouseKey', function(target, house)
 				[1] = sourceTarget.PlayerData.citizenid
 			}
 			table.insert(housekeyholders[house], tPlayer.PlayerData.citizenid)
-			QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `keyholders` = '"..json.encode(housekeyholders[house]).."' WHERE `house` = '"..house.."'")
+			QBCore.Functions.ExecuteSql(true, {['a'] = json.encode(housekeyholders[house]), ['b'] = house}, "UPDATE `player_houses` SET `keyholders` = @a WHERE `house` = @b")
 			TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
 			TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, 'You have the keys of '..Config.Houses[house].adress..' recieved!', 'success', 2500)
 		end
@@ -448,11 +487,11 @@ AddEventHandler('qb-houses:server:setLocation', function(coords, house, type)
 	local Player = QBCore.Functions.GetPlayer(src)
 
 	if type == 1 then
-		QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `stash` = '"..json.encode(coords).."' WHERE `house` = '"..house.."'")
+		QBCore.Functions.ExecuteSql(true, {['a'] = json.encode(coords), ['b'] = house}, "UPDATE `player_houses` SET `stash` = @a WHERE `house` = @b")
 	elseif type == 2 then
-		QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `outfit` = '"..json.encode(coords).."' WHERE `house` = '"..house.."'")
+		QBCore.Functions.ExecuteSql(true, {['a'] = json.encode(coords), ['b'] = house}, "UPDATE `player_houses` SET `outfit` = @a WHERE `house` = @b")
 	elseif type == 3 then
-		QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `logout` = '"..json.encode(coords).."' WHERE `house` = '"..house.."'")
+		QBCore.Functions.ExecuteSql(true, {['a'] = json.encode(coords), ['b'] = house}, "UPDATE `player_houses` SET `logout` = @a WHERE `house` = @b")
 	end
 
 	TriggerClientEvent('qb-houses:client:refreshLocations', -1, house, json.encode(coords), type)
@@ -500,7 +539,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyHouses = {}
 
-	QBCore.Functions.ExecuteSql(false, "SELECT * FROM `player_houses` WHERE `citizenid` = '"..Player.PlayerData.citizenid.."'", function(result)
+	QBCore.Functions.ExecuteSql(false, {['a'] = Player.PlayerData.citizenid}, "SELECT * FROM `player_houses` WHERE `citizenid` = @a", function(result)
 		if result ~= nil and result[1] ~= nil then
 			for k, v in pairs(result) do
 				table.insert(MyHouses, {
@@ -517,7 +556,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 					v.keyholders = json.decode(v.keyholders)
 					if v.keyholders ~= nil then
 						for f, data in pairs(v.keyholders) do
-							QBCore.Functions.ExecuteSql(false, "SELECT * FROM `players` WHERE `citizenid` = '"..data.."'", function(keyholderdata)
+							QBCore.Functions.ExecuteSql(false, {['a'] = data} "SELECT * FROM `players` WHERE `citizenid` = @a", function(keyholderdata)
 								if keyholderdata[1] ~= nil then
 									keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
 									table.insert(MyHouses[k].keyholders, keyholderdata[1])
@@ -546,7 +585,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyKeys = {}
 
-	QBCore.Functions.ExecuteSql(false, "SELECT * FROM `player_houses`", function(result)
+	QBCore.Functions.ExecuteSql(false, nil, "SELECT * FROM `player_houses`", function(result)
 		for k, v in pairs(result) do
 			if v.keyholders ~= "null" then
 				v.keyholders = json.decode(v.keyholders)
@@ -581,9 +620,9 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
 		local search = escape_sqli(input)
 		local searchData = {}
 
-		QBCore.Functions.ExecuteSql(false, 'SELECT * FROM `players` WHERE `citizenid` = "'..search..'" OR `charinfo` LIKE "%'..search..'%"', function(result)
+		QBCore.Functions.ExecuteSql(false, {['a']=search, ['b'] = "%"..search.."%"}, 'SELECT * FROM `players` WHERE `citizenid` = @a OR `charinfo` LIKE @b', function(result)
 			if result[1] ~= nil then
-				QBCore.Functions.ExecuteSql(false, "SELECT * FROM `player_houses` WHERE `citizenid` = '"..result[1].citizenid.."'", function(houses)
+				QBCore.Functions.ExecuteSql(false, {['a']=result[1].citizenid}, "SELECT * FROM `player_houses` WHERE `citizenid` = @a", function(houses)
 					if houses[1] ~= nil then
 						for k, v in pairs(houses) do
 							table.insert(searchData, {
