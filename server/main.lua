@@ -514,21 +514,45 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 				})
 
 				if v.keyholders ~= "null" then
-					v.keyholders = json.decode(v.keyholders)
-					if v.keyholders ~= nil then
-						for f, data in pairs(v.keyholders) do
-							QBCore.Functions.ExecuteSql(false, "SELECT * FROM `players` WHERE `citizenid` = '"..data.."'", function(keyholderdata)
-								if keyholderdata[1] ~= nil then
-									keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
-									table.insert(MyHouses[k].keyholders, keyholderdata[1])
-								end
-							end)
+				    v.keyholders = json.decode(v.keyholders)
+				    if v.keyholders ~= nil then
+					for f, data in pairs(v.keyholders) do
+					    QBCore.Functions.ExecuteSql(false, "SELECT * FROM `players` WHERE `citizenid` = '"..data.."'", function(keyholderdata)
+						if keyholderdata[1] ~= nil then
+						    keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
+
+						    local userKeyHolderData = {
+							charinfo = {
+							    firstname = keyholderdata[1].charinfo.firstname,
+							    lastname = keyholderdata[1].charinfo.lastname
+							},
+							citizenid = keyholderdata[1].citizenid,
+							name = keyholderdata[1].name
+						    }
+
+						    table.insert(MyHouses[k].keyholders, userKeyHolderData)
 						end
-					else
-						MyHouses[k].keyholders[1] = Player.PlayerData
+					    end)
 					end
+				    else
+					MyHouses[k].keyholders[1] = {
+						charinfo = {
+							firstname = Player.PlayerData.charinfo.firstname,
+							lastname = Player.PlayerData.charinfo.lastname
+					    	},
+					    	citizenid = Player.PlayerData.citizenid,
+					    	name = Player.PlayerData.name
+						}
+				    end
 				else
-					MyHouses[k].keyholders[1] = Player.PlayerData
+					MyHouses[k].keyholders[1] = {
+						charinfo = {
+					    		firstname = Player.PlayerData.charinfo.firstname,
+					    		lastname = Player.PlayerData.charinfo.lastname
+						},
+						citizenid = Player.PlayerData.citizenid,
+						name = Player.PlayerData.name
+				    	}
 				end
 			end
 				
