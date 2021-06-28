@@ -117,7 +117,7 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
 			['@citizenid'] = pData.PlayerData.citizenid,
 			['@keyholders'] = json.encode(housekeyholders[house])
 		})
-		QBCore.Functions.ExecuteSql(true, "UPDATE `houselocations` SET `owned` = 1 WHERE `name` = '"..house.."'")
+		exports.ghmattimysql:execute('UPDATE houselocations SET owned=@owned WHERE name=@name', {['@owned'] = 1, ['@house'] = house})
 		TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
 		pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
 	else
@@ -421,7 +421,7 @@ AddEventHandler('qb-houses:server:LogoutLocation', function()
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyItems = Player.PlayerData.items
-	QBCore.Functions.ExecuteSql(true, "UPDATE `players` SET `inventory` = '"..QBCore.EscapeSqli(json.encode(MyItems)).."' WHERE `citizenid` = '"..Player.PlayerData.citizenid.."'")
+	exports.ghmattimysql:execute('UPDATE players SET inventory=@inventory WHERE citizenid=@citizenid', {['@inventory'] = QBCore.EscapeSqli(json.encode(MyItems)), ['@citizenid'] = Player.PlayerData.citizenid})
 	QBCore.Player.Logout(src)
     TriggerClientEvent('qb-multicharacter:client:chooseChar', src)
 end)
@@ -440,7 +440,7 @@ AddEventHandler('qb-houses:server:giveHouseKey', function(target, house)
 				end
 			end		
 			table.insert(housekeyholders[house], tPlayer.PlayerData.citizenid)
-			QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `keyholders` = '"..json.encode(housekeyholders[house]).."' WHERE `house` = '"..house.."'")
+			exports.ghmattimysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
 			TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
 			TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, 'You have the keys of '..Config.Houses[house].adress..' recieved!', 'success', 2500)
 		else
@@ -449,7 +449,7 @@ AddEventHandler('qb-houses:server:giveHouseKey', function(target, house)
 				[1] = sourceTarget.PlayerData.citizenid
 			}
 			table.insert(housekeyholders[house], tPlayer.PlayerData.citizenid)
-			QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `keyholders` = '"..json.encode(housekeyholders[house]).."' WHERE `house` = '"..house.."'")
+			exports.ghmattimysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
 			TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
 			TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, 'You have the keys of '..Config.Houses[house].adress..' recieved!', 'success', 2500)
 		end
@@ -464,11 +464,11 @@ AddEventHandler('qb-houses:server:setLocation', function(coords, house, type)
 	local Player = QBCore.Functions.GetPlayer(src)
 
 	if type == 1 then
-		QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `stash` = '"..json.encode(coords).."' WHERE `house` = '"..house.."'")
+		exports.ghmattimysql:execute('UPDATE player_houses SET stash=@stash WHERE house=@house', {['@stash'] = json.encode(coords), ['@house'] = house})
 	elseif type == 2 then
-		QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `outfit` = '"..json.encode(coords).."' WHERE `house` = '"..house.."'")
+		exports.ghmattimysql:execute('UPDATE player_houses SET outfit=@outfit WHERE house=@house', {['@outfit'] = json.encode(coords), ['@house'] = house})
 	elseif type == 3 then
-		QBCore.Functions.ExecuteSql(true, "UPDATE `player_houses` SET `logout` = '"..json.encode(coords).."' WHERE `house` = '"..house.."'")
+		exports.ghmattimysql:execute('UPDATE player_houses SET logout=@logout WHERE house=@house', {['@logout'] = json.encode(coords), ['@house'] = house})
 	end
 
 	TriggerClientEvent('qb-houses:client:refreshLocations', -1, house, json.encode(coords), type)
