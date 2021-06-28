@@ -421,7 +421,7 @@ AddEventHandler('qb-houses:server:LogoutLocation', function()
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyItems = Player.PlayerData.items
-	exports.ghmattimysql:execute('UPDATE players SET inventory=@inventory WHERE citizenid=@citizenid', {['@inventory'] = QBCore.EscapeSqli(json.encode(MyItems)), ['@citizenid'] = Player.PlayerData.citizenid})
+	exports.ghmattimysql:execute('UPDATE players SET inventory=@inventory WHERE citizenid=@citizenid', {['@inventory'] = json.encode(MyItems), ['@citizenid'] = Player.PlayerData.citizenid})
 	QBCore.Player.Logout(src)
     TriggerClientEvent('qb-multicharacter:client:chooseChar', src)
 end)
