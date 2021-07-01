@@ -510,7 +510,7 @@ function HouseKeysMenu()
                 Menu.addButton(holders[k].firstname .. " " .. holders[k].lastname, "optionMenu", holders[k]) 
             end
         end
-        Menu.addButton("Sluit Menu", "closeMenuFull", nil) 
+        Menu.addButton("Exit Menu", "closeMenuFull", nil) 
     end, closesthouse)
 end
 
@@ -847,7 +847,7 @@ function CreateInstuctionScaleform(scaleform)
     PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
     PushScaleformMovieFunctionParameterInt(1)
     InstructionButton(GetControlInstructionalButton(1, 194, true))
-    InstructionButtonMessage("Sluit Camera")
+    InstructionButtonMessage("Exit Camera")
     PopScaleformMovieFunctionVoid()
 
     PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
