@@ -143,7 +143,7 @@ $(document).on('click', '.header-btn', function(){
             $.post('https://qb-houses/setupMyObjects', JSON.stringify({}), function(myObjects){
                 $('.decorate-items').html("");
                 $.each(myObjects, function(i, object){
-                    var elem = '<div class="decorate-item" id="myobject-'+i+'" data-type="myObject"><span id="decorate-item-name"><b>Object: </b>'+object.hashname+'</span><span id="decorate-item-category"><strong>Prijs: </strong><span id="item-price" style="color: green;">OWNED</span></span></div>';
+                    var elem = '<div class="decorate-item" id="myobject-'+i+'" data-type="myObject"><span id="decorate-item-name"><b>Object: </b>'+object.hashname+'</span><span id="decorate-item-category"><strong>Price: </strong><span id="item-price" style="color: green;">OWNED</span></span></div>';
                     $('.decorate-items').append(elem);
                     $('#myobject-'+i).data('myObjectData', object);
                 });
