@@ -16,27 +16,14 @@ outfitLocation = nil
 logoutLocation = nil
 
 local OwnedHouseBlips = {}
-
 local CurrentDoorBell = 0
 local rangDoorbell = nil
-
 local houseObj = {}
 local POIOffsets = nil
 local entering = false
 local data = nil
-
 local CurrentHouse = nil
-
-QBCore = nil
-
 local inHoldersMenu = false
-
-Citizen.CreateThread(function() 
-    while QBCore == nil do
-        TriggerEvent("QBCore:GetObject", function(obj) QBCore = obj end)    
-        Citizen.Wait(200)
-    end
-end)
 
 RegisterNetEvent('qb-houses:client:sellHouse')
 AddEventHandler('qb-houses:client:sellHouse', function()

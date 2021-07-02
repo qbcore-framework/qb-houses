@@ -1,7 +1,3 @@
-
-QBCore = nil
-TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-
 Citizen.CreateThread(function()
 	local HouseGarages = {}
 	exports.ghmattimysql:execute('SELECT * FROM houselocations', function(result)
