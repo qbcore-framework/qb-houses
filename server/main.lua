@@ -104,12 +104,12 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
 	local bankBalance = pData.PlayerData.money["bank"]
 
 	if (bankBalance >= HousePrice) then
-		houseowneridentifier[house] = pData.PlayerData.steam
+		houseowneridentifier[house] = pData.PlayerData.license
 		houseownercid[house] = pData.PlayerData.citizenid
 		housekeyholders[house] = {[1] = pData.PlayerData.citizenid}
 		exports.ghmattimysql:execute('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (@house, @identifier, @citizenid, @keyholders)', {
 			['@house'] = house,
-			['@identifier'] = pData.PlayerData.steam,
+			['@identifier'] = pData.PlayerData.license,
 			['@citizenid'] = pData.PlayerData.citizenid,
 			['@keyholders'] = json.encode(housekeyholders[house])
 		})
@@ -141,7 +141,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:hasKey', function(source, cb, 
 	local Player = QBCore.Functions.GetPlayer(src)
 	local retval = false
 	if Player ~= nil then 
-		local identifier = Player.PlayerData.steam
+		local identifier = Player.PlayerData.license
 		local CharId = Player.PlayerData.citizenid
 		if hasKey(identifier, CharId, house) then
 			retval = true
@@ -251,11 +251,11 @@ QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, 
 			housekeyholders[HouseName] = {}
 			housekeyholders[HouseName][1] = NewCid
 			houseownercid[HouseName] = NewCid
-			houseowneridentifier[HouseName] = result[1].steam
+			houseowneridentifier[HouseName] = result[1].license
 			exports.ghmattimysql:execute('UPDATE player_houses SET citizenid=@citizenid, keyholders=@keyholders, identifier=@identifier WHERE house=@house', {
                 ['@citizenid'] = NewCid,
                 ['@keyholders'] = json.encode(housekeyholders[HouseName]),
-                ['@identifier'] = result[1].steam,
+                ['@identifier'] = result[1].license,
                 ['@house'] = HouseName
             })
 			cb(true)
@@ -364,7 +364,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getOwnedHouses', function(sour
 	local pData = QBCore.Functions.GetPlayer(src)
 
 	if pData then
-		exports['ghmattimysql']:execute('SELECT * FROM player_houses WHERE identifier = @identifier AND citizenid = @citizenid', {['@identifier'] = pData.PlayerData.steam, ['@citizenid'] = pData.PlayerData.citizenid}, function(houses)
+		exports['ghmattimysql']:execute('SELECT * FROM player_houses WHERE identifier = @identifier AND citizenid = @citizenid', {['@identifier'] = pData.PlayerData.license, ['@citizenid'] = pData.PlayerData.citizenid}, function(houses)
 			local ownedHouses = {}
 
 			for i=1, #houses, 1 do
