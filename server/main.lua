@@ -136,6 +136,33 @@ end)
 
 --------------------------------------------------------------
 
+QBCore.Functions.CreateCallback('qb-houses:server:ProximityKO', function(source, cb, house)
+	local src = source
+	local Player = QBCore.Functions.GetPlayer(src)
+	local retvalK = false
+	local retvalO = false
+	
+	if Player ~= nil then 
+		local identifier = Player.PlayerData.license
+		local CharId = Player.PlayerData.citizenid
+		if hasKey(identifier, CharId, house) then
+			retval = true
+		elseif Player.PlayerData.job.name == "realestate" then
+			retval = true
+		else
+			retval = false
+		end
+	end
+	
+	if houseowneridentifier[house] ~= nil and houseownercid[house] ~= nil then
+		retvalO = true
+	else
+		retvalO = false
+	end
+	
+	cb(retvalK, retvalO)
+end)
+
 QBCore.Functions.CreateCallback('qb-houses:server:hasKey', function(source, cb, house)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
