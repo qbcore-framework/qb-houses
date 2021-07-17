@@ -146,11 +146,11 @@ QBCore.Functions.CreateCallback('qb-houses:server:ProximityKO', function(source,
 		local identifier = Player.PlayerData.license
 		local CharId = Player.PlayerData.citizenid
 		if hasKey(identifier, CharId, house) then
-			retval = true
+			retvalK = true
 		elseif Player.PlayerData.job.name == "realestate" then
-			retval = true
+			retvalK = true
 		else
-			retval = false
+			retvalK = false
 		end
 	end
 	
