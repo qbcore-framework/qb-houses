@@ -1,32 +1,31 @@
 Citizen.CreateThread(function()
 	local HouseGarages = {}
-	exports.ghmattimysql:execute('SELECT * FROM houselocations', function(result)
-		if result[1] ~= nil then
-			for k, v in pairs(result) do
-				local owned = false
-				if tonumber(v.owned) == 1 then
-					owned = true
-				end
-				local garage = v.garage ~= nil and json.decode(v.garage) or {}
-				Config.Houses[v.name] = {
-					coords = json.decode(v.coords),
-					owned = v.owned,
-					price = v.price,
-					locked = true,
-					adress = v.label, 
-					tier = v.tier,
-					garage = garage,
-					decorations = {},
-				}
-				HouseGarages[v.name] = {
-					label = v.label,
-					takeVehicle = garage,
-				}
+	local result = exports.ghmattimysql:executeSync('SELECT * FROM houselocations')
+	if result[1] ~= nil then
+		for k, v in pairs(result) do
+			local owned = false
+			if tonumber(v.owned) == 1 then
+				owned = true
 			end
+			local garage = v.garage ~= nil and json.decode(v.garage) or {}
+			Config.Houses[v.name] = {
+				coords = json.decode(v.coords),
+				owned = v.owned,
+				price = v.price,
+				locked = true,
+				adress = v.label, 
+				tier = v.tier,
+				garage = garage,
+				decorations = {},
+			}
+			HouseGarages[v.name] = {
+				label = v.label,
+				takeVehicle = garage,
+			}
 		end
-		TriggerClientEvent("qb-garages:client:houseGarageConfig", -1, HouseGarages)
-		TriggerClientEvent("qb-houses:client:setHouseConfig", -1, Config.Houses)
-	end)
+	end
+	TriggerClientEvent("qb-garages:client:houseGarageConfig", -1, HouseGarages)
+	TriggerClientEvent("qb-houses:client:setHouseConfig", -1, Config.Houses)
 end)
 
 local houseowneridentifier = {}
@@ -200,17 +199,16 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
 	if housekeyholders[house] ~= nil then 
 		for i = 1, #housekeyholders[house], 1 do
 			if Player.PlayerData.citizenid ~= housekeyholders[house][i] then
-				exports.ghmattimysql:execute('SELECT charinfo FROM players WHERE citizenid=@citizenid', {['@citizenid'] = housekeyholders[house][i]}, function(result)
-					if result[1] ~= nil then 
-						local charinfo = json.decode(result[1].charinfo)
-						table.insert(retval, {
-							firstname = charinfo.firstname,
-							lastname = charinfo.lastname,
-							citizenid = housekeyholders[house][i],
-						})
-					end
-					cb(retval)
-				end)
+				local result = exports.ghmattimysql:executeSync('SELECT charinfo FROM players WHERE citizenid=@citizenid', {['@citizenid'] = housekeyholders[house][i]})
+				if result[1] ~= nil then 
+					local charinfo = json.decode(result[1].charinfo)
+					table.insert(retval, {
+						firstname = charinfo.firstname,
+						lastname = charinfo.lastname,
+						citizenid = housekeyholders[house][i],
+					})
+				end
+				cb(retval)
 			end
 		end
 	else
@@ -236,15 +234,13 @@ function hasKey(identifier, cid, house)
 end
 
 function getOfflinePlayerData(citizenid)
-	exports.ghmattimysql:execute('SELECT charinfo FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenid}, function(result)
-		Citizen.Wait(100)
-		if result[1] ~= nil then 
-			local charinfo = json.decode(result[1].charinfo)
-			return charinfo
-		else
-			return nil
-		end
-	end)
+	local result = exports.ghmattimysql:executeSync('SELECT charinfo FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenid})
+	if result[1] ~= nil then 
+		local charinfo = json.decode(result[1].charinfo)
+		return charinfo
+	else
+		return nil
+	end
 end
 
 RegisterServerEvent('qb-houses:server:giveKey')
@@ -272,24 +268,23 @@ AddEventHandler('qb-houses:server:removeHouseKey', function(house, citizenData)
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, cb, NewCid, house)
-	exports.ghmattimysql:execute('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = NewCid}, function(result)
-		if result[1] ~= nil then
-			local HouseName = house.name
-			housekeyholders[HouseName] = {}
-			housekeyholders[HouseName][1] = NewCid
-			houseownercid[HouseName] = NewCid
-			houseowneridentifier[HouseName] = result[1].license
-			exports.ghmattimysql:execute('UPDATE player_houses SET citizenid=@citizenid, keyholders=@keyholders, identifier=@identifier WHERE house=@house', {
-                ['@citizenid'] = NewCid,
-                ['@keyholders'] = json.encode(housekeyholders[HouseName]),
-                ['@identifier'] = result[1].license,
-                ['@house'] = HouseName
-            })
-			cb(true)
-		else
-			cb(false)
-		end
-	end)
+	local result = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = NewCid})
+	if result[1] ~= nil then
+		local HouseName = house.name
+		housekeyholders[HouseName] = {}
+		housekeyholders[HouseName][1] = NewCid
+		houseownercid[HouseName] = NewCid
+		houseowneridentifier[HouseName] = result[1].license
+		exports.ghmattimysql:execute('UPDATE player_houses SET citizenid=@citizenid, keyholders=@keyholders, identifier=@identifier WHERE house=@house', {
+			['@citizenid'] = NewCid,
+			['@keyholders'] = json.encode(housekeyholders[HouseName]),
+			['@identifier'] = result[1].license,
+			['@house'] = HouseName
+		})
+		cb(true)
+	else
+		cb(false)
+	end
 end)
 
 function typeof(var)
@@ -349,24 +344,22 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function(source, cb, house)
 	local retval = nil
-	exports.ghmattimysql:execute('SELECT * FROM player_houses WHERE house=@house', {['@house'] = house}, function(result)
-		if result[1] ~= nil then
-			if result[1].decorations ~= nil then
-				retval = json.decode(result[1].decorations)
-			end
+	local result = exports.ghmattimysql:executeSync('SELECT * FROM player_houses WHERE house=@house', {['@house'] = house})
+	if result[1] ~= nil then
+		if result[1].decorations ~= nil then
+			retval = json.decode(result[1].decorations)
 		end
-		cb(retval)
-	end)
+	end
+	cb(retval)
 end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseLocations', function(source, cb, house)
 	local retval = nil
-	exports.ghmattimysql:execute('SELECT * FROM player_houses WHERE house=@house', {['@house'] = house}, function(result)
-		if result[1] ~= nil then
-			retval = result[1]
-		end
-		cb(retval)
-	end)
+	local result = exports.ghmattimysql:executeSync('SELECT * FROM player_houses WHERE house=@house', {['@house'] = house})
+	if result[1] ~= nil then
+		retval = result[1]
+	end
+	cb(retval)
 end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeys', function(source, cb)
@@ -428,14 +421,13 @@ end)
 
 function GetHouseStreetCount(street)
 	local count = 1
-	QBCore.Functions.ExecuteSql(true, "SELECT * FROM `houselocations` WHERE `name` LIKE '%"..street.."%'", function(result)
-		if result[1] ~= nil then 
-			for i = 1, #result, 1 do
-				count = count + 1
-			end
+	local query = '%'..street..'%'
+	local result = exports.ghmattimysql:executeSync('SELECT * FROM houselocations WHERE name LIKE @query', {['@query'] = query})
+	if result[1] ~= nil then 
+		for i = 1, #result, 1 do
+			count = count + 1
 		end
-		return count
-	end)
+	end
 	return count
 end
 
@@ -538,69 +530,67 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyHouses = {}
-	exports.ghmattimysql:execute('SELECT * FROM player_houses WHERE citizenid=@citizenid', {['@citizenid'] = Player.PlayerData.citizenid}, function(result)
-		if result ~= nil and result[1] ~= nil then
-			for k, v in pairs(result) do
-				table.insert(MyHouses, {
-					name = v.house,
-					keyholders = {},
-					owner = Player.PlayerData.citizenid,
-					price = Config.Houses[v.house].price,
-					label = Config.Houses[v.house].adress,
-					tier = Config.Houses[v.house].tier,
-					garage = Config.Houses[v.house].garage,
-				})
+	local result = exports.ghmattimysql:executeSync('SELECT * FROM player_houses WHERE citizenid=@citizenid', {['@citizenid'] = Player.PlayerData.citizenid})
+	if result ~= nil and result[1] ~= nil then
+		for k, v in pairs(result) do
+			table.insert(MyHouses, {
+				name = v.house,
+				keyholders = {},
+				owner = Player.PlayerData.citizenid,
+				price = Config.Houses[v.house].price,
+				label = Config.Houses[v.house].adress,
+				tier = Config.Houses[v.house].tier,
+				garage = Config.Houses[v.house].garage,
+			})
 
-				if v.keyholders ~= "null" then
-				    v.keyholders = json.decode(v.keyholders)
-				    if v.keyholders ~= nil then
-					for f, data in pairs(v.keyholders) do
-						exports.ghmattimysql:execute('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = data}, function(keyholderdata)
-						if keyholderdata[1] ~= nil then
-						    keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
+			if v.keyholders ~= "null" then
+				v.keyholders = json.decode(v.keyholders)
+				if v.keyholders ~= nil then
+				for f, data in pairs(v.keyholders) do
+					local keyholderdata = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = data})
+					if keyholderdata[1] ~= nil then
+						keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
 
-						    local userKeyHolderData = {
-							charinfo = {
-							    firstname = keyholderdata[1].charinfo.firstname,
-							    lastname = keyholderdata[1].charinfo.lastname
-							},
-							citizenid = keyholderdata[1].citizenid,
-							name = keyholderdata[1].name
-						    }
-
-						    table.insert(MyHouses[k].keyholders, userKeyHolderData)
-						end
-					    end)
-					end
-				    else
-					MyHouses[k].keyholders[1] = {
+						local userKeyHolderData = {
 						charinfo = {
-							firstname = Player.PlayerData.charinfo.firstname,
-							lastname = Player.PlayerData.charinfo.lastname
-					    	},
-					    	citizenid = Player.PlayerData.citizenid,
-					    	name = Player.PlayerData.name
+							firstname = keyholderdata[1].charinfo.firstname,
+							lastname = keyholderdata[1].charinfo.lastname
+						},
+						citizenid = keyholderdata[1].citizenid,
+						name = keyholderdata[1].name
 						}
-				    end
+
+						table.insert(MyHouses[k].keyholders, userKeyHolderData)
+					end
+				end
 				else
-					MyHouses[k].keyholders[1] = {
-						charinfo = {
-					    		firstname = Player.PlayerData.charinfo.firstname,
-					    		lastname = Player.PlayerData.charinfo.lastname
+				MyHouses[k].keyholders[1] = {
+					charinfo = {
+						firstname = Player.PlayerData.charinfo.firstname,
+						lastname = Player.PlayerData.charinfo.lastname
 						},
 						citizenid = Player.PlayerData.citizenid,
 						name = Player.PlayerData.name
-				    	}
+					}
 				end
+			else
+				MyHouses[k].keyholders[1] = {
+					charinfo = {
+							firstname = Player.PlayerData.charinfo.firstname,
+							lastname = Player.PlayerData.charinfo.lastname
+					},
+					citizenid = Player.PlayerData.citizenid,
+					name = Player.PlayerData.name
+					}
 			end
-				
-			SetTimeout(100, function()
-				cb(MyHouses)
-			end)
-		else
-			cb({})
 		end
-	end)
+			
+		SetTimeout(100, function()
+			cb(MyHouses)
+		end)
+	else
+		cb({})
+	end
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source, cb)
@@ -608,28 +598,26 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyKeys = {}
 
-	exports.ghmattimysql:execute('SELECT * FROM player_houses', function(result)
-		for k, v in pairs(result) do
-			if v.keyholders ~= "null" then
-				v.keyholders = json.decode(v.keyholders)
-				for s, p in pairs(v.keyholders) do
-					if p == Player.PlayerData.citizenid and (v.citizenid ~= Player.PlayerData.citizenid) then
-						table.insert(MyKeys, {
-							HouseData = Config.Houses[v.house]
-						})
-					end
+	local result = exports.ghmattimysql:executeSync('SELECT * FROM player_houses')
+	for k, v in pairs(result) do
+		if v.keyholders ~= "null" then
+			v.keyholders = json.decode(v.keyholders)
+			for s, p in pairs(v.keyholders) do
+				if p == Player.PlayerData.citizenid and (v.citizenid ~= Player.PlayerData.citizenid) then
+					table.insert(MyKeys, {
+						HouseData = Config.Houses[v.house]
+					})
 				end
-			end
-
-			if v.citizenid == Player.PlayerData.citizenid then
-				table.insert(MyKeys, {
-					HouseData = Config.Houses[v.house]
-				})
 			end
 		end
 
-		cb(MyKeys)
-	end)
+		if v.citizenid == Player.PlayerData.citizenid then
+			table.insert(MyKeys, {
+				HouseData = Config.Houses[v.house]
+			})
+		end
+	end
+	cb(MyKeys)
 end)
 
 function escape_sqli(source)
@@ -642,36 +630,33 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
 	if input ~= nil then
 		local search = escape_sqli(input)
 		local searchData = {}
-
-		exports.ghmattimysql:execute('SELECT * FROM `players` WHERE `citizenid` = "'..search..'" OR `charinfo` LIKE "%'..search..'%"', function(result)
-			if result[1] ~= nil then
-				exports.ghmattimysql:execute('SELECT * FROM player_houses WHERE citizenid=@citizenid', {['@citizenid'] = result[1].citizenid}, function(houses)
-					if houses[1] ~= nil then
-						for k, v in pairs(houses) do
-							table.insert(searchData, {
-								name = v.house,
-								keyholders = keyholders,
-								owner = v.citizenid,
-								price = Config.Houses[v.house].price,
-								label = Config.Houses[v.house].adress,
-								tier = Config.Houses[v.house].tier,
-								garage = Config.Houses[v.house].garage,
-								charinfo = json.decode(result[1].charinfo),
-								coords = {
-									x = Config.Houses[v.house].coords.enter.x,
-									y = Config.Houses[v.house].coords.enter.y,
-									z = Config.Houses[v.house].coords.enter.z,
-								}
-							})
-						end
-
-						cb(searchData)
-					end
-				end)
-			else
-				cb(nil)
+		local query = '%'..search..'%'
+		local result = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid OR charinfo LIKE @query', {['@citizenid'] = search, ['@query'] = query})
+		if result[1] ~= nil then
+			local houses = exports.ghmattimysql:executeSync('SELECT * FROM player_houses WHERE citizenid=@citizenid', {['@citizenid'] = result[1].citizenid})
+			if houses[1] ~= nil then
+				for k, v in pairs(houses) do
+					table.insert(searchData, {
+						name = v.house,
+						keyholders = keyholders,
+						owner = v.citizenid,
+						price = Config.Houses[v.house].price,
+						label = Config.Houses[v.house].adress,
+						tier = Config.Houses[v.house].tier,
+						garage = Config.Houses[v.house].garage,
+						charinfo = json.decode(result[1].charinfo),
+						coords = {
+							x = Config.Houses[v.house].coords.enter.x,
+							y = Config.Houses[v.house].coords.enter.y,
+							z = Config.Houses[v.house].coords.enter.z,
+						}
+					})
+				end
+				cb(searchData)
 			end
-		end)
+		else
+			cb(nil)
+		end
 	else
 		cb(nil)
 	end
