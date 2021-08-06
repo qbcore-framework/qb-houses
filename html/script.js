@@ -178,7 +178,9 @@ $(document).on('click', '.footer-btn', function(){
 });
 
 $(document).on('click', '#buy-object', function(){
-    $.post('https://qb-houses/buySelectedObject');
+    $.post("https://qb-houses/buySelectedObject", JSON.stringify({
+        price: selectedObjectData.price,
+    }));
     selectedObjectData = null;
     $(".decorate-confirm").css("display", "none");
 });

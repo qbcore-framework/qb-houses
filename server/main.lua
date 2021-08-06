@@ -120,6 +120,20 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
 	end
 end)
 
+QBCore.Functions.CreateCallback('qb-houses:server:buyFurniture', function(source, cb, price)
+    local src     	= source
+	local pData 	= QBCore.Functions.GetPlayer(src)
+	local bankBalance = pData.PlayerData.money["bank"]
+
+    if bankBalance >= price then
+        pData.Functions.RemoveMoney('bank', price, "bought-furniture")
+        cb(true)
+    else
+        TriggerClientEvent('QBCore:Notify', src, "You dont have enough money..", "error")
+        cb(false)
+    end
+end)
+
 RegisterServerEvent('qb-houses:server:lockHouse')
 AddEventHandler('qb-houses:server:lockHouse', function(bool, house)
 	TriggerClientEvent('qb-houses:client:lockHouse', -1, bool, house)
