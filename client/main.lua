@@ -182,10 +182,10 @@ AddEventHandler('qb-houses:client:toggleDoorlock', function()
                 QBCore.Functions.Notify("House is locked!", "error", 2500)
             end
         else
-            QBCore.Functions.Notify("You dont have the keys of the house...", "error", 3500)
+            QBCore.Functions.Notify("You don't have the keys of the house...", "error", 3500)
         end
     else
-        QBCore.Functions.Notify("There is no door to see??", "error", 3500)
+        QBCore.Functions.Notify("There is no door nearby", "error", 3500)
     end
 end)
 
@@ -387,7 +387,7 @@ AddEventHandler('qb-houses:client:RingDoor', function(player, house)
     if closesthouse == house and inside then
         CurrentDoorBell = player
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "doorbell", 0.1)
-        QBCore.Functions.Notify("Some one is ringing the door!")
+        QBCore.Functions.Notify("Someone is ringing the door!")
     end
 end)
 
@@ -423,7 +423,7 @@ AddEventHandler('qb-houses:client:giveHouseKey', function(data)
         if housedist < 10 then
             TriggerServerEvent('qb-houses:server:giveHouseKey', playerId, closesthouse)
         else
-            QBCore.Functions.Notify("You'r not close enough to the door..", "error")
+            QBCore.Functions.Notify("You're not close enough to the door..", "error")
         end
     elseif closesthouse == nil then
         QBCore.Functions.Notify("There is no house near you", "error")
@@ -448,10 +448,10 @@ AddEventHandler('qb-houses:client:removeHouseKey', function(data)
                 end
             end, closesthouse)
         else
-            QBCore.Functions.Notify("You'r not close enough to the door..", "error")
+            QBCore.Functions.Notify("You're not close enough to the door..", "error")
         end
     else
-        QBCore.Functions.Notify("You'r not close enough to the door..", "error")
+        QBCore.Functions.Notify("You're not close enough to the door..", "error")
     end
 end)
 
@@ -513,8 +513,8 @@ function optionMenu(citizenData)
     ped = PlayerPedId();
     MenuTitle = "What now?"
     ClearMenu()
-    Menu.addButton("Verwijder sleutel", "removeHouseKey", citizenData) 
-    Menu.addButton("Terug", "HouseKeysMenu",nil)
+    Menu.addButton("Remove key", "removeHouseKey", citizenData) 
+    Menu.addButton("Back", "HouseKeysMenu",nil)
 end
 
 function removeHouseKey(citizenData)
@@ -963,10 +963,10 @@ AddEventHandler('qb-houses:client:setLocation', function(data)
                 TriggerServerEvent('qb-houses:server:setLocation', coords, closesthouse, 3)
             end
         else
-            QBCore.Functions.Notify('You Do Not Own This House', 'error')
+            QBCore.Functions.Notify('You do not own this house', 'error')
         end
     else    
-        QBCore.Functions.Notify('You Are Not In A House', 'error')
+        QBCore.Functions.Notify('You are not in a house', 'error')
     end
 end)
 
@@ -1050,12 +1050,12 @@ AddEventHandler('qb-houses:client:HomeInvasion', function()
                             end, function()
                                 RamsDone = 0
                                 TriggerServerEvent('qb-houses:server:SetRamState', false, closesthouse)
-                                QBCore.Functions.Notify('It faild try again.', 'error')
+                                QBCore.Functions.Notify('It failed try again.', 'error')
                                 DoRamAnimation(false)
                             end)
                             TriggerServerEvent('qb-houses:server:SetRamState', true, closesthouse)
                         else
-                            QBCore.Functions.Notify('Er is al iemand bezig met de deur..', 'error')
+                            QBCore.Functions.Notify('Someone is already working on the door..', 'error')
                         end
                     else
                         QBCore.Functions.Notify('19/5000 This house is already open..', 'error')
@@ -1100,7 +1100,7 @@ AddEventHandler('qb-houses:client:ResetHouse', function()
             RamsDone = 0
             QBCore.Functions.Notify('You locked the house again..', 'success')
         else
-            QBCore.Functions.Notify('This door is not broken open  ..', 'error')
+            QBCore.Functions.Notify('This door is not broken open ..', 'error')
         end
     end
 end)
