@@ -112,7 +112,7 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
 			['@citizenid'] = pData.PlayerData.citizenid,
 			['@keyholders'] = json.encode(housekeyholders[house])
 		})
-		exports.ghmattimysql:execute('UPDATE houselocations SET owned=@owned WHERE name=@name', {['@owned'] = 1, ['@house'] = house})
+		exports.ghmattimysql:execute('UPDATE houselocations SET owned=@owned WHERE name=@house', {['@owned'] = 1, ['@house'] = house})
 		TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
 		pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
 	else
