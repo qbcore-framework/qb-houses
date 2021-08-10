@@ -180,12 +180,21 @@ RegisterNUICallback("cancelSelectedObject", function(data, cb)
 end)
 
 RegisterNUICallback("buySelectedObject", function(data, cb)
-	SetNuiFocus(false, false)
-	cursorEnabled = not cursorEnabled
-	SaveDecorations()
-	SelectedObj = nil
-	SelObjId = 0
-	peanut = false
+    QBCore.Functions.TriggerCallback('qb-houses:server:buyFurniture', function(isSuccess)
+        if isSuccess then
+            SetNuiFocus(false, false)
+            cursorEnabled = not cursorEnabled
+            SaveDecorations()
+            SelectedObj = nil
+            SelObjId = 0
+            peanut = false
+        else
+            DeleteObject(SelectedObj)
+            SelectedObj = nil
+            SelObjId = 0
+            peanut = false
+        end
+    end, data.price)
 end)
 
 RegisterNUICallback('setupMyObjects', function(data, cb)
