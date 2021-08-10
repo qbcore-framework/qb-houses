@@ -65,7 +65,7 @@ $('document').ready(function() {
         }
 
         if (data.which == 13 ) {
-            if (selectedObjectData != null) {
+            if (selectedObjectData != null && $(".decorate-confirm").css('display') != 'block') {
                 $.post('https://qb-houses/editOwnedObject', JSON.stringify({
                     objectData: selectedObjectData
                 }));
@@ -80,7 +80,7 @@ $('document').ready(function() {
                     });
                     $(".decorate-items").fadeIn(150);
                 });
-            } else if (selectedObject !== null) {
+            } else if (selectedObject !== null && $(".decorate-confirm").css('display') != 'block') {
                 var objId = $(selectedObject).attr('id');
                 var objData = $('#'+objId).data('objectData');
                 selectedObjectData = objData
