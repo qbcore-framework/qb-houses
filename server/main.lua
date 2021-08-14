@@ -509,6 +509,8 @@ QBCore.Commands.Add("createhouse", "Create House (Real Estate Only)", {{name="pr
 	local tier = tonumber(args[2])
 	if Player.PlayerData.job.name == "realestate" then
 		TriggerClientEvent("qb-houses:client:createHouses", source, price, tier)
+	else
+		TriggerClientEvent('QBCore:Notify', source, "Only realestate can use this command", "error")
 	end
 end)
 
