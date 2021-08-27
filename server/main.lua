@@ -518,6 +518,8 @@ QBCore.Commands.Add("addgarage", "Add House Garage (Real Estate Only)", {}, fals
 	local Player = QBCore.Functions.GetPlayer(source)
 	if Player.PlayerData.job.name == "realestate" then
 		TriggerClientEvent("qb-houses:client:addGarage", source)
+	else
+		TriggerClientEvent('QBCore:Notify', source, "Only realestate can use this command", "error")
 	end
 end)
 
