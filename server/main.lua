@@ -503,14 +503,16 @@ AddEventHandler('qb-houses:server:setLocation', function(coords, house, type)
 	TriggerClientEvent('qb-houses:client:refreshLocations', -1, house, json.encode(coords), type)
 end)
 
-QBCore.Commands.Add("createhouse", "Create House (Real Estate Only)", {{name="price", help="Price of the house"},{name="tier", help="Name of the item(no label)"}}, true, function(source, args)
+QBCore.Commands.Add("createhouse", "Create a house as a real estate agent", {{name="price", help="Price of the house"},{name="tier", help="1, 2, 3, 4, 5, 6, 7"}}, true, function(source, args)
 	local Player = QBCore.Functions.GetPlayer(source)
 	local price = tonumber(args[1])
 	local tier = tonumber(args[2])
 	if Player.PlayerData.job.name == "realestate" then
-		TriggerClientEvent("qb-houses:client:createHouses", source, price, tier)
-	else
-		TriggerClientEvent('QBCore:Notify', source, "Only realestate can use this command", "error")
+		if tier < 1 or tier > 7 then
+			TriggerClientEvent('QBCore:Notify', source, 'Invalid house tier!', 'error')
+		else
+			TriggerClientEvent("qb-houses:client:createHouses", source, price, tier)
+		end
 	end
 end)
 
