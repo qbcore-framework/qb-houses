@@ -115,6 +115,7 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
 		exports.ghmattimysql:execute('UPDATE houselocations SET owned=@owned WHERE name=@house', {['@owned'] = 1, ['@house'] = house})
 		TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
 		pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
+		TriggerEvent('qb-bossmenu:server:addAccountMoney', "realestate", HousePrice)
 	else
 		TriggerClientEvent('QBCore:Notify', source, "You dont have enough money..", "error")
 	end
@@ -127,6 +128,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:buyFurniture', function(source
 
     if bankBalance >= price then
         pData.Functions.RemoveMoney('bank', price, "bought-furniture")
+	TriggerEvent('qb-bossmenu:server:addAccountMoney', "realestate", price)
         cb(true)
     else
         TriggerClientEvent('QBCore:Notify', src, "You dont have enough money..", "error")
