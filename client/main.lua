@@ -1,20 +1,15 @@
-inside = false
-closesthouse = nil
-hasKey = false
-isOwned = false
-
-isLoggedIn = true
+local inside = false
+local closesthouse = nil
+local hasKey = false
+local isOwned = false
+local isLoggedIn = true
 local contractOpen = false
-
 local cam = nil
 local viewCam = false
-
 local FrontCam = false
-
-stashLocation = nil
-outfitLocation = nil
-logoutLocation = nil
-
+local stashLocation = nil
+local outfitLocation = nil
+local logoutLocation = nil
 local OwnedHouseBlips = {}
 local CurrentDoorBell = 0
 local rangDoorbell = nil
@@ -33,7 +28,6 @@ AddEventHandler('qb-houses:client:sellHouse', function()
 end)
 
 --------------------------------------------------------------
-
 
 Citizen.CreateThread(function()
     while true do
@@ -78,7 +72,6 @@ end)
 
 Citizen.CreateThread(function()
     Wait(1000)
-    
     TriggerServerEvent('qb-houses:client:setHouses')
     isLoggedIn = true
     SetClosestHouse()
