@@ -145,10 +145,6 @@ AddEventHandler('qb-houses:server:SetRamState', function(bool, house)
 	TriggerClientEvent('qb-houses:server:SetRamState', -1, bool, house)
 end)
 
---------------------------------------------------------------
-
---------------------------------------------------------------
-
 QBCore.Functions.CreateCallback('qb-houses:server:ProximityKO', function(source, cb, house)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
