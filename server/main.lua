@@ -1,6 +1,6 @@
 Citizen.CreateThread(function()
 	local HouseGarages = {}
-	local result = exports.ghmattimysql:executeSync('SELECT * FROM houselocations')
+	local result = exports.oxmysql:fetchSync('SELECT * FROM houselocations', {})
 	if result[1] ~= nil then
 		for k, v in pairs(result) do
 			local owned = false
@@ -47,7 +47,7 @@ AddEventHandler('qb-houses:server:addNewHouse', function(street, coords, price, 
 	local houseCount = GetHouseStreetCount(street)
 	local name = street:lower() .. tostring(houseCount)
 	local label = street .. " " .. tostring(houseCount)
-	exports.ghmattimysql:execute('INSERT INTO houselocations (name, label, coords, owned, price, tier) VALUES (@name, @label, @coords, @owned, @price, @tier)', {
+	exports.oxmysql:insert('INSERT INTO houselocations (name, label, coords, owned, price, tier) VALUES (@name, @label, @coords, @owned, @price, @tier)', {
 		['@name'] = name,
 		['@label'] = label,
 		['@coords'] = json.encode(coords),
@@ -72,7 +72,7 @@ end)
 RegisterServerEvent('qb-houses:server:addGarage')
 AddEventHandler('qb-houses:server:addGarage', function(house, coords)
 	local src = source
-	exports.ghmattimysql:execute('UPDATE houselocations SET garage=@garage WHERE name=@name', {['@garage'] = json.encode(coords), ['@name'] = house})
+	exports.oxmysql:execute('UPDATE houselocations SET garage=@garage WHERE name=@name', {['@garage'] = json.encode(coords), ['@name'] = house})
 	local garageInfo = {
 		label = Config.Houses[house].adress,
 		takeVehicle = coords,
@@ -106,13 +106,13 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
 		houseowneridentifier[house] = pData.PlayerData.license
 		houseownercid[house] = pData.PlayerData.citizenid
 		housekeyholders[house] = {[1] = pData.PlayerData.citizenid}
-		exports.ghmattimysql:execute('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (@house, @identifier, @citizenid, @keyholders)', {
+		exports.oxmysql:insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (@house, @identifier, @citizenid, @keyholders)', {
 			['@house'] = house,
 			['@identifier'] = pData.PlayerData.license,
 			['@citizenid'] = pData.PlayerData.citizenid,
 			['@keyholders'] = json.encode(housekeyholders[house])
 		})
-		exports.ghmattimysql:execute('UPDATE houselocations SET owned=@owned WHERE name=@house', {['@owned'] = 1, ['@house'] = house})
+		exports.oxmysql:execute('UPDATE houselocations SET owned=@owned WHERE name=@house', {['@owned'] = 1, ['@house'] = house})
 		TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
 		pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
 	else
@@ -213,7 +213,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
 	if housekeyholders[house] ~= nil then 
 		for i = 1, #housekeyholders[house], 1 do
 			if Player.PlayerData.citizenid ~= housekeyholders[house][i] then
-				local result = exports.ghmattimysql:executeSync('SELECT charinfo FROM players WHERE citizenid=@citizenid', {['@citizenid'] = housekeyholders[house][i]})
+				local result = exports.oxmysql:fetchSync('SELECT charinfo FROM players WHERE citizenid=@citizenid', {['@citizenid'] = housekeyholders[house][i]})
 				if result[1] ~= nil then 
 					local charinfo = json.decode(result[1].charinfo)
 					table.insert(retval, {
@@ -248,7 +248,7 @@ function hasKey(identifier, cid, house)
 end
 
 function getOfflinePlayerData(citizenid)
-	local result = exports.ghmattimysql:executeSync('SELECT charinfo FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenid})
+	local result = exports.oxmysql:fetchSync('SELECT charinfo FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenid})
 	if result[1] ~= nil then 
 		local charinfo = json.decode(result[1].charinfo)
 		return charinfo
@@ -262,7 +262,7 @@ AddEventHandler('qb-houses:server:giveKey', function(house, target)
 	local pData = QBCore.Functions.GetPlayer(target)
 
 	table.insert(housekeyholders[house], pData.PlayerData.citizenid)
-	exports.ghmattimysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
+	exports.oxmysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
 end)
 
 RegisterServerEvent('qb-houses:server:removeHouseKey')
@@ -278,18 +278,18 @@ AddEventHandler('qb-houses:server:removeHouseKey', function(house, citizenData)
 	end
 	housekeyholders[house] = newHolders
 	TriggerClientEvent('QBCore:Notify', src, 'Keys Have Been Removed From ' ..citizenData.firstname..' '..citizenData.lastname, 'error')
-	exports.ghmattimysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
+	exports.oxmysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, cb, NewCid, house)
-	local result = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = NewCid})
+	local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = NewCid})
 	if result[1] ~= nil then
 		local HouseName = house.name
 		housekeyholders[HouseName] = {}
 		housekeyholders[HouseName][1] = NewCid
 		houseownercid[HouseName] = NewCid
 		houseowneridentifier[HouseName] = result[1].license
-		exports.ghmattimysql:execute('UPDATE player_houses SET citizenid=@citizenid, keyholders=@keyholders, identifier=@identifier WHERE house=@house', {
+		exports.oxmysql:execute('UPDATE player_houses SET citizenid=@citizenid, keyholders=@keyholders, identifier=@identifier WHERE house=@house', {
 			['@citizenid'] = NewCid,
 			['@keyholders'] = json.encode(housekeyholders[HouseName]),
 			['@identifier'] = result[1].license,
@@ -319,7 +319,7 @@ local housesLoaded = false
 Citizen.CreateThread(function()
 	while true do
 		if not housesLoaded then
-			exports['ghmattimysql']:execute('SELECT * FROM player_houses', function(houses)
+			exports.oxmysql:fetch('SELECT * FROM player_houses', {}, function(houses)
 				if houses ~= nil then
 					for _,house in pairs(houses) do
 						houseowneridentifier[house.house] = house.identifier
@@ -352,13 +352,13 @@ end)
 RegisterServerEvent('qb-houses:server:savedecorations')
 AddEventHandler('qb-houses:server:savedecorations', function(house, decorations)
 	local src = source
-	exports.ghmattimysql:execute('UPDATE player_houses SET decorations=@decorations WHERE house=@house', {['@decorations'] = json.encode(decorations), ['@house'] = house})
+	exports.oxmysql:execute('UPDATE player_houses SET decorations=@decorations WHERE house=@house', {['@decorations'] = json.encode(decorations), ['@house'] = house})
 	TriggerClientEvent("qb-houses:server:sethousedecorations", -1, house, decorations)
 end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function(source, cb, house)
 	local retval = nil
-	local result = exports.ghmattimysql:executeSync('SELECT * FROM player_houses WHERE house=@house', {['@house'] = house})
+	local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE house=@house', {['@house'] = house})
 	if result[1] ~= nil then
 		if result[1].decorations ~= nil then
 			retval = json.decode(result[1].decorations)
@@ -369,7 +369,7 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseLocations', function(source, cb, house)
 	local retval = nil
-	local result = exports.ghmattimysql:executeSync('SELECT * FROM player_houses WHERE house=@house', {['@house'] = house})
+	local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE house=@house', {['@house'] = house})
 	if result[1] ~= nil then
 		retval = result[1]
 	end
@@ -398,7 +398,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getOwnedHouses', function(sour
 	local pData = QBCore.Functions.GetPlayer(src)
 
 	if pData then
-		exports['ghmattimysql']:execute('SELECT * FROM player_houses WHERE identifier = @identifier AND citizenid = @citizenid', {['@identifier'] = pData.PlayerData.license, ['@citizenid'] = pData.PlayerData.citizenid}, function(houses)
+		exports.oxmysql:fetch('SELECT * FROM player_houses WHERE identifier = @identifier AND citizenid = @citizenid', {['@identifier'] = pData.PlayerData.license, ['@citizenid'] = pData.PlayerData.citizenid}, function(houses)
 			local ownedHouses = {}
 
 			for i=1, #houses, 1 do
@@ -419,7 +419,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getSavedOutfits', function(sou
 	local pData = QBCore.Functions.GetPlayer(src)
 
 	if pData then
-		exports['ghmattimysql']:execute('SELECT * FROM player_outfits WHERE citizenid = @citizenid', {['@citizenid'] = pData.PlayerData.citizenid}, function(result)
+		exports.oxmysql:fetch('SELECT * FROM player_outfits WHERE citizenid = @citizenid', {['@citizenid'] = pData.PlayerData.citizenid}, function(result)
 			if result[1] ~= nil then
 				cb(result)
 			else
@@ -436,7 +436,7 @@ end)
 function GetHouseStreetCount(street)
 	local count = 1
 	local query = '%'..street..'%'
-	local result = exports.ghmattimysql:executeSync('SELECT * FROM houselocations WHERE name LIKE @query', {['@query'] = query})
+	local result = exports.oxmysql:fetchSync('SELECT * FROM houselocations WHERE name LIKE @query', {['@query'] = query})
 	if result[1] ~= nil then 
 		for i = 1, #result, 1 do
 			count = count + 1
@@ -450,7 +450,7 @@ AddEventHandler('qb-houses:server:LogoutLocation', function()
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyItems = Player.PlayerData.items
-	exports.ghmattimysql:execute('UPDATE players SET inventory=@inventory WHERE citizenid=@citizenid', {['@inventory'] = json.encode(MyItems), ['@citizenid'] = Player.PlayerData.citizenid})
+	exports.oxmysql:execute('UPDATE players SET inventory=@inventory WHERE citizenid=@citizenid', {['@inventory'] = json.encode(MyItems), ['@citizenid'] = Player.PlayerData.citizenid})
 	QBCore.Player.Logout(src)
     TriggerClientEvent('qb-multicharacter:client:chooseChar', src)
 end)
@@ -469,7 +469,7 @@ AddEventHandler('qb-houses:server:giveHouseKey', function(target, house)
 				end
 			end		
 			table.insert(housekeyholders[house], tPlayer.PlayerData.citizenid)
-			exports.ghmattimysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
+			exports.oxmysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
 			TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
 			TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, 'You have the keys of '..Config.Houses[house].adress..' recieved!', 'success', 2500)
 		else
@@ -478,7 +478,7 @@ AddEventHandler('qb-houses:server:giveHouseKey', function(target, house)
 				[1] = sourceTarget.PlayerData.citizenid
 			}
 			table.insert(housekeyholders[house], tPlayer.PlayerData.citizenid)
-			exports.ghmattimysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
+			exports.oxmysql:execute('UPDATE player_houses SET keyholders=@keyholders WHERE house=@house', {['@keyholders'] = json.encode(housekeyholders[house]), ['@house'] = house})
 			TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
 			TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, 'You have the keys of '..Config.Houses[house].adress..' recieved!', 'success', 2500)
 		end
@@ -493,11 +493,11 @@ AddEventHandler('qb-houses:server:setLocation', function(coords, house, type)
 	local Player = QBCore.Functions.GetPlayer(src)
 
 	if type == 1 then
-		exports.ghmattimysql:execute('UPDATE player_houses SET stash=@stash WHERE house=@house', {['@stash'] = json.encode(coords), ['@house'] = house})
+		exports.oxmysql:execute('UPDATE player_houses SET stash=@stash WHERE house=@house', {['@stash'] = json.encode(coords), ['@house'] = house})
 	elseif type == 2 then
-		exports.ghmattimysql:execute('UPDATE player_houses SET outfit=@outfit WHERE house=@house', {['@outfit'] = json.encode(coords), ['@house'] = house})
+		exports.oxmysql:execute('UPDATE player_houses SET outfit=@outfit WHERE house=@house', {['@outfit'] = json.encode(coords), ['@house'] = house})
 	elseif type == 3 then
-		exports.ghmattimysql:execute('UPDATE player_houses SET logout=@logout WHERE house=@house', {['@logout'] = json.encode(coords), ['@house'] = house})
+		exports.oxmysql:execute('UPDATE player_houses SET logout=@logout WHERE house=@house', {['@logout'] = json.encode(coords), ['@house'] = house})
 	end
 
 	TriggerClientEvent('qb-houses:client:refreshLocations', -1, house, json.encode(coords), type)
@@ -548,7 +548,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyHouses = {}
-	local result = exports.ghmattimysql:executeSync('SELECT * FROM player_houses WHERE citizenid=@citizenid', {['@citizenid'] = Player.PlayerData.citizenid})
+	local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE citizenid=@citizenid', {['@citizenid'] = Player.PlayerData.citizenid})
 	if result ~= nil and result[1] ~= nil then
 		for k, v in pairs(result) do
 			table.insert(MyHouses, {
@@ -565,7 +565,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 				v.keyholders = json.decode(v.keyholders)
 				if v.keyholders ~= nil then
 				for f, data in pairs(v.keyholders) do
-					local keyholderdata = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = data})
+					local keyholderdata = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = data})
 					if keyholderdata[1] ~= nil then
 						keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
 
@@ -616,7 +616,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
 	local Player = QBCore.Functions.GetPlayer(src)
 	local MyKeys = {}
 
-	local result = exports.ghmattimysql:executeSync('SELECT * FROM player_houses')
+	local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses', {})
 	for k, v in pairs(result) do
 		if v.keyholders ~= "null" then
 			v.keyholders = json.decode(v.keyholders)
@@ -649,9 +649,9 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
 		local search = escape_sqli(input)
 		local searchData = {}
 		local query = '%'..search..'%'
-		local result = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid OR charinfo LIKE @query', {['@citizenid'] = search, ['@query'] = query})
+		local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid=@citizenid OR charinfo LIKE @query', {['@citizenid'] = search, ['@query'] = query})
 		if result[1] ~= nil then
-			local houses = exports.ghmattimysql:executeSync('SELECT * FROM player_houses WHERE citizenid=@citizenid', {['@citizenid'] = result[1].citizenid})
+			local houses = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE citizenid=@citizenid', {['@citizenid'] = result[1].citizenid})
 			if houses[1] ~= nil then
 				for k, v in pairs(houses) do
 					table.insert(searchData, {
