@@ -1,20 +1,15 @@
-inside = false
-closesthouse = nil
-hasKey = false
-isOwned = false
-
-isLoggedIn = true
+local inside = false
+local closesthouse = nil
+local hasKey = false
+local isOwned = false
+local isLoggedIn = true
 local contractOpen = false
-
 local cam = nil
 local viewCam = false
-
 local FrontCam = false
-
-stashLocation = nil
-outfitLocation = nil
-logoutLocation = nil
-
+local stashLocation = nil
+local outfitLocation = nil
+local logoutLocation = nil
 local OwnedHouseBlips = {}
 local CurrentDoorBell = 0
 local rangDoorbell = nil
