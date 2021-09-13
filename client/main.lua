@@ -29,7 +29,6 @@ end)
 
 --------------------------------------------------------------
 
-
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(5000)
@@ -73,7 +72,6 @@ end)
 
 Citizen.CreateThread(function()
     Wait(1000)
-    
     TriggerServerEvent('qb-houses:client:setHouses')
     isLoggedIn = true
     SetClosestHouse()
