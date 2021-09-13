@@ -1,27 +1,21 @@
-DecoMode = false
+local DecoMode = false
 local MainCamera = nil
 local curPos
 local speeds = {0.05, 0.1, 0.2, 0.4, 0.5}
 local curSpeed = 1
-
 local cursorEnabled = true
-
 local SelectedObj = nil
 local SelObjHash = {}
 local SelObjPos = {}
 local SelObjRot = {}
-
 local curRotate = {}
-
 local ObjectList = {}
 local SelObjId = 0
-
 local isEdit = false
-
 local rotateActive = false
 local peanut = false
-
 local previewObj = nil
+
 -- Only enable some controls
 Citizen.CreateThread(function()
 	while true do
@@ -110,7 +104,6 @@ Citizen.CreateThread(function()
 		end
 	end
 end)
-
 
 RegisterNetEvent("qb-houses:client:decorate")
 AddEventHandler("qb-houses:client:decorate", function()
