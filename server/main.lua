@@ -47,7 +47,7 @@ AddEventHandler('qb-houses:server:addNewHouse', function(street, coords, price, 
     local houseCount = GetHouseStreetCount(street)
     local name = street:lower() .. tostring(houseCount)
     local label = street .. " " .. tostring(houseCount)
-    exports.oxmysql:insert('INSERT INTO houselocations (name, label, coords, owned, price, tier) VALUES (?)',
+    exports.oxmysql:insert('INSERT INTO houselocations (name, label, coords, owned, price, tier) VALUES (?, ?, ?, ?, ?, ?)',
         {name, label, json.encode(coords), 0, price, tier})
     Config.Houses[name] = {
         coords = coords,
@@ -103,7 +103,7 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
         housekeyholders[house] = {
             [1] = pData.PlayerData.citizenid
         }
-        exports.oxmysql:insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?)',
+        exports.oxmysql:insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)',
             {house, pData.PlayerData.license, pData.PlayerData.citizenid, json.encode(housekeyholders[house])})
         exports.oxmysql:execute('UPDATE houselocations SET owned = ? WHERE name = ?', {1, house})
         TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
