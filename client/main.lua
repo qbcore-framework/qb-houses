@@ -1,6 +1,6 @@
-local inside = false
-local closesthouse = nil
-local hasKey = false
+inside = false
+closesthouse = nil
+hasKey = false
 local isOwned = false
 local isLoggedIn = true
 local contractOpen = false
