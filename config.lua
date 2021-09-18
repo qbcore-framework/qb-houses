@@ -1,10 +1,18 @@
 Config = Config or {}
 
 Config.MinZOffset = 30
-
 Config.RamsNeeded = 2
-
 Config.Houses = {}
+
+Config.MinPrice = {
+    ["1"] = 20000,
+    ["2"] = 30000,
+    ["3"] = 40000,
+    ["4"] = 50000,
+    ["5"] = 60000,
+    ["6"] = 70000,
+    ["7"] = 80000,
+}
 
 Config.Furniture = {
 	["sofas"] = {
