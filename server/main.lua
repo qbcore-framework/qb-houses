@@ -108,6 +108,7 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
         exports.oxmysql:execute('UPDATE houselocations SET owned = ? WHERE name = ?', {1, house})
         TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
         pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
+        TriggerEvent('qb-bossmenu:server:addAccountMoney', "realestate", (HousePrice / 100) * math.random(18, 25))    
     else
         TriggerClientEvent('QBCore:Notify', source, "You dont have enough money..", "error")
     end
