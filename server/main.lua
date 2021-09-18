@@ -711,8 +711,11 @@ end)
 QBCore.Commands.Add("enter", "Enter House", {}, false, function(source, args)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-
-    TriggerClientEvent('qb-houses:client:EnterHouse', src)
+	if QBCore.Functions.HasPermission(src, 'god') then
+		TriggerClientEvent('qb-houses:client:EnterHouse', src, true)
+	else
+		TriggerClientEvent('qb-houses:client:EnterHouse', src, false)
+	end
 end)
 
 QBCore.Commands.Add("ring", "Ring The Doorbell", {}, false, function(source, args)
