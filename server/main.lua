@@ -507,10 +507,10 @@ QBCore.Commands.Add("createhouse", "Create House (Real Estate Only)", {{ name = 
     local price = tonumber(args[1])
     local tier = tonumber(args[2])
     if Player.PlayerData.job.name == "realestate" then
-		if price >= Config.MinAmounts[tostring(tier)] then
+		if price >= Config.MinPrice[tostring(tier)] then
 			TriggerClientEvent("qb-houses:client:createHouses", source, price, tier)
 		else
-			TriggerClientEvent('QBCore:Notify', source, "The min price of tier " .. tostring(tier) .. ' is ' .. tostring(Config.MinAmounts[tostring(tier)]) .. '$', "error")
+			TriggerClientEvent('QBCore:Notify', source, "The min price of tier " .. tostring(tier) .. ' is ' .. tostring(Config.MinPrice[tostring(tier)]) .. '$', "error")
 		end
     else
         TriggerClientEvent('QBCore:Notify', source, "Only realestate can use this command", "error")
