@@ -299,7 +299,38 @@ Citizen.CreateThread(function()
                             if #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z)) < 1.5 then
                                 DrawText3Ds(stashLocation.x, stashLocation.y, stashLocation.z, '~g~E~w~ - Stash')
                                 if IsControlJustPressed(0, 38) then -- E
-                                    TriggerServerEvent("inventory:server:OpenInventory", "stash", CurrentHouse)
+                                    local other = {}
+                                    other.maxweight = 1000000
+                                    other.slots = 50
+                                    if Config.Houses[CurrentHouse].tier == 1 then
+                                        other.maxweight = 1500000
+                                        other.slots = 60
+                                    end
+                                    if Config.Houses[CurrentHouse].tier == 2 then
+                                        other.maxweight = 2000000
+                                        other.slots = 70
+                                    end
+                                    if Config.Houses[CurrentHouse].tier == 3 then
+                                        other.maxweight = 2500000
+                                        other.slots = 80
+                                    end
+                                    if Config.Houses[CurrentHouse].tier == 4 then
+                                        other.maxweight = 3000000
+                                        other.slots = 90
+                                    end
+                                    if Config.Houses[CurrentHouse].tier == 5 then
+                                        other.maxweight = 3500000
+                                        other.slots = 90
+                                    end	
+                                    if Config.Houses[CurrentHouse].tier == 6 then
+                                        other.maxweight = 3600000
+                                        other.slots = 90
+                                    end	
+                                    if Config.Houses[CurrentHouse].tier == 7 then
+                                        other.maxweight = 3700000
+                                        other.slots = 100
+                                    end	
+                                    TriggerServerEvent("inventory:server:OpenInventory", "stash", CurrentHouse, other)
                                     TriggerEvent("inventory:client:SetCurrentStash", CurrentHouse)
                                 end
                             elseif #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z)) < 3 then
