@@ -643,7 +643,7 @@ Config.Furniture = {
 			[21] = { ["object"] = "prop_toilet_soap_02", ["price"] = 100, ["label"] = "Tray Soap" },
 			[22] = { ["object"] = "prop_bar_sink_01", ["price"] = 100, ["label"] = "Sink" },
 			[23] = { ["object"] = "apa_mp_h_bathtub_01", ["price"] = 1000, ["label"] = "Bath" }
-		}
+		},
 	},
 	["medical"] = {
 		label = "Medical",
