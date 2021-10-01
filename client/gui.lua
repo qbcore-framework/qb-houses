@@ -77,19 +77,15 @@ function Menu.renderBox(xMin,xMax,yMin,yMax,color1,color2,color3,color4)
 end
 
 function Menu.renderButtons()
-	
-		local yoffset = 0.5
-		local xoffset = 0
-
-		
-		
+	local yoffset = 0.5
+	local xoffset = 0
 	for id, settings in pairs(Menu.GUI) do
 		local screen_w = 0
 		local screen_h = 0
 		screen_w, screen_h =  GetScreenResolution(0, 0)
-		
 		boxColor = {38,38,38,199}
 		local movetext = 0.0
+
 		if(settings["extra"] == "Garage") then
 			boxColor = {44,100,44,200}
 		elseif (settings["extra"] == "In Seizure") then
@@ -140,10 +136,7 @@ function Menu.renderButtons()
 			AddTextComponentString(settings["fuel"])
 			DrawText(0.854, (settings["ymin"] - 0.012 )) 
 
-			
-
 			DrawRect(0.832, settings["ymin"], 0.11, settings["ymax"]-0.002, 255,255,255,199)
-			--Global.DrawRect(x, y, width, height, r, g, b, a)
 		else
 			SetTextFont(4)
 			SetTextScale(0.31, 0.31)
@@ -154,20 +147,13 @@ function Menu.renderButtons()
 			DrawText(0.7, (settings["ymin"] - 0.012 )) 
 
 		end
-
-
-
-
 		Menu.renderBox(settings["xmin"] ,settings["xmax"], settings["ymin"], settings["ymax"],boxColor[1],boxColor[2],boxColor[3],boxColor[4])
-
-
-	 end     
+	 end 
 end
 
 --------------------------------------------------------------------------------------------------------------------
 
 function ClearMenu()
-	--Menu = {}
 	Menu.GUI = {}
 	Menu.buttonCount = 0
 	Menu.selection = 0

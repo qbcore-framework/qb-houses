@@ -1,13 +1,21 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+local houseowneridentifier = {}
+local houseownercid = {}
+local housekeyholders = {}
+local housesLoaded = false
+
+-- Threads
+
 Citizen.CreateThread(function()
     local HouseGarages = {}
     local result = exports.oxmysql:fetchSync('SELECT * FROM houselocations', {})
-    if result[1] ~= nil then
+    if result[1] then
         for k, v in pairs(result) do
             local owned = false
             if tonumber(v.owned) == 1 then
                 owned = true
             end
-            local garage = v.garage ~= nil and json.decode(v.garage) or {}
+            local garage = json.decode(v.garage) or {}
             Config.Houses[v.name] = {
                 coords = json.decode(v.coords),
                 owned = v.owned,
@@ -28,18 +36,121 @@ Citizen.CreateThread(function()
     TriggerClientEvent("qb-houses:client:setHouseConfig", -1, Config.Houses)
 end)
 
-local houseowneridentifier = {}
-local houseownercid = {}
-local housekeyholders = {}
+Citizen.CreateThread(function()
+    while true do
+        if not housesLoaded then
+            exports.oxmysql:fetch('SELECT * FROM player_houses', {}, function(houses)
+                if houses then
+                    for _, house in pairs(houses) do
+                        houseowneridentifier[house.house] = house.identifier
+                        houseownercid[house.house] = house.citizenid
+                        housekeyholders[house.house] = json.decode(house.keyholders)
+                    end
+                end
+            end)
+            housesLoaded = true
+        end
+        Citizen.Wait(7)
+    end
+end)
 
-RegisterServerEvent('qb-houses:server:setHouses')
-AddEventHandler('qb-houses:server:setHouses', function()
+-- Commands
+
+QBCore.Commands.Add("decorate", "Decorate Interior", {}, false, function(source)
+    local src = source
+    TriggerClientEvent("qb-houses:client:decorate", src)
+end)
+
+QBCore.Commands.Add("createhouse", "Create House (Real Estate Only)", {{name = "price", help = "Price of the house"}, {name = "tier", help = "Name of the item(no label)"}}, true, function(source, args)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local price = tonumber(args[1])
+    local tier = tonumber(args[2])
+    if Player.PlayerData.job.name == "realestate" then
+        TriggerClientEvent("qb-houses:client:createHouses", src, price, tier)
+    else
+        TriggerClientEvent('QBCore:Notify', src, "Only realestate can use this command", "error")
+    end
+end)
+
+QBCore.Commands.Add("addgarage", "Add House Garage (Real Estate Only)", {}, false, function(source)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if Player.PlayerData.job.name == "realestate" then
+        TriggerClientEvent("qb-houses:client:addGarage", src)
+    else
+        TriggerClientEvent('QBCore:Notify', src, "Only realestate can use this command", "error")
+    end
+end)
+
+QBCore.Commands.Add("enter", "Enter House", {}, false, function(source)
+    local src = source
+    TriggerClientEvent('qb-houses:client:EnterHouse', src)
+end)
+
+QBCore.Commands.Add("ring", "Ring The Doorbell", {}, false, function(source)
+    local src = source
+    TriggerClientEvent('qb-houses:client:RequestRing', src)
+end)
+
+-- Item
+
+QBCore.Functions.CreateUseableItem("police_stormram", function(source, item)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
+        TriggerClientEvent("qb-houses:client:HomeInvasion", source)
+    else
+        TriggerClientEvent('QBCore:Notify', source, "This is only possible for emergency services!", "error")
+    end
+end)
+
+-- Functions
+
+local function hasKey(identifier, cid, house)
+    if houseowneridentifier[house] and houseownercid[house] then
+        if houseowneridentifier[house] == identifier and houseownercid[house] == cid then
+            return true
+        else
+            if housekeyholders[house] then
+                for i = 1, #housekeyholders[house], 1 do
+                    if housekeyholders[house][i] == cid then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
+local function GetHouseStreetCount(street)
+    local count = 1
+    local query = '%' .. street .. '%'
+    local result = exports.oxmysql:fetchSync('SELECT * FROM houselocations WHERE name LIKE ?', {query})
+    if result[1] then
+        for i = 1, #result, 1 do
+            count = count + 1
+        end
+    end
+    return count
+end
+
+local function escape_sqli(source)
+    local replacements = {
+        ['"'] = '\\"',
+        ["'"] = "\\'"
+    }
+    return source:gsub("['\"]", replacements)
+end
+
+-- Events
+
+RegisterNetEvent('qb-houses:server:setHouses', function()
     local src = source
     TriggerClientEvent("qb-houses:client:setHouseConfig", src, Config.Houses)
 end)
 
-RegisterServerEvent('qb-houses:server:addNewHouse')
-AddEventHandler('qb-houses:server:addNewHouse', function(street, coords, price, tier)
+RegisterNetEvent('qb-houses:server:addNewHouse', function(street, coords, price, tier)
     local src = source
     local street = street:gsub("%'", "")
     local price = tonumber(price)
@@ -63,8 +174,7 @@ AddEventHandler('qb-houses:server:addNewHouse', function(street, coords, price, 
     TriggerClientEvent('QBCore:Notify', src, "You have added a house: " .. label)
 end)
 
-RegisterServerEvent('qb-houses:server:addGarage')
-AddEventHandler('qb-houses:server:addGarage', function(house, coords)
+RegisterNetEvent('qb-houses:server:addGarage', function(house, coords)
     local src = source
     exports.oxmysql:execute('UPDATE houselocations SET garage = ? WHERE name = ?', {json.encode(coords), house})
     local garageInfo = {
@@ -75,8 +185,7 @@ AddEventHandler('qb-houses:server:addGarage', function(house, coords)
     TriggerClientEvent('QBCore:Notify', src, "You have added a garage: " .. garageInfo.label)
 end)
 
-RegisterServerEvent('qb-houses:server:viewHouse')
-AddEventHandler('qb-houses:server:viewHouse', function(house)
+RegisterNetEvent('qb-houses:server:viewHouse', function(house)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
 
@@ -89,8 +198,7 @@ AddEventHandler('qb-houses:server:viewHouse', function(house)
         pData.PlayerData.charinfo.firstname, pData.PlayerData.charinfo.lastname)
 end)
 
-RegisterServerEvent('qb-houses:server:buyHouse')
-AddEventHandler('qb-houses:server:buyHouse', function(house)
+RegisterNetEvent('qb-houses:server:buyHouse', function(house)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     local price = Config.Houses[house].price
@@ -114,6 +222,130 @@ AddEventHandler('qb-houses:server:buyHouse', function(house)
     end
 end)
 
+RegisterNetEvent('qb-houses:server:lockHouse', function(bool, house)
+    TriggerClientEvent('qb-houses:client:lockHouse', -1, bool, house)
+end)
+
+RegisterNetEvent('qb-houses:server:SetRamState', function(bool, house)
+    Config.Houses[house].IsRaming = bool
+    TriggerClientEvent('qb-houses:server:SetRamState', -1, bool, house)
+end)
+
+RegisterNetEvent('qb-houses:server:giveKey', function(house, target)
+    local pData = QBCore.Functions.GetPlayer(target)
+    table.insert(housekeyholders[house], pData.PlayerData.citizenid)
+    exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?',
+        {json.encode(housekeyholders[house]), house})
+end)
+
+RegisterNetEvent('qb-houses:server:removeHouseKey', function(house, citizenData)
+    local src = source
+    local newHolders = {}
+    if housekeyholders[house] then
+        for k, v in pairs(housekeyholders[house]) do
+            if housekeyholders[house][k] ~= citizenData.citizenid then
+                table.insert(newHolders, housekeyholders[house][k])
+            end
+        end
+    end
+    housekeyholders[house] = newHolders
+    TriggerClientEvent('QBCore:Notify', src, 'Keys Have Been Removed From ' .. citizenData.firstname .. ' ' .. citizenData.lastname, 'error')
+    exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
+end)
+
+RegisterNetEvent('qb-houses:server:OpenDoor', function(target, house)
+    local OtherPlayer = QBCore.Functions.GetPlayer(target)
+    if OtherPlayer then
+        TriggerClientEvent('qb-houses:client:SpawnInApartment', OtherPlayer.PlayerData.source, house)
+    end
+end)
+
+RegisterNetEvent('qb-houses:server:RingDoor', function(house)
+    local src = source
+    TriggerClientEvent('qb-houses:client:RingDoor', -1, src, house)
+end)
+
+RegisterNetEvent('qb-houses:server:savedecorations', function(house, decorations)
+    exports.oxmysql:execute('UPDATE player_houses SET decorations = ? WHERE house = ?', {json.encode(decorations), house})
+    TriggerClientEvent("qb-houses:server:sethousedecorations", -1, house, decorations)
+end)
+
+RegisterNetEvent('qb-houses:server:LogoutLocation', function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local MyItems = Player.PlayerData.items
+    exports.oxmysql:execute('UPDATE players SET inventory = ? WHERE citizenid = ?',
+        {json.encode(MyItems), Player.PlayerData.citizenid})
+    QBCore.Player.Logout(src)
+    TriggerClientEvent('qb-multicharacter:client:chooseChar', src)
+end)
+
+RegisterNetEvent('qb-houses:server:giveHouseKey', function(target, house)
+    local src = source
+    local tPlayer = QBCore.Functions.GetPlayer(target)
+    if tPlayer then
+        if housekeyholders[house] then
+            for _, cid in pairs(housekeyholders[house]) do
+                if cid == tPlayer.PlayerData.citizenid then
+                    TriggerClientEvent('QBCore:Notify', src, 'This person already has the keys of the house!', 'error', 3500)
+                    return
+                end
+            end
+            housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
+            exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
+            TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
+            TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source,
+                'You have the keys of ' .. Config.Houses[house].adress .. ' recieved!', 'success', 2500)
+        else
+            local sourceTarget = QBCore.Functions.GetPlayer(src)
+            housekeyholders[house] = {
+                [1] = sourceTarget.PlayerData.citizenid
+            }
+            housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
+            exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
+            TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
+            TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, 'You have the keys of ' .. Config.Houses[house].adress .. ' recieved!', 'success', 2500)
+        end
+    else
+        TriggerClientEvent('QBCore:Notify', src, 'Something went wrond try again!', 'error', 2500)
+    end
+end)
+
+RegisterNetEvent('qb-houses:server:setLocation', function(coords, house, type)
+    if type == 1 then
+        exports.oxmysql:execute('UPDATE player_houses SET stash = ? WHERE house = ?', {json.encode(coords), house})
+    elseif type == 2 then
+        exports.oxmysql:execute('UPDATE player_houses SET outfit = ? WHERE house = ?', {json.encode(coords), house})
+    elseif type == 3 then
+        exports.oxmysql:execute('UPDATE player_houses SET logout = ? WHERE house = ?', {json.encode(coords), house})
+    end
+    TriggerClientEvent('qb-houses:client:refreshLocations', -1, house, json.encode(coords), type)
+end)
+
+RegisterNetEvent('qb-houses:server:SetHouseRammed', function(bool, house)
+    Config.Houses[house].IsRammed = bool
+    TriggerClientEvent('qb-houses:client:SetHouseRammed', -1, bool, house)
+end)
+
+RegisterNetEvent('qb-houses:server:SetInsideMeta', function(insideId, bool)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local insideMeta = Player.PlayerData.metadata["inside"]
+    if bool then
+        insideMeta.apartment.apartmentType = nil
+        insideMeta.apartment.apartmentId = nil
+        insideMeta.house = insideId
+        Player.Functions.SetMetaData("inside", insideMeta)
+    else
+        insideMeta.apartment.apartmentType = nil
+        insideMeta.apartment.apartmentId = nil
+        insideMeta.house = nil
+        Player.Functions.SetMetaData("inside", insideMeta)
+    end
+end)
+
+-- Callbacks
+
 QBCore.Functions.CreateCallback('qb-houses:server:buyFurniture', function(source, cb, price)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
@@ -128,24 +360,13 @@ QBCore.Functions.CreateCallback('qb-houses:server:buyFurniture', function(source
     end
 end)
 
-RegisterServerEvent('qb-houses:server:lockHouse')
-AddEventHandler('qb-houses:server:lockHouse', function(bool, house)
-    TriggerClientEvent('qb-houses:client:lockHouse', -1, bool, house)
-end)
-
-RegisterServerEvent('qb-houses:server:SetRamState')
-AddEventHandler('qb-houses:server:SetRamState', function(bool, house)
-    Config.Houses[house].IsRaming = bool
-    TriggerClientEvent('qb-houses:server:SetRamState', -1, bool, house)
-end)
-
 QBCore.Functions.CreateCallback('qb-houses:server:ProximityKO', function(source, cb, house)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local retvalK = false
     local retvalO = false
 
-    if Player ~= nil then
+    if Player then
         local identifier = Player.PlayerData.license
         local CharId = Player.PlayerData.citizenid
         if hasKey(identifier, CharId, house) then
@@ -157,7 +378,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:ProximityKO', function(source,
         end
     end
 
-    if houseowneridentifier[house] ~= nil and houseownercid[house] ~= nil then
+    if houseowneridentifier[house] and houseownercid[house] then
         retvalO = true
     else
         retvalO = false
@@ -170,7 +391,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:hasKey', function(source, cb, 
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local retval = false
-    if Player ~= nil then
+    if Player then
         local identifier = Player.PlayerData.license
         local CharId = Player.PlayerData.citizenid
         if hasKey(identifier, CharId, house) then
@@ -186,7 +407,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:hasKey', function(source, cb, 
 end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:isOwned', function(source, cb, house)
-    if houseowneridentifier[house] ~= nil and houseownercid[house] ~= nil then
+    if houseowneridentifier[house] and houseownercid[house] then
         cb(true)
     else
         cb(false)
@@ -199,13 +420,14 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(source, cb, house)
     local retval = {}
-    local Player = QBCore.Functions.GetPlayer(source)
-    if housekeyholders[house] ~= nil then
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if housekeyholders[house] then
         for i = 1, #housekeyholders[house], 1 do
             if Player.PlayerData.citizenid ~= housekeyholders[house][i] then
                 local result = exports.oxmysql:fetchSync('SELECT charinfo FROM players WHERE citizenid = ?',
                     {housekeyholders[house][i]})
-                if result[1] ~= nil then
+                if result[1] then
                     local charinfo = json.decode(result[1].charinfo)
                     table.insert(retval, {
                         firstname = charinfo.firstname,
@@ -221,63 +443,9 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
     end
 end)
 
-function hasKey(identifier, cid, house)
-    if houseowneridentifier[house] ~= nil and houseownercid[house] ~= nil then
-        if houseowneridentifier[house] == identifier and houseownercid[house] == cid then
-            return true
-        else
-            if housekeyholders[house] ~= nil then
-                for i = 1, #housekeyholders[house], 1 do
-                    if housekeyholders[house][i] == cid then
-                        return true
-                    end
-                end
-            end
-        end
-    end
-    return false
-end
-
-function getOfflinePlayerData(citizenid)
-    local result = exports.oxmysql:fetchSync('SELECT charinfo FROM players WHERE citizenid = ?', {citizenid})
-    if result[1] ~= nil then
-        local charinfo = json.decode(result[1].charinfo)
-        return charinfo
-    else
-        return nil
-    end
-end
-
-RegisterServerEvent('qb-houses:server:giveKey')
-AddEventHandler('qb-houses:server:giveKey', function(house, target)
-    local pData = QBCore.Functions.GetPlayer(target)
-
-    table.insert(housekeyholders[house], pData.PlayerData.citizenid)
-    exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?',
-        {json.encode(housekeyholders[house]), house})
-end)
-
-RegisterServerEvent('qb-houses:server:removeHouseKey')
-AddEventHandler('qb-houses:server:removeHouseKey', function(house, citizenData)
-    local src = source
-    local newHolders = {}
-    if housekeyholders[house] ~= nil then
-        for k, v in pairs(housekeyholders[house]) do
-            if housekeyholders[house][k] ~= citizenData.citizenid then
-                table.insert(newHolders, housekeyholders[house][k])
-            end
-        end
-    end
-    housekeyholders[house] = newHolders
-    TriggerClientEvent('QBCore:Notify', src,
-        'Keys Have Been Removed From ' .. citizenData.firstname .. ' ' .. citizenData.lastname, 'error')
-    exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?',
-        {json.encode(housekeyholders[house]), house})
-end)
-
 QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, cb, NewCid, house)
     local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid = ?', {NewCid})
-    if result[1] ~= nil then
+    if result[1] then
         local HouseName = house.name
         housekeyholders[HouseName] = {}
         housekeyholders[HouseName][1] = NewCid
@@ -292,67 +460,11 @@ QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, 
     end
 end)
 
-function typeof(var)
-    local _type = type(var);
-    if (_type ~= "table" and _type ~= "userdata") then
-        return _type;
-    end
-    local _meta = getmetatable(var);
-    if (_meta ~= nil and _meta._NAME ~= nil) then
-        return _meta._NAME;
-    else
-        return _type;
-    end
-end
-
-local housesLoaded = false
-
-Citizen.CreateThread(function()
-    while true do
-        if not housesLoaded then
-            exports.oxmysql:fetch('SELECT * FROM player_houses', {}, function(houses)
-                if houses ~= nil then
-                    for _, house in pairs(houses) do
-                        houseowneridentifier[house.house] = house.identifier
-                        houseownercid[house.house] = house.citizenid
-                        housekeyholders[house.house] = json.decode(house.keyholders)
-                    end
-                end
-            end)
-            housesLoaded = true
-        end
-        Citizen.Wait(7)
-    end
-end)
-
-RegisterServerEvent('qb-houses:server:OpenDoor')
-AddEventHandler('qb-houses:server:OpenDoor', function(target, house)
-    local src = source
-    local OtherPlayer = QBCore.Functions.GetPlayer(target)
-    if OtherPlayer ~= nil then
-        TriggerClientEvent('qb-houses:client:SpawnInApartment', OtherPlayer.PlayerData.source, house)
-    end
-end)
-
-RegisterServerEvent('qb-houses:server:RingDoor')
-AddEventHandler('qb-houses:server:RingDoor', function(house)
-    local src = source
-    TriggerClientEvent('qb-houses:client:RingDoor', -1, src, house)
-end)
-
-RegisterServerEvent('qb-houses:server:savedecorations')
-AddEventHandler('qb-houses:server:savedecorations', function(house, decorations)
-    local src = source
-    exports.oxmysql:execute('UPDATE player_houses SET decorations = ? WHERE house = ?',
-        {json.encode(decorations), house})
-    TriggerClientEvent("qb-houses:server:sethousedecorations", -1, house, decorations)
-end)
-
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function(source, cb, house)
     local retval = nil
     local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE house = ?', {house})
-    if result[1] ~= nil then
-        if result[1].decorations ~= nil then
+    if result[1] then
+        if result[1].decorations then
             retval = json.decode(result[1].decorations)
         end
     end
@@ -362,7 +474,7 @@ end)
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseLocations', function(source, cb, house)
     local retval = nil
     local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE house = ?', {house})
-    if result[1] ~= nil then
+    if result[1] then
         retval = result[1]
     end
     cb(retval)
@@ -374,36 +486,21 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeys', function(source
     local cid = pData.PlayerData.citizenid
 end)
 
-function mysplit(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    return t
-end
-
 QBCore.Functions.CreateCallback('qb-houses:server:getOwnedHouses', function(source, cb)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-
     if pData then
-        exports.oxmysql:fetch('SELECT * FROM player_houses WHERE identifier = ? AND citizenid = ?',
-            {pData.PlayerData.license, pData.PlayerData.citizenid}, function(houses)
-                local ownedHouses = {}
-
-                for i = 1, #houses, 1 do
-                    table.insert(ownedHouses, houses[i].house)
-                end
-
-                if houses ~= nil then
-                    cb(ownedHouses)
-                else
-                    cb(nil)
-                end
-            end)
+        exports.oxmysql:fetch('SELECT * FROM player_houses WHERE identifier = ? AND citizenid = ?', {pData.PlayerData.license, pData.PlayerData.citizenid}, function(houses)
+            local ownedHouses = {}
+            for i = 1, #houses, 1 do
+                ownedHouses[#ownedHouses+1] = houses[i].house
+            end
+            if houses then
+                cb(ownedHouses)
+            else
+                cb(nil)
+            end
+        end)
     end
 end)
 
@@ -414,139 +511,12 @@ QBCore.Functions.CreateCallback('qb-houses:server:getSavedOutfits', function(sou
     if pData then
         exports.oxmysql:fetch('SELECT * FROM player_outfits WHERE citizenid = ?', {pData.PlayerData.citizenid},
             function(result)
-                if result[1] ~= nil then
+                if result[1] then
                     cb(result)
                 else
                     cb(nil)
                 end
             end)
-    end
-end)
-
-QBCore.Commands.Add("decorate", "Decorate Interior", {}, false, function(source, args)
-    TriggerClientEvent("qb-houses:client:decorate", source)
-end)
-
-function GetHouseStreetCount(street)
-    local count = 1
-    local query = '%' .. street .. '%'
-    local result = exports.oxmysql:fetchSync('SELECT * FROM houselocations WHERE name LIKE ?', {query})
-    if result[1] ~= nil then
-        for i = 1, #result, 1 do
-            count = count + 1
-        end
-    end
-    return count
-end
-
-RegisterServerEvent('qb-houses:server:LogoutLocation')
-AddEventHandler('qb-houses:server:LogoutLocation', function()
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local MyItems = Player.PlayerData.items
-    exports.oxmysql:execute('UPDATE players SET inventory = ? WHERE citizenid = ?',
-        {json.encode(MyItems), Player.PlayerData.citizenid})
-    QBCore.Player.Logout(src)
-    TriggerClientEvent('qb-multicharacter:client:chooseChar', src)
-end)
-
-RegisterServerEvent('qb-houses:server:giveHouseKey')
-AddEventHandler('qb-houses:server:giveHouseKey', function(target, house)
-    local src = source
-    local tPlayer = QBCore.Functions.GetPlayer(target)
-
-    if tPlayer ~= nil then
-        if housekeyholders[house] ~= nil then
-            for _, cid in pairs(housekeyholders[house]) do
-                if cid == tPlayer.PlayerData.citizenid then
-                    TriggerClientEvent('QBCore:Notify', src, 'This person already has the keys of the house!', 'error',
-                        3500)
-                    return
-                end
-            end
-            table.insert(housekeyholders[house], tPlayer.PlayerData.citizenid)
-            exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?',
-                {json.encode(housekeyholders[house]), house})
-            TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
-            TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source,
-                'You have the keys of ' .. Config.Houses[house].adress .. ' recieved!', 'success', 2500)
-        else
-            local sourceTarget = QBCore.Functions.GetPlayer(src)
-            housekeyholders[house] = {
-                [1] = sourceTarget.PlayerData.citizenid
-            }
-            table.insert(housekeyholders[house], tPlayer.PlayerData.citizenid)
-            exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?',
-                {json.encode(housekeyholders[house]), house})
-            TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
-            TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source,
-                'You have the keys of ' .. Config.Houses[house].adress .. ' recieved!', 'success', 2500)
-        end
-    else
-        TriggerClientEvent('QBCore:Notify', src, 'Something went wrond try again!', 'error', 2500)
-    end
-end)
-
-RegisterServerEvent('qb-houses:server:setLocation')
-AddEventHandler('qb-houses:server:setLocation', function(coords, house, type)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-
-    if type == 1 then
-        exports.oxmysql:execute('UPDATE player_houses SET stash = ? WHERE house = ?', {json.encode(coords), house})
-    elseif type == 2 then
-        exports.oxmysql:execute('UPDATE player_houses SET outfit = ? WHERE house = ?', {json.encode(coords), house})
-    elseif type == 3 then
-        exports.oxmysql:execute('UPDATE player_houses SET logout = ? WHERE house = ?', {json.encode(coords), house})
-    end
-
-    TriggerClientEvent('qb-houses:client:refreshLocations', -1, house, json.encode(coords), type)
-end)
-
-QBCore.Commands.Add("createhouse", "Create House (Real Estate Only)", {{
-    name = "price",
-    help = "Price of the house"
-}, {
-    name = "tier",
-    help = "Name of the item(no label)"
-}}, true, function(source, args)
-    local Player = QBCore.Functions.GetPlayer(source)
-    local price = tonumber(args[1])
-    local tier = tonumber(args[2])
-    if Player.PlayerData.job.name == "realestate" then
-        TriggerClientEvent("qb-houses:client:createHouses", source, price, tier)
-    else
-        TriggerClientEvent('QBCore:Notify', source, "Only realestate can use this command", "error")
-    end
-end)
-
-QBCore.Commands.Add("addgarage", "Add House Garage (Real Estate Only)", {}, false, function(source, args)
-    local Player = QBCore.Functions.GetPlayer(source)
-    if Player.PlayerData.job.name == "realestate" then
-        TriggerClientEvent("qb-houses:client:addGarage", source)
-    else
-        TriggerClientEvent('QBCore:Notify', source, "Only realestate can use this command", "error")
-    end
-end)
-
-RegisterServerEvent('qb-houses:server:SetInsideMeta')
-AddEventHandler('qb-houses:server:SetInsideMeta', function(insideId, bool)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local insideMeta = Player.PlayerData.metadata["inside"]
-
-    if bool then
-        insideMeta.apartment.apartmentType = nil
-        insideMeta.apartment.apartmentId = nil
-        insideMeta.house = insideId
-
-        Player.Functions.SetMetaData("inside", insideMeta)
-    else
-        insideMeta.apartment.apartmentType = nil
-        insideMeta.apartment.apartmentId = nil
-        insideMeta.house = nil
-
-        Player.Functions.SetMetaData("inside", insideMeta)
     end
 end)
 
@@ -556,7 +526,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
     local MyHouses = {}
     local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE citizenid = ?',
         {Player.PlayerData.citizenid})
-    if result ~= nil and result[1] ~= nil then
+    if result and result[1] then
         for k, v in pairs(result) do
             table.insert(MyHouses, {
                 name = v.house,
@@ -570,11 +540,11 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
 
             if v.keyholders ~= "null" then
                 v.keyholders = json.decode(v.keyholders)
-                if v.keyholders ~= nil then
+                if v.keyholders then
                     for f, data in pairs(v.keyholders) do
                         local keyholderdata = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid = ?',
                             {data})
-                        if keyholderdata[1] ~= nil then
+                        if keyholderdata[1] then
                             keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
 
                             local userKeyHolderData = {
@@ -646,26 +616,18 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
     cb(MyKeys)
 end)
 
-function escape_sqli(source)
-    local replacements = {
-        ['"'] = '\\"',
-        ["'"] = "\\'"
-    }
-    return source:gsub("['\"]", replacements) -- or string.gsub( source, "['\"]", replacements )
-end
-
 QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(source, cb, input)
     local src = source
-    if input ~= nil then
+    if input then
         local search = escape_sqli(input)
         local searchData = {}
         local query = '%' .. search .. '%'
         local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid = ? OR charinfo LIKE ?',
             {search, query})
-        if result[1] ~= nil then
+        if result[1] then
             local houses = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE citizenid = ?',
                 {result[1].citizenid})
-            if houses[1] ~= nil then
+            if houses[1] then
                 for k, v in pairs(houses) do
                     table.insert(searchData, {
                         name = v.house,
@@ -691,34 +653,4 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
     else
         cb(nil)
     end
-end)
-
-QBCore.Functions.CreateUseableItem("police_stormram", function(source, item)
-    local Player = QBCore.Functions.GetPlayer(source)
-
-    if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
-        TriggerClientEvent("qb-houses:client:HomeInvasion", source)
-    else
-        TriggerClientEvent('QBCore:Notify', source, "This is only possible for emergency services!", "error")
-    end
-end)
-
-RegisterServerEvent('qb-houses:server:SetHouseRammed')
-AddEventHandler('qb-houses:server:SetHouseRammed', function(bool, house)
-    Config.Houses[house].IsRammed = bool
-    TriggerClientEvent('qb-houses:client:SetHouseRammed', -1, bool, house)
-end)
-
-QBCore.Commands.Add("enter", "Enter House", {}, false, function(source, args)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-
-    TriggerClientEvent('qb-houses:client:EnterHouse', src)
-end)
-
-QBCore.Commands.Add("ring", "Ring The Doorbell", {}, false, function(source, args)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-
-    TriggerClientEvent('qb-houses:client:RequestRing', src)
 end)
