@@ -528,7 +528,7 @@ RegisterNetEvent('qb-houses:client:RequestRing', function()
     end
 end)
 
-AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     TriggerServerEvent('qb-houses:client:setHouses')
     SetClosestHouse()
     TriggerEvent('qb-houses:client:setupHouseBlips')
@@ -537,7 +537,7 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     TriggerServerEvent("qb-houses:server:setHouses")
 end)
 
-AddEventHandler('QBCore:Client:OnPlayerUnload', function()
+RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     inside = false
     closesthouse = nil
     hasKey = false
