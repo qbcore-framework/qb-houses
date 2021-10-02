@@ -412,16 +412,10 @@ local function enterOwnedHouse(house)
     houseObj = data[1]
     POIOffsets = data[2]
     entering = true
-    TriggerServerEvent('qb-houses:server:SetInsideMeta', house, true)
     Citizen.Wait(500)
-    SetRainLevel(0.0)
+    TriggerServerEvent('qb-houses:server:SetInsideMeta', house, true)
     TriggerEvent('qb-weathersync:client:DisableSync')
     TriggerEvent('qb-weed:client:getHousePlants', house)
-    Citizen.Wait(100)
-    SetWeatherTypePersist('EXTRASUNNY')
-    SetWeatherTypeNow('EXTRASUNNY')
-    SetWeatherTypeNowPersist('EXTRASUNNY')
-    NetworkOverrideClockTime(17, 0, 0)
     entering = false
     setHouseLocations()
 end
@@ -461,15 +455,9 @@ local function enterNonOwnedHouse(house)
     POIOffsets = data[2]
     entering = true
     Citizen.Wait(500)
-    SetRainLevel(0.0)
     TriggerServerEvent('qb-houses:server:SetInsideMeta', house, true)
     TriggerEvent('qb-weathersync:client:DisableSync')
     TriggerEvent('qb-weed:client:getHousePlants', house)
-    Citizen.Wait(100)
-    SetWeatherTypePersist('EXTRASUNNY')
-    SetWeatherTypeNow('EXTRASUNNY')
-    SetWeatherTypeNowPersist('EXTRASUNNY')
-    NetworkOverrideClockTime(17, 0, 0)
     entering = false
     inOwned = true
     setHouseLocations()
