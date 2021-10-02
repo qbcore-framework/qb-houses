@@ -123,6 +123,8 @@ local function hasKey(identifier, cid, house)
     return false
 end
 
+exports('hasKey', hasKey)
+
 local function GetHouseStreetCount(street)
     local count = 1
     local query = '%' .. street .. '%'

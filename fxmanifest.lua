@@ -24,10 +24,6 @@ files {
 	'html/img/dynasty8-logo.png'
 }
 
-server_export {
-	'hasKey'
-}
-
 dependencies {
 	'qb-core',
 	'qb-interior',
