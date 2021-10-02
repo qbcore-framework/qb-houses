@@ -106,7 +106,7 @@ end)
 
 -- Functions
 
-local function hasKey(identifier, cid, house)
+function hasKey(identifier, cid, house)
     if houseowneridentifier[house] and houseownercid[house] then
         if houseowneridentifier[house] == identifier and houseownercid[house] == cid then
             return true
