@@ -383,17 +383,35 @@ local function getDataForHouseTier(house, coords)
     if Config.Houses[house].tier == 1 then
         return exports['qb-interior']:CreateTier1House(coords)
     elseif Config.Houses[house].tier == 2 then
-        return exports['qb-interior']:CreateMichaelShell(coords)
-    elseif Config.Houses[house].tier == 3 then
-        return exports['qb-interior']:CreateApartmentShell(coords)
-    elseif Config.Houses[house].tier == 4 then
-        return  exports['qb-interior']:CreateCaravanShell(coords)
-    elseif Config.Houses[house].tier == 5 then
-        return exports['qb-interior']:CreateFranklinShell(coords)
-    elseif Config.Houses[house].tier == 6 then
-        return exports['qb-interior']:CreateFranklinAuntShell(coords)
-    elseif Config.Houses[house].tier == 7 then
         return exports['qb-interior']:CreateTrevorsShell(coords)
+    elseif Config.Houses[house].tier == 3 then
+        return exports['qb-interior']:CreateMichaelShell(coords)
+    elseif Config.Houses[house].tier == 4 then
+        return exports['qb-interior']:CreateApartmentShell(coords)
+    elseif Config.Houses[house].tier == 5 then
+        return exports['qb-interior']:CreateCaravanShell(coords)
+    elseif Config.Houses[house].tier == 6 then
+        return exports['qb-interior']:CreateFranklinShell(coords)
+    elseif Config.Houses[house].tier == 7 then
+        return exports['qb-interior']:CreateFranklinAuntShell(coords)
+    elseif Config.Houses[house].tier == 8 then
+        return exports['qb-interior']:CreateK4Lester(coords)
+    elseif Config.Houses[house].tier == 9 then
+        return exports['qb-interior']:CreateK4Ranch(coords)
+    elseif Config.Houses[house].tier == 10 then
+        return exports['qb-interior']:CreateK4Trailer(coords)
+    elseif Config.Houses[house].tier == 11 then
+        return exports['qb-interior']:CreateK4Trevor(coords)
+    elseif Config.Houses[house].tier == 12 then
+        return exports['qb-interior']:CreateK4Michael(coords)
+    elseif Config.Houses[house].tier == 13 then
+        return exports['qb-interior']:CreateK4Low(coords)
+    elseif Config.Houses[house].tier == 14 then
+        return exports['qb-interior']:CreateK4Mid(coords)
+    elseif Config.Houses[house].tier == 15 then
+        return exports['qb-interior']:CreateK4High(coords)
+    elseif Config.Houses[house].tier == 16 then
+        return exports['qb-interior']:CreateK4High2(coords)
     else
         QBCore.Functions.Notify('Invalid House Tier', 'error')
     end
@@ -1053,5 +1071,22 @@ Citizen.CreateThread(function()
             Citizen.Wait(1500)
         end
         Citizen.Wait(3)
+    end
+end)
+
+RegisterCommand('getoffset', function()
+    local coords = GetEntityCoords(PlayerPedId())
+    local houseCoords = vector3(
+        Config.Houses[CurrentHouse].coords.enter.x,
+        Config.Houses[CurrentHouse].coords.enter.y,
+        Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset
+    )
+    if inside then
+        local xdist = coords.x - houseCoords.x
+        local ydist = coords.y - houseCoords.y
+        local zdist = coords.z - houseCoords.z
+        print('X: '..xdist)
+        print('Y: '..ydist)
+        print('Z: '..zdist)
     end
 end)
