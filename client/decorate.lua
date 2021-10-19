@@ -88,7 +88,7 @@ local function DisableEditMode()
 	SetEntityCollision(PlayerPedId(), true, true)
 	SetDefaultCamera()
 	EnableAllControlActions(0)
-	ObjectList = nil
+	ObjectList = {}
 	SelectedObj = nil
 	peanut = false
 	DecoMode = false
