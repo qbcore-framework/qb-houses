@@ -143,11 +143,10 @@ Config.Furniture = {
 			[72] = { ["object"] = "apa_mp_h_stn_foot_stool_02", ["price"] = 500, ["label"] = "pouffe 2" },
 			[73] = { ["object"] = "apa_mp_h_yacht_barstool_01", ["price"] = 500, ["label"] = "barstool 2" },
 			[74] = { ["object"] = "ba_prop_int_glam_stool", ["price"] = 500, ["label"] = "barstool 3" },
-			[75] = { ["object"] = "ba_prop_int_glam_stool", ["price"] = 500, ["label"] = "barstool 4" },
-			[76] = { ["object"] = "ba_prop_battle_club_chair_01", ["price"] = 500, ["label"] = "office chair" },
-			[77] = { ["object"] = "ba_prop_battle_club_chair_02", ["price"] = 500, ["label"] = "office chair 2" },
-			[78] = { ["object"] = "ba_prop_battle_club_chair_03", ["price"] = 500, ["label"] = "office chair 3" },
-			[79] = { ["object"] = "ba_prop_battle_control_seat", ["price"] = 500, ["label"] = "gaming chair" }			
+			[75] = { ["object"] = "ba_prop_battle_club_chair_01", ["price"] = 500, ["label"] = "office chair" },
+			[76] = { ["object"] = "ba_prop_battle_club_chair_02", ["price"] = 500, ["label"] = "office chair 2" },
+			[77] = { ["object"] = "ba_prop_battle_club_chair_03", ["price"] = 500, ["label"] = "office chair 3" },
+			[78] = { ["object"] = "ba_prop_battle_control_seat", ["price"] = 500, ["label"] = "gaming chair" }			
 		},
 	},
 	["beds"] = {
@@ -458,14 +457,10 @@ Config.Furniture = {
 			[54] = { ["object"] = "apa_mp_h_acc_candles_06", ["price"] = 100, ["label"] = "candle 4" },
 			[55] = { ["object"] = "apa_mp_h_acc_fruitbowl_02", ["price"] = 100, ["label"] = "fruit bowl" },
 			[56] = { ["object"] = "apa_mp_h_acc_tray_01", ["price"] = 100, ["label"] = "thingies" },
-			[52] = { ["object"] = "apa_mp_h_acc_candles_02", ["price"] = 100, ["label"] = "candle 2" },
-			[53] = { ["object"] = "apa_mp_h_acc_candles_04", ["price"] = 100, ["label"] = "candle 3" },
-			[54] = { ["object"] = "apa_mp_h_acc_candles_06", ["price"] = 100, ["label"] = "candle 4" },
-			[55] = { ["object"] = "apa_mp_h_acc_fruitbowl_02", ["price"] = 100, ["label"] = "fruit bowl" },
-			[56] = { ["object"] = "prop_bskball_01", ["price"] = 100, ["label"] = "Basketball" },
-			[57] = { ["object"] = "prop_cs_wrench", ["price"] = 100, ["label"] = "Wrench" },
-			[58] = { ["object"] = "prop_cs_bowie_knife", ["price"] = 100, ["label"] = "Bowie Knife" },
-			[59] = { ["object"] = "prop_w_me_hatchet", ["price"] = 100, ["label"] = "Hatchet" }			
+			[57] = { ["object"] = "prop_bskball_01", ["price"] = 100, ["label"] = "Basketball" },
+			[58] = { ["object"] = "prop_cs_wrench", ["price"] = 100, ["label"] = "Wrench" },
+			[59] = { ["object"] = "prop_cs_bowie_knife", ["price"] = 100, ["label"] = "Bowie Knife" },
+			[60] = { ["object"] = "prop_w_me_hatchet", ["price"] = 100, ["label"] = "Hatchet" }			
 		},
 	},
 	["small"] = {
@@ -515,8 +510,7 @@ Config.Furniture = {
 			[42] = { ["object"] = "apa_mp_h_acc_vase_01", ["price"] = 300, ["label"] = "vase black and white" },
 			[43] = { ["object"] = "apa_mp_h_acc_vase_02", ["price"] = 300, ["label"] = "vase red" },
 			[44] = { ["object"] = "apa_mp_h_acc_vase_05", ["price"] = 300, ["label"] = "vase" },
-			[45] = { ["object"] = "apa_mp_h_acc_vase_06", ["price"] = 300, ["label"] = "vase black and white 2" },
-			[46] = { ["object"] = "apa_mp_h_acc_dec_plate_01", ["price"] = 300, ["label"] = "Scale 2" }		
+			[45] = { ["object"] = "apa_mp_h_acc_vase_06", ["price"] = 300, ["label"] = "vase black and white 2" }	
 		},
 	},
 	["storage"] = {
@@ -574,18 +568,12 @@ Config.Furniture = {
 			[50] = { ["object"] = "prop_tv_cabinet_03", ["price"] = 750, ["label"] = "tv little cupboard" },
 			[51] = { ["object"] = "prop_tv_cabinet_04", ["price"] = 750, ["label"] = "tv little cupboard 2" },
 			[52] = { ["object"] = "prop_tv_cabinet_05", ["price"] = 750, ["label"] = "tv little cupboard 3" },
-			[53] = { ["object"] = "imp_prop_impexp_parts_rack_05a", ["price"] = 750, ["label"] = "car parts 3" },
-			[54] = { ["object"] = "hei_heist_bed_chestdrawer_04", ["price"] = 750, ["label"] = "chest of drawers 2" },
-			[55] = { ["object"] = "prop_rub_cabinet", ["price"] = 50, ["label"] = "rusted filing cabinet" },
-			[56] = { ["object"] = "prop_tv_cabinet_03", ["price"] = 750, ["label"] = "tv little cupboard" },
-			[57] = { ["object"] = "prop_tv_cabinet_04", ["price"] = 750, ["label"] = "tv little cupboard 2" },
-			[58] = { ["object"] = "prop_tv_cabinet_05", ["price"] = 750, ["label"] = "tv little cupboard 3" },
-			[59] = { ["object"] = "apa_mp_h_str_shelffreel_01", ["price"] = 750, ["label"] = "ikea closet" },
-			[60] = { ["object"] = "apa_mp_h_str_sideboardl_13", ["price"] = 750, ["label"] = "cabinet modern 4" },
-			[61] = { ["object"] = "apa_mp_h_str_sideboardl_14", ["price"] = 750, ["label"] = "cabinet modern 5" },
-			[62] = { ["object"] = "apa_mp_h_str_sideboardm_02", ["price"] = 750, ["label"] = "cabinet modern 6" },
-			[63] = { ["object"] = "bkr_prop_biker_garage_locker_01", ["price"] = 750, ["label"] = "Biker Locker" },
-			[64] = { ["object"] = "gr_prop_gr_bench_04b", ["price"] = 750, ["label"] = "Biker Bench" }			
+			[53] = { ["object"] = "apa_mp_h_str_shelffreel_01", ["price"] = 750, ["label"] = "ikea closet" },
+			[54] = { ["object"] = "apa_mp_h_str_sideboardl_13", ["price"] = 750, ["label"] = "cabinet modern 4" },
+			[55] = { ["object"] = "apa_mp_h_str_sideboardl_14", ["price"] = 750, ["label"] = "cabinet modern 5" },
+			[56] = { ["object"] = "apa_mp_h_str_sideboardm_02", ["price"] = 750, ["label"] = "cabinet modern 6" },
+			[57] = { ["object"] = "bkr_prop_biker_garage_locker_01", ["price"] = 750, ["label"] = "Biker Locker" },
+			[58] = { ["object"] = "gr_prop_gr_bench_04b", ["price"] = 750, ["label"] = "Biker Bench" }			
 		},
 	},
 	["electronics"] = {
