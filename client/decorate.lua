@@ -1,3 +1,4 @@
+ObjectList = {}
 local DecoMode = false
 local MainCamera = nil
 local curPos
@@ -8,7 +9,6 @@ local SelectedObj = nil
 local SelObjHash = {}
 local SelObjPos = {}
 local SelObjRot = {}
-local ObjectList = {}
 local SelObjId = 0
 local isEdit = false
 local rotateActive = false
@@ -54,12 +54,12 @@ local function EnableEditMode()
 end
 
 local function SaveDecorations()
-	if closesthouse ~= nil then
-		if SelectedObj ~= nil then
+	if closesthouse then
+		if SelectedObj then
 			if SelObjId ~= 0 then
 				ObjectList[SelObjId] = {hashname = SelObjHash, x = SelObjPos.x, y = SelObjPos.y, z = SelObjPos.z, rotx = SelObjRot.x, roty = SelObjRot.y, rotz = SelObjRot.z, object = SelectedObj, objectId = SelObjId}
 			else
-				if ObjectList ~= nil then
+				if ObjectList then
 					ObjectList[#ObjectList+1] = {hashname = SelObjHash, x = SelObjPos.x, y = SelObjPos.y, z = SelObjPos.z, rotx = SelObjRot.x, roty = SelObjRot.y, rotz = SelObjRot.z, object = SelectedObj, objectId = #ObjectList+1}
 				else
 					ObjectList[1] = {hashname = SelObjHash, x = SelObjPos.x, y = SelObjPos.y, z = SelObjPos.z, rotx = SelObjRot.x, roty = SelObjRot.y, rotz = SelObjRot.z, object = SelectedObj, objectId = #ObjectList+1}
@@ -88,7 +88,7 @@ local function DisableEditMode()
 	SetEntityCollision(PlayerPedId(), true, true)
 	SetDefaultCamera()
 	EnableAllControlActions(0)
-	ObjectList = {}
+	ObjectList = nil
 	SelectedObj = nil
 	peanut = false
 	DecoMode = false
@@ -326,7 +326,7 @@ end)
 -- NUI Callbacks
 
 RegisterNUICallback("closedecorations", function(data, cb)
-	if previewObj ~= nil then 
+	if previewObj then 
 		DeleteObject(previewObj)
 	end
 	DisableEditMode()
@@ -371,7 +371,7 @@ end)
 RegisterNUICallback('setupMyObjects', function(data, cb)
 	local Objects = {}
 	for k, v in pairs(ObjectList) do
-		if ObjectList[k] ~= nil then
+		if ObjectList[k] then
 			table.insert(Objects, {
 				rotx = v.rotx,
 				object = v.object,
@@ -391,7 +391,7 @@ RegisterNUICallback('setupMyObjects', function(data, cb)
 end)
 
 RegisterNUICallback('removeObject', function()
-	if previewObj ~= nil then 
+	if previewObj then 
 		DeleteObject(previewObj)
 	end
 end)
@@ -450,7 +450,7 @@ end)
 RegisterNUICallback("spawnobject", function(data, cb)
 	SetNuiFocus(false, false)
 	cursorEnabled = not cursorEnabled
-	if previewObj ~= nil then 
+	if previewObj then 
 		DeleteObject(previewObj)
 	end
 	local modelHash = GetHashKey(tostring(data.object))
@@ -474,7 +474,7 @@ RegisterNUICallback("spawnobject", function(data, cb)
 end)
 
 RegisterNUICallback("chooseobject", function(data, cb)
-	if previewObj ~= nil then 
+	if previewObj then 
 		DeleteObject(previewObj)
 	end
     local modelHash = GetHashKey(tostring(data.object))
@@ -531,7 +531,7 @@ Citizen.CreateThread(function()
 			CheckRotationInput()
             CheckMovementInput()
 
-			if SelectedObj ~= nil and peanut then
+			if SelectedObj and peanut then
 				local color = {r = 116, g = 189, b = 252, a = 100}
 				DrawEntityBoundingBox(SelectedObj, color)
                 DrawMarker(21, SelObjPos.x, SelObjPos.y, SelObjPos.z + 1.28, 0.0, 0.0, 0.0, 180.0, 0.0, 0.0, 0.6, 0.6, 0.6, 28, 149, 255, 100, true, true, 2, false, false, false, false)
