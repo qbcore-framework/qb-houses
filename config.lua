@@ -458,14 +458,14 @@ Config.Furniture = {
 			[54] = { ["object"] = "apa_mp_h_acc_candles_06", ["price"] = 100, ["label"] = "candle 4" },
 			[55] = { ["object"] = "apa_mp_h_acc_fruitbowl_02", ["price"] = 100, ["label"] = "fruit bowl" },
 			[56] = { ["object"] = "apa_mp_h_acc_tray_01", ["price"] = 100, ["label"] = "thingies" },
-			[52] = { ["object"] = "apa_mp_h_acc_candles_02", ["price"] = 100, ["label"] = "candle 2" },
-			[53] = { ["object"] = "apa_mp_h_acc_candles_04", ["price"] = 100, ["label"] = "candle 3" },
-			[54] = { ["object"] = "apa_mp_h_acc_candles_06", ["price"] = 100, ["label"] = "candle 4" },
-			[55] = { ["object"] = "apa_mp_h_acc_fruitbowl_02", ["price"] = 100, ["label"] = "fruit bowl" },
-			[56] = { ["object"] = "prop_bskball_01", ["price"] = 100, ["label"] = "Basketball" },
-			[57] = { ["object"] = "prop_cs_wrench", ["price"] = 100, ["label"] = "Wrench" },
-			[58] = { ["object"] = "prop_cs_bowie_knife", ["price"] = 100, ["label"] = "Bowie Knife" },
-			[59] = { ["object"] = "prop_w_me_hatchet", ["price"] = 100, ["label"] = "Hatchet" }			
+			[57] = { ["object"] = "apa_mp_h_acc_candles_02", ["price"] = 100, ["label"] = "candle 2" },
+			[58] = { ["object"] = "apa_mp_h_acc_candles_04", ["price"] = 100, ["label"] = "candle 3" },
+			[59] = { ["object"] = "apa_mp_h_acc_candles_06", ["price"] = 100, ["label"] = "candle 4" },
+			[60] = { ["object"] = "apa_mp_h_acc_fruitbowl_02", ["price"] = 100, ["label"] = "fruit bowl" },
+			[61] = { ["object"] = "prop_bskball_01", ["price"] = 100, ["label"] = "Basketball" },
+			[62] = { ["object"] = "prop_cs_wrench", ["price"] = 100, ["label"] = "Wrench" },
+			[63] = { ["object"] = "prop_cs_bowie_knife", ["price"] = 100, ["label"] = "Bowie Knife" },
+			[64] = { ["object"] = "prop_w_me_hatchet", ["price"] = 100, ["label"] = "Hatchet" }			
 		},
 	},
 	["small"] = {
