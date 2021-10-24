@@ -8,7 +8,7 @@ local housesLoaded = false
 
 Citizen.CreateThread(function()
     local HouseGarages = {}
-    local result = exports.oxmysql:fetchSync('SELECT * FROM houselocations', {})
+    local result = exports.oxmysql:executeSync('SELECT * FROM houselocations', {})
     if result[1] then
         for k, v in pairs(result) do
             local owned = false
@@ -39,7 +39,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         if not housesLoaded then
-            exports.oxmysql:fetch('SELECT * FROM player_houses', {}, function(houses)
+            exports.oxmysql:execute('SELECT * FROM player_houses', {}, function(houses)
                 if houses then
                     for _, house in pairs(houses) do
                         houseowneridentifier[house.house] = house.identifier
@@ -128,7 +128,7 @@ exports('hasKey', hasKey)
 local function GetHouseStreetCount(street)
     local count = 1
     local query = '%' .. street .. '%'
-    local result = exports.oxmysql:fetchSync('SELECT * FROM houselocations WHERE name LIKE ?', {query})
+    local result = exports.oxmysql:executeSync('SELECT * FROM houselocations WHERE name LIKE ?', {query})
     if result[1] then
         for i = 1, #result, 1 do
             count = count + 1
@@ -427,7 +427,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
     if housekeyholders[house] then
         for i = 1, #housekeyholders[house], 1 do
             if Player.PlayerData.citizenid ~= housekeyholders[house][i] then
-                local result = exports.oxmysql:fetchSync('SELECT charinfo FROM players WHERE citizenid = ?',
+                local result = exports.oxmysql:executeSync('SELECT charinfo FROM players WHERE citizenid = ?',
                     {housekeyholders[house][i]})
                 if result[1] then
                     local charinfo = json.decode(result[1].charinfo)
@@ -446,7 +446,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, cb, NewCid, house)
-    local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid = ?', {NewCid})
+    local result = exports.oxmysql:executeSync('SELECT * FROM players WHERE citizenid = ?', {NewCid})
     if result[1] then
         local HouseName = house.name
         housekeyholders[HouseName] = {}
@@ -464,7 +464,7 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function(source, cb, house)
     local retval = nil
-    local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE house = ?', {house})
+    local result = exports.oxmysql:executeSync('SELECT * FROM player_houses WHERE house = ?', {house})
     if result[1] then
         if result[1].decorations then
             retval = json.decode(result[1].decorations)
@@ -475,7 +475,7 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseLocations', function(source, cb, house)
     local retval = nil
-    local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE house = ?', {house})
+    local result = exports.oxmysql:executeSync('SELECT * FROM player_houses WHERE house = ?', {house})
     if result[1] then
         retval = result[1]
     end
@@ -492,7 +492,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getOwnedHouses', function(sour
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     if pData then
-        exports.oxmysql:fetch('SELECT * FROM player_houses WHERE identifier = ? AND citizenid = ?', {pData.PlayerData.license, pData.PlayerData.citizenid}, function(houses)
+        exports.oxmysql:execute('SELECT * FROM player_houses WHERE identifier = ? AND citizenid = ?', {pData.PlayerData.license, pData.PlayerData.citizenid}, function(houses)
             local ownedHouses = {}
             for i = 1, #houses, 1 do
                 ownedHouses[#ownedHouses+1] = houses[i].house
@@ -511,7 +511,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getSavedOutfits', function(sou
     local pData = QBCore.Functions.GetPlayer(src)
 
     if pData then
-        exports.oxmysql:fetch('SELECT * FROM player_outfits WHERE citizenid = ?', {pData.PlayerData.citizenid},
+        exports.oxmysql:execute('SELECT * FROM player_outfits WHERE citizenid = ?', {pData.PlayerData.citizenid},
             function(result)
                 if result[1] then
                     cb(result)
@@ -526,7 +526,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local MyHouses = {}
-    local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE citizenid = ?',
+    local result = exports.oxmysql:executeSync('SELECT * FROM player_houses WHERE citizenid = ?',
         {Player.PlayerData.citizenid})
     if result and result[1] then
         for k, v in pairs(result) do
@@ -544,7 +544,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
                 v.keyholders = json.decode(v.keyholders)
                 if v.keyholders then
                     for f, data in pairs(v.keyholders) do
-                        local keyholderdata = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid = ?',
+                        local keyholderdata = exports.oxmysql:executeSync('SELECT * FROM players WHERE citizenid = ?',
                             {data})
                         if keyholderdata[1] then
                             keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
@@ -596,7 +596,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
     local Player = QBCore.Functions.GetPlayer(src)
     local MyKeys = {}
 
-    local result = exports.oxmysql:fetchSync('SELECT * FROM player_houses', {})
+    local result = exports.oxmysql:executeSync('SELECT * FROM player_houses', {})
     for k, v in pairs(result) do
         if v.keyholders ~= "null" then
             v.keyholders = json.decode(v.keyholders)
@@ -624,10 +624,10 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
         local search = escape_sqli(input)
         local searchData = {}
         local query = '%' .. search .. '%'
-        local result = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid = ? OR charinfo LIKE ?',
+        local result = exports.oxmysql:executeSync('SELECT * FROM players WHERE citizenid = ? OR charinfo LIKE ?',
             {search, query})
         if result[1] then
-            local houses = exports.oxmysql:fetchSync('SELECT * FROM player_houses WHERE citizenid = ?',
+            local houses = exports.oxmysql:executeSync('SELECT * FROM player_houses WHERE citizenid = ?',
                 {result[1].citizenid})
             if houses[1] then
                 for k, v in pairs(houses) do
