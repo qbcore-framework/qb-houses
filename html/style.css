@@ -15,6 +15,8 @@
     margin-left: auto; 
     margin-right: auto; 
     top: 15%;
+	padding: 10px;
+	box-shadow: 5px 5px #363636;	
 }
 
 .contract-sub {
@@ -138,19 +140,22 @@
 #welcome-text {
     float: right;
     font-family: 'Poppins', sans-serif;
-    margin-top: 10px;
-    margin-right: 10px;
+	font-weight: bold;
+    margin-top: 15px;
+    margin-right: 15px;
 }
 
 #welcome-name {
     color: rgb(2, 88, 2);
+	font-weight: bold;
 }
 
 #contract-header-text {
     position: relative;
     top: 13px;
     font-family: 'Poppins', sans-serif;
-    color: white;
+    color: black;
+	font-weight: bold;
     font-size: 24px;
 }
 
