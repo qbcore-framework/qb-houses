@@ -1122,6 +1122,7 @@ Citizen.CreateThread(function()
                                 DrawText3Ds(stashLocation.x, stashLocation.y, stashLocation.z, '~g~E~w~ - Stash')
                                 if IsControlJustPressed(0, 38) then -- E
                                     TriggerServerEvent("inventory:server:OpenInventory", "stash", CurrentHouse)
+				    TriggerServerEvent("InteractSound_SV:PlayOnSource", "StashOpen", 0.4)
                                     TriggerEvent("inventory:client:SetCurrentStash", CurrentHouse)
                                 end
                             elseif #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z)) < 3 then
@@ -1136,6 +1137,7 @@ Citizen.CreateThread(function()
                             if #(pos - vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z)) < 1.5 then
                                 DrawText3Ds(outfitLocation.x, outfitLocation.y, outfitLocation.z, '~g~E~w~ - Outfits')
                                 if IsControlJustPressed(0, 38) then -- E
+				    TriggerServerEvent("InteractSound_SV:PlayOnSource", "Clothes1", 0.4)
                                     TriggerEvent('qb-clothing:client:openOutfitMenu')
                                 end
                             elseif #(pos - vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z)) < 3 then
