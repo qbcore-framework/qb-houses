@@ -1038,6 +1038,9 @@ Citizen.CreateThread(function()
                         if closesthouse ~= nil then
                             if #(pos - dist2) < 1.5 then
                                 DrawText3Ds(Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z, '~b~/enter~w~ - Enter')
+				if IsControlJustPressed(0, 46) then -- E
+                                    TriggerEvent('qb-houses:client:EnterHouse', src)
+                                end
                             end
                         end
                     end
