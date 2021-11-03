@@ -218,7 +218,7 @@ RegisterNetEvent('qb-houses:server:buyHouse', function(house)
         exports.oxmysql:execute('UPDATE houselocations SET owned = ? WHERE name = ?', {1, house})
         TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
         pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
-        TriggerEvent('qb-bossmenu:server:addAccountMoney', "realestate", (HousePrice / 100) * math.random(18, 25))    
+        TriggerEvent('qb-bossmenu:server:addAccountMoney', "realestate", (HousePrice / 100) * math.random(18, 25))
     else
         TriggerClientEvent('QBCore:Notify', source, "You dont have enough money..", "error")
     end
@@ -235,7 +235,7 @@ end)
 
 RegisterNetEvent('qb-houses:server:giveKey', function(house, target)
     local pData = QBCore.Functions.GetPlayer(target)
-    table.insert(housekeyholders[house], pData.PlayerData.citizenid)
+    housekeyholders[house][#housekeyholders[house]+1] = pData.PlayerData.citizenid
     exports.oxmysql:execute('UPDATE player_houses SET keyholders = ? WHERE house = ?',
         {json.encode(housekeyholders[house]), house})
 end)
@@ -246,7 +246,7 @@ RegisterNetEvent('qb-houses:server:removeHouseKey', function(house, citizenData)
     if housekeyholders[house] then
         for k, v in pairs(housekeyholders[house]) do
             if housekeyholders[house][k] ~= citizenData.citizenid then
-                table.insert(newHolders, housekeyholders[house][k])
+                newHolders[#newHolders+1] = housekeyholders[house][k]
             end
         end
     end
@@ -431,11 +431,11 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
                     {housekeyholders[house][i]})
                 if result[1] then
                     local charinfo = json.decode(result[1].charinfo)
-                    table.insert(retval, {
+                    retval[#retval+1] = {
                         firstname = charinfo.firstname,
                         lastname = charinfo.lastname,
                         citizenid = housekeyholders[house][i]
-                    })
+                    }
                 end
                 cb(retval)
             end
@@ -530,7 +530,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
         {Player.PlayerData.citizenid})
     if result and result[1] then
         for k, v in pairs(result) do
-            table.insert(MyHouses, {
+            MyHouses[#MyHouses+1] = {
                 name = v.house,
                 keyholders = {},
                 owner = Player.PlayerData.citizenid,
@@ -538,7 +538,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
                 label = Config.Houses[v.house].adress,
                 tier = Config.Houses[v.house].tier,
                 garage = Config.Houses[v.house].garage
-            })
+            }
 
             if v.keyholders ~= "null" then
                 v.keyholders = json.decode(v.keyholders)
@@ -557,8 +557,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
                                 citizenid = keyholderdata[1].citizenid,
                                 name = keyholderdata[1].name
                             }
-
-                            table.insert(MyHouses[k].keyholders, userKeyHolderData)
+                            MyHouses[k].keyholders[#MyHouses[k].keyholders+1] = userKeyHolderData
                         end
                     end
                 else
@@ -602,17 +601,17 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
             v.keyholders = json.decode(v.keyholders)
             for s, p in pairs(v.keyholders) do
                 if p == Player.PlayerData.citizenid and (v.citizenid ~= Player.PlayerData.citizenid) then
-                    table.insert(MyKeys, {
+                    MyKeys[#MyKeys+1] = {
                         HouseData = Config.Houses[v.house]
-                    })
+                    }
                 end
             end
         end
 
         if v.citizenid == Player.PlayerData.citizenid then
-            table.insert(MyKeys, {
+            MyKeys[#MyKeys+1] = {
                 HouseData = Config.Houses[v.house]
-            })
+            }
         end
     end
     cb(MyKeys)
@@ -631,7 +630,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
                 {result[1].citizenid})
             if houses[1] then
                 for k, v in pairs(houses) do
-                    table.insert(searchData, {
+                    searchData[#searchData+1] = {
                         name = v.house,
                         keyholders = keyholders,
                         owner = v.citizenid,
@@ -645,7 +644,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
                             y = Config.Houses[v.house].coords.enter.y,
                             z = Config.Houses[v.house].coords.enter.z
                         }
-                    })
+                    }
                 end
                 cb(searchData)
             end

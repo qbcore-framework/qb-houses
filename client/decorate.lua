@@ -218,17 +218,17 @@ local function DrawEntityBoundingBox(entity, color)
     local rightVector, forwardVector, upVector, position = GetEntityMatrix(entity)
 
     -- Calculate size
-    local dim = 
-	{ 
-		x = 0.5*(max.x - min.x), 
-		y = 0.5*(max.y - min.y), 
+    local dim =
+	{
+		x = 0.5*(max.x - min.x),
+		y = 0.5*(max.y - min.y),
 		z = 0.5*(max.z - min.z)
 	}
 
-    local FUR = 
+    local FUR =
     {
-		x = position.x + dim.y*rightVector.x + dim.x*forwardVector.x + dim.z*upVector.x, 
-		y = position.y + dim.y*rightVector.y + dim.x*forwardVector.y + dim.z*upVector.y, 
+		x = position.x + dim.y*rightVector.x + dim.x*forwardVector.x + dim.z*upVector.x,
+		y = position.y + dim.y*rightVector.y + dim.x*forwardVector.y + dim.z*upVector.y,
 		z = 0
     }
 
@@ -236,7 +236,7 @@ local function DrawEntityBoundingBox(entity, color)
     FUR.z = FUR_z
     FUR.z = position.z + 2 * dim.z
 
-    local BLL = 
+    local BLL =
     {
         x = position.x - dim.y*rightVector.x - dim.x*forwardVector.x - dim.z*upVector.x,
         y = position.y - dim.y*rightVector.y - dim.x*forwardVector.y - dim.z*upVector.y,
@@ -249,42 +249,42 @@ local function DrawEntityBoundingBox(entity, color)
     local edge1 = BLL
     local edge5 = FUR
 
-    local edge2 = 
+    local edge2 =
     {
         x = edge1.x + 2 * dim.y*rightVector.x,
         y = edge1.y + 2 * dim.y*rightVector.y,
         z = edge1.z + 2 * dim.y*rightVector.z
     }
 
-    local edge3 = 
+    local edge3 =
     {
         x = edge2.x + 2 * dim.z*upVector.x,
         y = edge2.y + 2 * dim.z*upVector.y,
         z = edge2.z + 2 * dim.z*upVector.z
     }
 
-    local edge4 = 
+    local edge4 =
     {
         x = edge1.x + 2 * dim.z*upVector.x,
         y = edge1.y + 2 * dim.z*upVector.y,
         z = edge1.z + 2 * dim.z*upVector.z
     }
 
-    local edge6 = 
+    local edge6 =
     {
         x = edge5.x - 2 * dim.y*rightVector.x,
         y = edge5.y - 2 * dim.y*rightVector.y,
         z = edge5.z - 2 * dim.y*rightVector.z
     }
 
-    local edge7 = 
+    local edge7 =
     {
         x = edge6.x - 2 * dim.z*upVector.x,
         y = edge6.y - 2 * dim.z*upVector.y,
         z = edge6.z - 2 * dim.z*upVector.z
     }
 
-    local edge8 = 
+    local edge8 =
     {
         x = edge5.x - 2 * dim.z*upVector.x,
         y = edge5.y - 2 * dim.z*upVector.y,
@@ -326,7 +326,7 @@ end)
 -- NUI Callbacks
 
 RegisterNUICallback("closedecorations", function(data, cb)
-	if previewObj then 
+	if previewObj then
 		DeleteObject(previewObj)
 	end
 	DisableEditMode()
@@ -372,7 +372,7 @@ RegisterNUICallback('setupMyObjects', function(data, cb)
 	local Objects = {}
 	for k, v in pairs(ObjectList) do
 		if ObjectList[k] then
-			table.insert(Objects, {
+			Objects[#Objects+1] = {
 				rotx = v.rotx,
 				object = v.object,
 				y = v.y,
@@ -382,7 +382,7 @@ RegisterNUICallback('setupMyObjects', function(data, cb)
 				objectId = v.objectId,
 				roty = v.roty,
 				z = v.z,
-			})
+			}
 		end
 	end
 	Wait(100)
@@ -391,7 +391,7 @@ RegisterNUICallback('setupMyObjects', function(data, cb)
 end)
 
 RegisterNUICallback('removeObject', function()
-	if previewObj then 
+	if previewObj then
 		DeleteObject(previewObj)
 	end
 end)
@@ -450,7 +450,7 @@ end)
 RegisterNUICallback("spawnobject", function(data, cb)
 	SetNuiFocus(false, false)
 	cursorEnabled = not cursorEnabled
-	if previewObj then 
+	if previewObj then
 		DeleteObject(previewObj)
 	end
 	local modelHash = GetHashKey(tostring(data.object))
@@ -474,7 +474,7 @@ RegisterNUICallback("spawnobject", function(data, cb)
 end)
 
 RegisterNUICallback("chooseobject", function(data, cb)
-	if previewObj then 
+	if previewObj then
 		DeleteObject(previewObj)
 	end
     local modelHash = GetHashKey(tostring(data.object))
@@ -535,7 +535,7 @@ Citizen.CreateThread(function()
 				local color = {r = 116, g = 189, b = 252, a = 100}
 				DrawEntityBoundingBox(SelectedObj, color)
                 DrawMarker(21, SelObjPos.x, SelObjPos.y, SelObjPos.z + 1.28, 0.0, 0.0, 0.0, 180.0, 0.0, 0.0, 0.6, 0.6, 0.6, 28, 149, 255, 100, true, true, 2, false, false, false, false)
-                if rotateActive then 
+                if rotateActive then
                     CheckObjRotationInput()
                 else
                     CheckObjMovementInput()
