@@ -174,6 +174,7 @@ RegisterNetEvent('qb-houses:server:addNewHouse', function(street, coords, price,
     }
     TriggerClientEvent("qb-houses:client:setHouseConfig", -1, Config.Houses)
     TriggerClientEvent('QBCore:Notify', src, "You have added a house: " .. label)
+    TriggerEvent('qb-log:server:CreateLog', 'house', 'House Created:', 'green', '**Address**:\n'..label..'\n\n**Listing Price**:\n$'..price..'\n\n**Tier**:\n'..tier..'\n\n**Listing Agent**:\n'..GetPlayerName(src))
 end)
 
 RegisterNetEvent('qb-houses:server:addGarage', function(house, coords)
@@ -213,12 +214,12 @@ RegisterNetEvent('qb-houses:server:buyHouse', function(house)
         housekeyholders[house] = {
             [1] = pData.PlayerData.citizenid
         }
-        exports.oxmysql:insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)',
-            {house, pData.PlayerData.license, pData.PlayerData.citizenid, json.encode(housekeyholders[house])})
+        exports.oxmysql:insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)',{house, pData.PlayerData.license, pData.PlayerData.citizenid, json.encode(housekeyholders[house])})
         exports.oxmysql:execute('UPDATE houselocations SET owned = ? WHERE name = ?', {1, house})
         TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
         pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
         TriggerEvent('qb-bossmenu:server:addAccountMoney', "realestate", (HousePrice / 100) * math.random(18, 25))
+        TriggerEvent('qb-log:server:CreateLog', 'house', 'House Purchased:', 'green', '**Address**:\n'..house:upper()..'\n\n**Purchase Price**:\n$'..HousePrice..'\n\n**Purchaser**:\n'..pData.PlayerData.charinfo.firstname..' '..pData.PlayerData.charinfo.lastname)
     else
         TriggerClientEvent('QBCore:Notify', source, "You dont have enough money..", "error")
     end
