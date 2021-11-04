@@ -1,8 +1,8 @@
 Config = Config or {}
 
 Config.MinZOffset = 30
-
 Config.RamsNeeded = 2
+Config.UnownedBlips = false
 
 Config.Houses = {}
 
@@ -63,7 +63,7 @@ Config.Furniture = {
 			[51] = { ["object"] = "hei_heist_stn_sofa3seat_02", ["price"] = 1000, ["label"] = "sofa modern 2" },
 			[52] = { ["object"] = "hei_heist_stn_sofa3seat_06", ["price"] = 1000, ["label"] = "sofa modern 3" },
 			[53] = { ["object"] = "imp_prop_impexp_sofabed_01a", ["price"] = 1000, ["label"] = "sofa bed" },
-			[54] = { ["object"] = "prop_t_sofa_02", ["price"] = 1000, ["label"] = "sofa bed2" }			
+			[54] = { ["object"] = "prop_t_sofa_02", ["price"] = 1000, ["label"] = "sofa bed2" }
 		},
 	},
 	["chairs"] = {
@@ -146,31 +146,31 @@ Config.Furniture = {
 			[75] = { ["object"] = "ba_prop_battle_club_chair_01", ["price"] = 500, ["label"] = "office chair" },
 			[76] = { ["object"] = "ba_prop_battle_club_chair_02", ["price"] = 500, ["label"] = "office chair 2" },
 			[77] = { ["object"] = "ba_prop_battle_club_chair_03", ["price"] = 500, ["label"] = "office chair 3" },
-			[78] = { ["object"] = "ba_prop_battle_control_seat", ["price"] = 500, ["label"] = "gaming chair" }			
+			[78] = { ["object"] = "ba_prop_battle_control_seat", ["price"] = 500, ["label"] = "gaming chair" }
 		},
 	},
 	["beds"] = {
 		label = "Beds",
 		items = {
-			[1] = { ["object"] = "v_res_d_bed", ["price"] = 700, ["label"] = "Bed 1" },	
-			[2] = { ["object"] = "v_res_lestersbed", ["price"] = 700, ["label"] = "Bed 2" },	
-			[3] = { ["object"] = "v_res_mbbed", ["price"] = 700, ["label"] = "MB Bed" },	
-			[4] = { ["object"] = "v_res_mdbed", ["price"] = 700, ["label"] = "MD Bed" },	
-			[5] = { ["object"] = "v_res_msonbed", ["price"] = 700, ["label"] = "Bed 3" },	
-			[6] = { ["object"] = "v_res_tre_bed1", ["price"] = 700, ["label"] = "Bed 4" },	
-			[7] = { ["object"] = "v_res_tre_bed2", ["price"] = 700, ["label"] = "T Bed" },	
+			[1] = { ["object"] = "v_res_d_bed", ["price"] = 700, ["label"] = "Bed 1" },
+			[2] = { ["object"] = "v_res_lestersbed", ["price"] = 700, ["label"] = "Bed 2" },
+			[3] = { ["object"] = "v_res_mbbed", ["price"] = 700, ["label"] = "MB Bed" },
+			[4] = { ["object"] = "v_res_mdbed", ["price"] = 700, ["label"] = "MD Bed" },
+			[5] = { ["object"] = "v_res_msonbed", ["price"] = 700, ["label"] = "Bed 3" },
+			[6] = { ["object"] = "v_res_tre_bed1", ["price"] = 700, ["label"] = "Bed 4" },
+			[7] = { ["object"] = "v_res_tre_bed2", ["price"] = 700, ["label"] = "T Bed" },
 			[8] = { ["object"] = "v_res_tt_bed", ["price"] = 700, ["label"] = "TT Bed" },
 			[9] = { ["object"] = "apa_mp_h_bed_with_table_02", ["price"] = 5000, ["label"] = "fancy bed" },
 			[10] = { ["object"] = "apa_mp_h_bed_wide_05", ["price"] = 5000, ["label"] = "red bed" },
-			[11] = { ["object"] = "apa_mp_h_bed_double_08", ["price"] = 3000, ["label"] = "square bed" },	
-			[12] = { ["object"] = "apa_mp_h_bed_double_09", ["price"] = 3000, ["label"] = "modern bed" },	
+			[11] = { ["object"] = "apa_mp_h_bed_double_08", ["price"] = 3000, ["label"] = "square bed" },
+			[12] = { ["object"] = "apa_mp_h_bed_double_09", ["price"] = 3000, ["label"] = "modern bed" },
 			[13] = { ["object"] = "apa_mp_h_yacht_bed_01", ["price"] = 5000, ["label"] = "california king" },
 			[14] = { ["object"] = "apa_mp_h_yacht_bed_02", ["price"] = 5000, ["label"] = "california king 2" },
 			[15] = { ["object"] = "bkr_prop_biker_campbed_01", ["price"] = 100, ["label"] = "camp bed" },
 			[16] = { ["object"] = "ex_prop_exec_bed_01", ["price"] = 700, ["label"] = "small bed" },
 			[17] = { ["object"] = "gr_prop_bunker_bed_01", ["price"] = 700, ["label"] = "klein bed 2" },
-			[18] = { ["object"] = "p_mbbed_s", ["price"] = 700, ["label"] = "Bed 5" }			
-		},	
+			[18] = { ["object"] = "p_mbbed_s", ["price"] = 700, ["label"] = "Bed 5" }
+		},
 	},
 	["general"] = {
 		label = "General",
@@ -213,7 +213,7 @@ Config.Furniture = {
 			[36] = { ["object"] = "apa_mp_h_acc_rugwoolm_03", ["price"] = 500, ["label"] = "Rug 4" },
 			[37] = { ["object"] = "apa_mp_h_acc_rugwooll_03", ["price"] = 500, ["label"] = "Rug 5" },
 			[38] = { ["object"] = "apa_mp_h_acc_rugwoolm_04", ["price"] = 500, ["label"] = "Rug 6" },
-			[39] = { ["object"] = "v_club_rack", ["price"] = 500, ["label"] = "kledingrek" }	
+			[39] = { ["object"] = "v_club_rack", ["price"] = 500, ["label"] = "kledingrek" }
 		},
 	},
 	["general2"] = {
@@ -337,7 +337,7 @@ Config.Furniture = {
 			[116] = { ["object"] = "prop_cs_hotdog_01", ["price"] = 100, ["label"] = "Hotdog" },
 			[117] = { ["object"] = "prop_cs_milk_01", ["price"] = 100, ["label"] = "Milk" },
 			[118] = { ["object"] = "prop_cs_panties", ["price"] = 100, ["label"] = "Panties" },
-			[119] = { ["object"] = "prop_cs_steak", ["price"] = 100, ["label"] = "Meat" }			
+			[119] = { ["object"] = "prop_cs_steak", ["price"] = 100, ["label"] = "Meat" }
 		},
 	},
 	["general3"] = {
@@ -381,7 +381,7 @@ Config.Furniture = {
 			[36] = { ["object"] = "prop_cs_fertilizer", ["price"] = 100, ["label"] = "Fertilizer" },
 			[37] = { ["object"] = "prop_cs_shopping_bag", ["price"] = 100, ["label"] = "Shopping Bag" },
 			[38] = { ["object"] = "prop_cs_vial_01", ["price"] = 100, ["label"] = "Vial" },
-			[39] = { ["object"] = "prop_defilied_ragdoll_01", ["price"] = 100, ["label"] = "Ragdoll" }, 
+			[39] = { ["object"] = "prop_defilied_ragdoll_01", ["price"] = 100, ["label"] = "Ragdoll" },
 			[40] = { ["object"] = "v_res_fa_book03", ["price"] = 100, ["label"] = "boek kamasutra" },
 			[41] = { ["object"] = "prop_weight_rack_02", ["price"] = 500, ["label"] = "dumbbellrek" },
 			[42] = { ["object"] = "prop_weight_bench_02", ["price"] = 500, ["label"] = "Couchdrukset" },
@@ -460,7 +460,7 @@ Config.Furniture = {
 			[57] = { ["object"] = "prop_bskball_01", ["price"] = 100, ["label"] = "Basketball" },
 			[58] = { ["object"] = "prop_cs_wrench", ["price"] = 100, ["label"] = "Wrench" },
 			[59] = { ["object"] = "prop_cs_bowie_knife", ["price"] = 100, ["label"] = "Bowie Knife" },
-			[60] = { ["object"] = "prop_w_me_hatchet", ["price"] = 100, ["label"] = "Hatchet" }			
+			[60] = { ["object"] = "prop_w_me_hatchet", ["price"] = 100, ["label"] = "Hatchet" }
 		},
 	},
 	["small"] = {
@@ -510,7 +510,7 @@ Config.Furniture = {
 			[42] = { ["object"] = "apa_mp_h_acc_vase_01", ["price"] = 300, ["label"] = "vase black and white" },
 			[43] = { ["object"] = "apa_mp_h_acc_vase_02", ["price"] = 300, ["label"] = "vase red" },
 			[44] = { ["object"] = "apa_mp_h_acc_vase_05", ["price"] = 300, ["label"] = "vase" },
-			[45] = { ["object"] = "apa_mp_h_acc_vase_06", ["price"] = 300, ["label"] = "vase black and white 2" }	
+			[45] = { ["object"] = "apa_mp_h_acc_vase_06", ["price"] = 300, ["label"] = "vase black and white 2" }
 		},
 	},
 	["storage"] = {
@@ -573,7 +573,7 @@ Config.Furniture = {
 			[55] = { ["object"] = "apa_mp_h_str_sideboardl_14", ["price"] = 750, ["label"] = "cabinet modern 5" },
 			[56] = { ["object"] = "apa_mp_h_str_sideboardm_02", ["price"] = 750, ["label"] = "cabinet modern 6" },
 			[57] = { ["object"] = "bkr_prop_biker_garage_locker_01", ["price"] = 750, ["label"] = "Biker Locker" },
-			[58] = { ["object"] = "gr_prop_gr_bench_04b", ["price"] = 750, ["label"] = "Biker Bench" }			
+			[58] = { ["object"] = "gr_prop_gr_bench_04b", ["price"] = 750, ["label"] = "Biker Bench" }
 		},
 	},
 	["electronics"] = {
@@ -633,7 +633,7 @@ Config.Furniture = {
 			[52] = { ["object"] = "prop_cs_remote_01", ["price"] = 300, ["label"] = "Remote control" },
 			[53] = { ["object"] = "prop_portable_hifi_01", ["price"] = 300, ["label"] = "Radio" },
 			[54] = { ["object"] = "prop_dj_deck_02", ["price"] = 300, ["label"] = "DJ table" },
-			[55] = { ["object"] = "prop_speaker_01", ["price"] = 300, ["label"] = "Speaker" }			
+			[55] = { ["object"] = "prop_speaker_01", ["price"] = 300, ["label"] = "Speaker" }
 		},
 	},
 	["lighting"] = {
@@ -701,7 +701,7 @@ Config.Furniture = {
 			[60] = { ["object"] = "apa_mp_h_lit_lamptable_09", ["price"] = 100, ["label"] = "night light 5" },
 			[61] = { ["object"] = "apa_mp_h_lit_lamptable_14", ["price"] = 100, ["label"] = "night light 6" },
 			[62] = { ["object"] = "apa_mp_h_lit_lamptable_17", ["price"] = 100, ["label"] = "night light 7" },
-			[63] = { ["object"] = "apa_mp_h_yacht_table_lamp_01", ["price"] = 100, ["label"] = "night light 8" }			
+			[63] = { ["object"] = "apa_mp_h_yacht_table_lamp_01", ["price"] = 100, ["label"] = "night light 8" }
 		},
 	},
 	["tables"] = {
@@ -756,27 +756,27 @@ Config.Furniture = {
 			[47] = { ["object"] = "ba_prop_int_edgy_table_01", ["price"] = 500, ["label"] = "table marble" },
 			[48] = { ["object"] = "ba_prop_int_edgy_table_02", ["price"] = 500, ["label"] = "table marble high" },
 			[49] = { ["object"] = "apa_mp_h_tab_sidelrg_01", ["price"] = 1000, ["label"] = "glass side table" },
-			[50] = { ["object"] = "xm_prop_lab_desk_01", ["price"] = 1000, ["label"] = "lab table" }			
+			[50] = { ["object"] = "xm_prop_lab_desk_01", ["price"] = 1000, ["label"] = "lab table" }
 		},
 	},
 	["plants"] = {
 		label = "Plants",
 		items = {
 			[1] = { ["object"] = "prop_fib_plant_01", ["price"] = 150, ["label"] = "Plant Fib" },
-			[2] = { ["object"] = "v_corp_bombplant", ["price"] = 170, ["label"] = "Plant Bomb" },		
-			[3] = { ["object"] = "v_res_mflowers", ["price"] = 170, ["label"] = "Plant Flowers" },	
-			[4] = { ["object"] = "v_res_mvasechinese", ["price"] = 170, ["label"] = "Plant Chinese" },	
-			[5] = { ["object"] = "v_res_m_bananaplant", ["price"] = 170, ["label"] = "Plant Banana" },	
-			[6] = { ["object"] = "v_res_m_palmplant1", ["price"] = 170, ["label"] = "Plant Palm" },	
-			[7] = { ["object"] = "v_res_m_palmstairs", ["price"] = 170, ["label"] = "Plant Palm 2" },	
-			[8] = { ["object"] = "v_res_m_urn", ["price"] = 170, ["label"] = "Plant Urn" },	
-			[9] = { ["object"] = "v_res_rubberplant", ["price"] = 170, ["label"] = "Plant Rubber" },	
-			[10] = { ["object"] = "v_res_tre_plant", ["price"] = 170, ["label"] = "Plant" },	
-			[11] = { ["object"] = "v_res_tre_tree", ["price"] = 170, ["label"] = "Plant Tree" },	
-			[12] = { ["object"] = "v_med_p_planter", ["price"] = 170, ["label"] = "Planter" },	
+			[2] = { ["object"] = "v_corp_bombplant", ["price"] = 170, ["label"] = "Plant Bomb" },
+			[3] = { ["object"] = "v_res_mflowers", ["price"] = 170, ["label"] = "Plant Flowers" },
+			[4] = { ["object"] = "v_res_mvasechinese", ["price"] = 170, ["label"] = "Plant Chinese" },
+			[5] = { ["object"] = "v_res_m_bananaplant", ["price"] = 170, ["label"] = "Plant Banana" },
+			[6] = { ["object"] = "v_res_m_palmplant1", ["price"] = 170, ["label"] = "Plant Palm" },
+			[7] = { ["object"] = "v_res_m_palmstairs", ["price"] = 170, ["label"] = "Plant Palm 2" },
+			[8] = { ["object"] = "v_res_m_urn", ["price"] = 170, ["label"] = "Plant Urn" },
+			[9] = { ["object"] = "v_res_rubberplant", ["price"] = 170, ["label"] = "Plant Rubber" },
+			[10] = { ["object"] = "v_res_tre_plant", ["price"] = 170, ["label"] = "Plant" },
+			[11] = { ["object"] = "v_res_tre_tree", ["price"] = 170, ["label"] = "Plant Tree" },
+			[12] = { ["object"] = "v_med_p_planter", ["price"] = 170, ["label"] = "Planter" },
 			[13] = { ["object"] = "v_ret_flowers", ["price"] = 100, ["label"] = "Flowers" },
 			[14] = { ["object"] = "v_ret_j_flowerdisp", ["price"] = 100, ["label"] = "Flowers 1" },
-			[15] = { ["object"] = "v_ret_j_flowerdisp_white", ["price"] = 100, ["label"] = "Flowers 2" },	
+			[15] = { ["object"] = "v_ret_j_flowerdisp_white", ["price"] = 100, ["label"] = "Flowers 2" },
 			[16] = { ["object"] = "v_res_m_vasefresh", ["price"] = 300, ["label"] = "FlowerFase" },
 			[17] = { ["object"] = "v_res_rosevasedead", ["price"] = 300, ["label"] = "Pink Fase 2" },
 			[18] = { ["object"] = "v_res_exoticvase", ["price"] = 300, ["label"] = "FlowerFase 2" },
@@ -808,7 +808,7 @@ Config.Furniture = {
 			[44] = { ["object"] = "apa_mp_h_acc_vase_flowers_01", ["price"] = 300, ["label"] = "plant pot 12" },
 			[45] = { ["object"] = "apa_mp_h_acc_vase_flowers_02", ["price"] = 300, ["label"] = "plant pot 13" },
 			[46] = { ["object"] = "apa_mp_h_acc_vase_flowers_03", ["price"] = 300, ["label"] = "plant pot 14" },
-			[47] = { ["object"] = "apa_mp_h_acc_vase_flowers_04", ["price"] = 300, ["label"] = "plant pot 15" }				
+			[47] = { ["object"] = "apa_mp_h_acc_vase_flowers_04", ["price"] = 300, ["label"] = "plant pot 15" }
 		},
 	},
 	["kitchen"] = {
@@ -870,7 +870,7 @@ Config.Furniture = {
 			[54] = { ["object"] = "v_ilev_tt_plate01", ["price"] = 500, ["label"] = "Plate 6" },
 			[55] = { ["object"] = "v_res_fa_grater", ["price"] = 500, ["label"] = "Grater" },
 			[56] = { ["object"] = "v_res_tt_pizzaplate", ["price"] = 500, ["label"] = "Pizza Plate" },
-			[57] = { ["object"] = "v_ret_247_ketchup2", ["price"] = 500, ["label"] = "Ketchup" }			
+			[57] = { ["object"] = "v_ret_247_ketchup2", ["price"] = 500, ["label"] = "Ketchup" }
 		},
 	},
 	["bathroom"] = {
@@ -903,7 +903,7 @@ Config.Furniture = {
 			[25] = { ["object"] = "prop_toilet_roll_01", ["price"] = 1000, ["label"] = "Toilet rol" },
 			[26] = { ["object"] = "prop_toilet_roll_02", ["price"] = 1000, ["label"] = "Toilet rol 2" },
 			[27] = { ["object"] = "prop_toilet_shamp_01", ["price"] = 1000, ["label"] = "Shampoo" },
-			[28] = { ["object"] = "prop_toilet_shamp_02", ["price"] = 1000, ["label"] = "Shampoo 2" }			
+			[28] = { ["object"] = "prop_toilet_shamp_02", ["price"] = 1000, ["label"] = "Shampoo 2" }
 		},
 	},
 	["medical"] = {
@@ -976,7 +976,7 @@ Config.Furniture = {
 			[19] = { ["object"] = "hei_heist_acc_artgolddisc_02", ["price"] = 250, ["label"] = "wall deco 3" },
 			[20] = { ["object"] = "hei_heist_acc_artgolddisc_03", ["price"] = 250, ["label"] = "wall deco 4" },
 			[21] = { ["object"] = "hei_heist_acc_artgolddisc_04", ["price"] = 250, ["label"] = "wall deco 5" },
-			[22] = { ["object"] = "v_ilev_ra_doorsafe", ["price"] = 250, ["label"] = "Luxury deco" }		
+			[22] = { ["object"] = "v_ilev_ra_doorsafe", ["price"] = 250, ["label"] = "Luxury deco" }
 		},
 	},
 }
