@@ -152,6 +152,13 @@ RegisterNetEvent('qb-houses:server:setHouses', function()
     TriggerClientEvent("qb-houses:client:setHouseConfig", src, Config.Houses)
 end)
 
+RegisterNetEvent('qb-houses:server:createBlip', function()
+    local src = source
+    local ped = GetPlayerPed(src)
+    local coords = GetEntityCoords(ped)
+    TriggerClientEvent("qb-houses:client:createBlip", -1, coords)
+end)
+
 RegisterNetEvent('qb-houses:server:addNewHouse', function(street, coords, price, tier)
     local src = source
     local street = street:gsub("%'", "")

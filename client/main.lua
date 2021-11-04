@@ -695,7 +695,7 @@ RegisterNetEvent('qb-houses:client:createHouses', function(price, tier)
     }
     street = street:gsub("%-", " ")
     TriggerServerEvent('qb-houses:server:addNewHouse', street, coords, price, tier)
-    if Config.UnownedBlips then TriggerEvent('qb-houses:client:createBlip') end
+    if Config.UnownedBlips then TriggerServerEvent('qb-houses:server:createBlip') end
 end)
 
 RegisterNetEvent('qb-houses:client:addGarage', function()
@@ -856,9 +856,7 @@ RegisterNetEvent('qb-houses:client:setupHouseBlips2', function() -- Setup unowne
     end
 end)
 
-RegisterNetEvent('qb-houses:client:createBlip', function() -- Create unowned on command
-    local ped = PlayerPedId()
-    local coords = GetEntityCoords(ped)
+RegisterNetEvent('qb-houses:client:createBlip', function(coords) -- Create unowned on command
     NewHouseBlip = AddBlipForCoord(coords.x, coords.y, coords.z)
     SetBlipSprite (NewHouseBlip, 40)
     SetBlipDisplay(NewHouseBlip, 4)
