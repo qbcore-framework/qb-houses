@@ -626,7 +626,6 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(source, cb, input)
-    local src = source
     if input then
         local search = escape_sqli(input)
         local searchData = {}
@@ -640,7 +639,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
                 for k, v in pairs(houses) do
                     searchData[#searchData+1] = {
                         name = v.house,
-                        keyholders = keyholders,
+                        keyholders = v.keyholders,
                         owner = v.citizenid,
                         price = Config.Houses[v.house].price,
                         label = Config.Houses[v.house].adress,
