@@ -30,3 +30,5 @@ dependencies {
 	'qb-clothing',
 	'qb-weathersync'
 }
+
+lua54 'yes'
