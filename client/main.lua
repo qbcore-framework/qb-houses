@@ -352,11 +352,11 @@ end
 
 function HouseKeysMenu()
     ped = PlayerPedId();
-    MenuTitle = "Sleutels"
+    MenuTitle = "Keys"
     ClearMenu()
     QBCore.Functions.TriggerCallback('qb-houses:server:getHouseKeyHolders', function(holders)
         ped = PlayerPedId();
-        MenuTitle = "Sleutelhouders:"
+        MenuTitle = "Keyholders:"
         ClearMenu()
         if holders == nil or next(holders) == nil then
             QBCore.Functions.Notify("No key holders found..", "error", 3500)
