@@ -19,6 +19,7 @@ local previewObj = nil
 
 local function openDecorateUI()
 	SetNuiFocus(true, true)
+	cursorEnabled = true
 	SendNUIMessage({
 		type = "openObjects",
 		furniture = Config.Furniture,
@@ -27,8 +28,8 @@ local function openDecorateUI()
 end
 
 local function closeDecorateUI()
-	cursorEnabled = false
 	SetNuiFocus(false, false)
+	cursorEnabled = false
 	SendNUIMessage({
 		type = "closeUI",
 	})
@@ -331,6 +332,7 @@ RegisterNUICallback("closedecorations", function(data, cb)
 	end
 	DisableEditMode()
     SetNuiFocus(false, false)
+	cursorEnabled = false
 end)
 
 RegisterNUICallback("deleteSelectedObject", function(data, cb)
@@ -569,7 +571,7 @@ Citizen.CreateThread(function()
 						cursorEnabled = true
 					end
 				end
-            end
+                        end
 		end
 	end
 end)
