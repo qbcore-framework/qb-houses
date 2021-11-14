@@ -6,7 +6,7 @@ local housesLoaded = false
 
 -- Threads
 
-Citizen.CreateThread(function()
+CreateThread(function()
     local HouseGarages = {}
     local result = exports.oxmysql:executeSync('SELECT * FROM houselocations', {})
     if result[1] then
@@ -36,7 +36,7 @@ Citizen.CreateThread(function()
     TriggerClientEvent("qb-houses:client:setHouseConfig", -1, Config.Houses)
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         if not housesLoaded then
             exports.oxmysql:execute('SELECT * FROM player_houses', {}, function(houses)
@@ -50,7 +50,7 @@ Citizen.CreateThread(function()
             end)
             housesLoaded = true
         end
-        Citizen.Wait(7)
+        Wait(7)
     end
 end)
 
