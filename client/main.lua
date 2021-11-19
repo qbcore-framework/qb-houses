@@ -517,6 +517,12 @@ end
 --         return exports['qb-interior']:CreateWeed(coords)
 --     elseif Config.Houses[house].tier == 58 then
 --         return exports['qb-interior']:CreateWeed2(coords)
+--     elseif Config.Houses[house].tier == 59 then
+--         return exports['qb-interior']:CreateMansion(coords)
+--     elseif Config.Houses[house].tier == 60 then
+--         return exports['qb-interior']:CreateMansion2(coords)
+--     elseif Config.Houses[house].tier == 61 then
+--         return exports['qb-interior']:CreateMansion3(coords)
 --     else
 --         QBCore.Functions.Notify('Invalid House Tier', 'error')
 --     end
