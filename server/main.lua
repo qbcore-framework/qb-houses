@@ -435,8 +435,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
     if housekeyholders[house] then
         for i = 1, #housekeyholders[house], 1 do
             if Player.PlayerData.citizenid ~= housekeyholders[house][i] then
-                local result = exports.oxmysql:executeSync('SELECT charinfo FROM players WHERE citizenid = ?',
-                    {housekeyholders[house][i]})
+                local result = exports.oxmysql:executeSync('SELECT charinfo FROM players WHERE citizenid = ?', {housekeyholders[house][i]})
                 if result[1] then
                     local charinfo = json.decode(result[1].charinfo)
                     retval[#retval+1] = {
@@ -445,9 +444,9 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
                         citizenid = housekeyholders[house][i]
                     }
                 end
-                cb(retval)
             end
         end
+        cb(retval)
     else
         cb(nil)
     end
