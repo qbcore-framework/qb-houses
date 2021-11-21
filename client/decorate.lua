@@ -55,7 +55,7 @@ local function EnableEditMode()
 end
 
 local function SaveDecorations()
-	if closesthouse then
+	if ClosestHouse then
 		if SelectedObj then
 			if SelObjId ~= 0 then
 				ObjectList[SelObjId] = {hashname = SelObjHash, x = SelObjPos.x, y = SelObjPos.y, z = SelObjPos.z, rotx = SelObjRot.x, roty = SelObjRot.y, rotz = SelObjRot.z, object = SelectedObj, objectId = SelObjId}
@@ -71,7 +71,7 @@ local function SaveDecorations()
 				DeleteObject(v.object)
 			end
 		end
-		TriggerServerEvent("qb-houses:server:savedecorations", closesthouse, ObjectList)
+		TriggerServerEvent("qb-houses:server:savedecorations", ClosestHouse, ObjectList)
 	end
 end
 
@@ -217,8 +217,8 @@ end
 
 RegisterNetEvent('qb-houses:client:decorate', function()
 	Wait(500)
-	if inside then
-		if hasKey then
+	if IsInside then
+		if HasKey then
 			if not DecoMode then
 				EnableEditMode()
 				openDecorateUI()
@@ -489,7 +489,7 @@ CreateThread(function()
 		Wait(7)
 		if DecoMode then
 			local camPos = GetCamCoord(MainCamera)
-			local dist = #(vector3(camPos.x, camPos.y, camPos.z) - vector3(Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z))
+			local dist = #(vector3(camPos.x, camPos.y, camPos.z) - vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z))
 			if dist > 50.0 then
 				DisableEditMode()
 				closeDecorateUI()
