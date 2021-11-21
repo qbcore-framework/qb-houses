@@ -248,7 +248,7 @@ RegisterNetEvent('qb-houses:server:giveKey', function(house, target)
         {json.encode(housekeyholders[house]), house})
 end)
 
-RegisterNetEvent('qb-houses:server:removeHouseKey', function(house, citizenData)
+RegisterNetEvent('qb-houses:server:RemoveHouseKey', function(house, citizenData)
     local src = source
     local newHolders = {}
     if housekeyholders[house] then
