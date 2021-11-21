@@ -361,6 +361,7 @@ end
 
 function HouseKeysMenu()
     local holders = getKeyHolders()
+    p = nil
     if holders == nil or next(holders) == nil then
         QBCore.Functions.Notify("No key holders found..", "error", 3500)
         CloseMenuFull()
