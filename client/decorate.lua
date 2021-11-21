@@ -4,7 +4,7 @@ local MainCamera = nil
 local curPos
 local speeds = {0.05, 0.1, 0.2, 0.4, 0.5}
 local curSpeed = 1
-local cursorEnabled = true
+local cursorEnabled = false
 local SelectedObj = nil
 local SelObjHash = {}
 local SelObjPos = {}
@@ -19,6 +19,7 @@ local previewObj = nil
 
 local function openDecorateUI()
 	SetNuiFocus(true, true)
+	cursorEnabled = true
 	SendNUIMessage({
 		type = "openObjects",
 		furniture = Config.Furniture,
@@ -27,8 +28,8 @@ local function openDecorateUI()
 end
 
 local function closeDecorateUI()
-	cursorEnabled = not cursorEnabled
 	SetNuiFocus(false, false)
+	cursorEnabled = false
 	SendNUIMessage({
 		type = "closeUI",
 	})
@@ -238,6 +239,7 @@ RegisterNUICallback("closedecorations", function(data, cb)
 	end
 	DisableEditMode()
     SetNuiFocus(false, false)
+	cursorEnabled = false
 end)
 
 RegisterNUICallback("deleteSelectedObject", function(data, cb)
@@ -261,7 +263,7 @@ RegisterNUICallback("buySelectedObject", function(data, cb)
     QBCore.Functions.TriggerCallback('qb-houses:server:buyFurniture', function(isSuccess)
         if isSuccess then
             SetNuiFocus(false, false)
-            cursorEnabled = not cursorEnabled
+            cursorEnabled = false
             SaveDecorations()
             SelectedObj = nil
             SelObjId = 0
@@ -304,11 +306,8 @@ RegisterNUICallback('removeObject', function()
 end)
 
 RegisterNUICallback('toggleCursor', function()
-	if cursorEnabled then
-		SetNuiFocus(false, false)
-	end
-
 	cursorEnabled = not cursorEnabled
+	SetNuiFocus(cursorEnabled, cursorEnabled)
 end)
 
 RegisterNUICallback('selectOwnedObject', function(data)
@@ -328,7 +327,7 @@ end)
 
 RegisterNUICallback('editOwnedObject', function(data)
 	SetNuiFocus(false, false)
-	cursorEnabled = not cursorEnabled
+	cursorEnabled = false
 	local objectData = data.objectData
 
 	local ownedObject = GetClosestObjectOfType(objectData.x, objectData.y, objectData.z, 1.5, GetHashKey(objectData.hashname), false, 6, 7)
@@ -356,7 +355,7 @@ end)
 
 RegisterNUICallback("spawnobject", function(data, cb)
 	SetNuiFocus(false, false)
-	cursorEnabled = not cursorEnabled
+	cursorEnabled = false
 	if previewObj then
 		DeleteObject(previewObj)
 	end
@@ -457,14 +456,14 @@ Citizen.CreateThread(function()
                 end
 				if IsControlJustReleased(0, 191) then -- Enter
 					SetNuiFocus(true, true)
-					cursorEnabled = not cursorEnabled
+					cursorEnabled = true
 					if not isEdit then
 						SendNUIMessage({
 							type = "buyOption",
 						})
 					else
 						SetNuiFocus(false, false)
-						cursorEnabled = not cursorEnabled
+						cursorEnabled = false
 						SaveDecorations()
 						SelectedObj = nil
 						SelObjId = 0
@@ -476,9 +475,10 @@ Citizen.CreateThread(function()
 				if IsControlJustPressed(0, 166) then -- F5
 					if not cursorEnabled then
 						SetNuiFocus(true, true)
+						cursorEnabled = true
 					end
 				end
-            end
+                        end
 		end
 	end
 end)
