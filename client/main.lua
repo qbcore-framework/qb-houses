@@ -19,8 +19,10 @@ local POIOffsets = nil
 local entering = false
 local data = nil
 local CurrentHouse = nil
-local inHoldersMenu = false
 local RamsDone = 0
+local keyholderMenu = {}
+local keyholderOptions = {}
+local p = nil
 
 -- Functions
 
@@ -343,56 +345,84 @@ function CloseMenuFull()
     exports['qb-menu']:closeMenu()
 end
 
-function RemoveHouseKey(citizenData)
-    TriggerServerEvent('qb-houses:server:RemoveHouseKey', ClosestHouse, citizenData)
+local function RemoveHouseKey(citizenData)
+    TriggerServerEvent('qb-houses:server:removeHouseKey', ClosestHouse, citizenData)
     CloseMenuFull()
 end
 
-function HouseKeysMenu()
-    ped = PlayerPedId();
-    MenuTitle = "Keys"
-    ClearMenu()
+local function getKeyHolders()
+    if p then return end
+    p = promise.new()
     QBCore.Functions.TriggerCallback('qb-houses:server:getHouseKeyHolders', function(holders)
-        ped = PlayerPedId();
-        MenuTitle = "Keyholders:"
-        ClearMenu()
-        if holders == nil or next(holders) == nil then
-            QBCore.Functions.Notify("No key holders found..", "error", 3500)
-            CloseMenuFull()
-        else
-            for k, v in pairs(holders) do
-                Menu.addButton(holders[k].firstname .. " " .. holders[k].lastname, "optionMenu", holders[k])
-            end
-        end
-        Menu.addButton("Exit Menu", "CloseMenuFull", nil)
-    end, ClosestHouse)
+        p:resolve(holders)
+    end,ClosestHouse)
+    return Citizen.Await(p)
 end
 
-function optionMenu(citizenData)
-    ped = PlayerPedId();
-    MenuTitle = "What now?"
-    ClearMenu()
-    Menu.addButton("Remove key", "RemoveHouseKey", citizenData)
-    Menu.addButton("Back", "HouseKeysMenu",nil)
+function HouseKeysMenu()
+    local holders = getKeyHolders()
+    if holders == nil or next(holders) == nil then
+        QBCore.Functions.Notify("No key holders found..", "error", 3500)
+        CloseMenuFull()
+    else
+        keyholderMenu = {}
+
+        for k, v in pairs(holders) do
+            keyholderMenu[#keyholderMenu+1] = {
+                header = holders[k].firstname .. " " .. holders[k].lastname,
+                params = {
+                    event = "qb-houses:client:OpenClientOptions",
+                    args = {
+                        citizenData = holders[k]
+                    }
+                }
+            }
+        end
+        exports['qb-menu']:openMenu(keyholderMenu)
+    end
+
+end
+
+local function optionMenu(citizenData)
+    keyholderOptions = {
+        {
+            header = "Remove Key",
+            params = {
+                events = "qb-houses:client:RevokeKey",
+                args = {
+                    citizenData = citizenData
+                }
+            }
+        },
+        {
+            header = "Back",
+            params = {
+                event = "qb-houses:client:removeHouseKey",
+                args = {}
+            }
+        },
+    }
+
+    exports['qb-menu']:openMenu(keyholderOptions)
 end
 
 -- Shell Configuration
-
 local function getDataForHouseTier(house, coords)
-    if Config.Houses[house].tier == 1 then
-        return exports['qb-interior']:CreateApartmentShell(coords)
-    elseif Config.Houses[house].tier == 2 then
-        return exports['qb-interior']:CreateTier1House(coords)
-    elseif Config.Houses[house].tier == 3 then
-        return exports['qb-interior']:CreateTrevorsShell(coords)
-    elseif Config.Houses[house].tier == 4 then
-        return exports['qb-interior']:CreateCaravanShell(coords)
-    elseif Config.Houses[house].tier == 5 then
-        return exports['qb-interior']:CreateLesterShell(coords)
-    elseif Config.Houses[house].tier == 6 then
-        return exports['qb-interior']:CreateRanchShell(coords)
-    else
+    local houseTier = Config.Houses[house].tier
+    local shells = {
+        [1] = function(coords) return exports['qb-interior']:CreateApartmentShell(coords) end,
+        [2] = function(coords) return exports['qb-interior']:CreateTier1House(coords) end,
+        [3] = function(coords) return exports['qb-interior']:CreateTrevorsShell(coords) end,
+        [4] = function(coords) return exports['qb-interior']:CreateCaravanShell(coords) end,
+        [5] = function(coords) return exports['qb-interior']:CreateLesterShell(coords) end,
+        [6] = function(coords) return exports['qb-interior']:CreateRanchShell(coords) end
+    }
+
+    if not shells[houseTier] then
         QBCore.Functions.Notify('Invalid House Tier', 'error')
+        return nil
+    else
+        return shells[houseTier](coords)
     end
 end
 
@@ -745,7 +775,7 @@ RegisterNetEvent('qb-houses:client:RingDoor', function(player, house)
     end
 end)
 
-RegisterNetEvent('qb-houses:client:giveHouseKey', function(data)
+RegisterNetEvent('qb-houses:client:giveHouseKey', function()
     local player, distance = GetClosestPlayer()
     if player ~= -1 and distance < 2.5 and ClosestHouse ~= nil then
         local playerId = GetPlayerServerId(player)
@@ -763,16 +793,14 @@ RegisterNetEvent('qb-houses:client:giveHouseKey', function(data)
     end
 end)
 
-RegisterNetEvent('qb-houses:client:RemoveHouseKey', function(data)
+RegisterNetEvent('qb-houses:client:removeHouseKey', function()
     if ClosestHouse ~= nil then
         local pedpos = GetEntityCoords(PlayerPedId())
         local housedist = #(pedpos - vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z))
-        if housedist < 5 then
+        if housedist <= 5 then
             QBCore.Functions.TriggerCallback('qb-houses:server:getHouseOwner', function(result)
                 if QBCore.Functions.GetPlayerData().citizenid == result then
-                    inHoldersMenu = true
                     HouseKeysMenu()
-                    Menu.hidden = not Menu.hidden
                 else
                     QBCore.Functions.Notify("You're not a house owner..", "error")
                 end
@@ -783,6 +811,10 @@ RegisterNetEvent('qb-houses:client:RemoveHouseKey', function(data)
     else
         QBCore.Functions.Notify("You're not close enough to the door..", "error")
     end
+end)
+
+RegisterNetEvent('qb-houses:client:RevokeKey', function(data)
+    RemoveHouseKey(data.citizenData)
 end)
 
 RegisterNetEvent('qb-houses:client:refreshHouse', function(data)
@@ -1043,7 +1075,6 @@ RegisterNetEvent('qb-houses:client:AnswerDoorbell', function()
     end
 end)
 
-
 RegisterNetEvent('qb-houses:client:OpenStash', function()
     local stashLoc = vector3(stashLocation.x, stashLocation.y, stashLocation.z)
     if CheckDistance(stashLoc, 1.5) then
@@ -1085,6 +1116,10 @@ RegisterNetEvent('qb-houses:client:ViewHouse', function()
         TriggerServerEvent('qb-houses:server:viewHouse', ClosestHouse)
     end
 end)
+
+RegisterNetEvent('qb-houses:client:KeyholderOptions', function(data)
+    optionMenu(data.citizenData)
+end)
 -- NUI Callbacks
 
 RegisterNUICallback('HasEnoughMoney', function(data, cb)
@@ -1125,15 +1160,6 @@ CreateThread(function()
             if not IsInside then
                 SetClosestHouse()
             end
-        end
-    end
-end)
-
-CreateThread(function()
-    while true do
-        Wait(1)
-        if inHoldersMenu then
-            Menu.renderGUI()
         end
     end
 end)
