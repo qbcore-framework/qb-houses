@@ -216,7 +216,7 @@ end
 -- Events
 
 RegisterNetEvent('qb-houses:client:decorate', function()
-	Citizen.Wait(500)
+	Wait(500)
 	if inside then
 		if hasKey then
 			if not DecoMode then
@@ -246,7 +246,7 @@ RegisterNUICallback("deleteSelectedObject", function(data, cb)
 	DeleteObject(SelectedObj)
 	SelectedObj = nil
 	table.remove(ObjectList, SelObjId)
-	Citizen.Wait(100)
+	Wait(100)
 	SaveDecorations()
 	SelObjId = 0
 	peanut = false
@@ -362,7 +362,7 @@ RegisterNUICallback("spawnobject", function(data, cb)
 	local modelHash = GetHashKey(tostring(data.object))
 	RequestModel(modelHash)
 	while not HasModelLoaded(modelHash) do
-	    Citizen.Wait(1000)
+	    Wait(1000)
 	end
 	local rotation = GetCamRot(MainCamera, 2)
 	local xVect = 2.5 * math.sin( degToRad( rotation.z ) ) * -1.0
@@ -393,7 +393,7 @@ RegisterNUICallback("chooseobject", function(data, cb)
 			break
 		end
 		count = count + 1
-	    Citizen.Wait(1000)
+	    Wait(1000)
 	end
 
 	-- Make buttons selectable again
@@ -410,9 +410,9 @@ end)
 
 -- Threads
 
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
-		Citizen.Wait(7)
+		Wait(7)
 		if DecoMode then
 			DisableAllControlActions(0)
 			EnableControlAction(0, 32, true) -- W
@@ -484,9 +484,9 @@ Citizen.CreateThread(function()
 end)
 
 -- Out of area
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
-		Citizen.Wait(7)
+		Wait(7)
 		if DecoMode then
 			local camPos = GetCamCoord(MainCamera)
 			local dist = #(vector3(camPos.x, camPos.y, camPos.z) - vector3(Config.Houses[closesthouse].coords.enter.x, Config.Houses[closesthouse].coords.enter.y, Config.Houses[closesthouse].coords.enter.z))

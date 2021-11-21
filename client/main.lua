@@ -42,14 +42,14 @@ end
 local function loadAnimDict(dict)
     while (not HasAnimDictLoaded(dict)) do
         RequestAnimDict(dict)
-        Citizen.Wait(5)
+        Wait(5)
     end
 end
 
 local function openHouseAnim()
     loadAnimDict("anim@heists@keycard@")
     TaskPlayAnim( PlayerPedId(), "anim@heists@keycard@", "exit", 5.0, 1.0, -1, 16, 0, 0, 0, 0 )
-    Citizen.Wait(400)
+    Wait(400)
     ClearPedTasks(PlayerPedId())
 end
 
@@ -88,13 +88,13 @@ local function DoRamAnimation(bool)
     if bool then
         RequestAnimDict(dict)
         while not HasAnimDictLoaded(dict) do
-            Citizen.Wait(1)
+            Wait(1)
         end
         TaskPlayAnim(ped, dict, anim, 8.0, 8.0, -1, 1, -1, false, false, false)
     else
         RequestAnimDict(dict)
         while not HasAnimDictLoaded(dict) do
-            Citizen.Wait(1)
+            Wait(1)
         end
         TaskPlayAnim(ped, dict, "exit", 8.0, 8.0, -1, 1, -1, false, false, false)
     end
@@ -120,7 +120,7 @@ end
 local function CreateInstuctionScaleform(scaleform)
     local scaleform = RequestScaleformMovie(scaleform)
     while not HasScaleformMovieLoaded(scaleform) do
-        Citizen.Wait(0)
+        Wait(0)
     end
     PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
     PopScaleformMovieFunctionVoid()
@@ -145,20 +145,20 @@ end
 
 local function FrontDoorCam(coords)
     DoScreenFadeOut(150)
-    Citizen.Wait(500)
+    Wait(500)
     cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", coords.x, coords.y, coords.z + 0.5, 0.0, 0.00, coords.h - 180, 80.00, false, 0)
     SetCamActive(cam, true)
     RenderScriptCams(true, true, 500, true, true)
     FrontCam = true
     FreezeEntityPosition(PlayerPedId(), true)
-    Citizen.Wait(500)
+    Wait(500)
     DoScreenFadeIn(150)
     SendNUIMessage({
         type = "frontcam",
         toggle = true,
         label = Config.Houses[closesthouse].adress
     })
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while FrontCam do
             local instructions = CreateInstuctionScaleform("instructional_buttons")
             DrawScaleformMovieFullscreen(instructions, 255, 255, 255, 255, 0)
@@ -170,7 +170,7 @@ local function FrontDoorCam(coords)
                     type = "frontcam",
                     toggle = false,
                 })
-                Citizen.Wait(500)
+                Wait(500)
                 RenderScriptCams(false, true, 500, true, true)
                 FreezeEntityPosition(PlayerPedId(), false)
                 SetCamActive(cam, false)
@@ -178,7 +178,7 @@ local function FrontDoorCam(coords)
                 ClearTimecycleModifier("scanline_cam_cheap")
                 cam = nil
                 FrontCam = false
-                Citizen.Wait(500)
+                Wait(500)
                 DoScreenFadeIn(150)
             end
 
@@ -208,7 +208,7 @@ local function FrontDoorCam(coords)
                 SetCamRot(cam, getCameraRot.x, 0.0, getCameraRot.z - 0.7, 2)
             end
 
-            Citizen.Wait(1)
+            Wait(1)
         end
     end)
 end
@@ -296,7 +296,7 @@ local function LoadDecorations(house)
 						local modelHash = GetHashKey(Config.Houses[house].decorations[k].hashname)
 						RequestModel(modelHash)
 						while not HasModelLoaded(modelHash) do
-							Citizen.Wait(10)
+							Wait(10)
 						end
 						local decorateObject = CreateObject(modelHash, Config.Houses[house].decorations[k].x, Config.Houses[house].decorations[k].y, Config.Houses[house].decorations[k].z, false, false, false)
 						SetEntityRotation(decorateObject, Config.Houses[house].decorations[k].rotx, Config.Houses[house].decorations[k].roty, Config.Houses[house].decorations[k].rotz)
@@ -318,7 +318,7 @@ local function LoadDecorations(house)
 				local modelHash = GetHashKey(Config.Houses[house].decorations[k].hashname)
 				RequestModel(modelHash)
 				while not HasModelLoaded(modelHash) do
-					Citizen.Wait(10)
+					Wait(10)
 				end
 				local decorateObject = CreateObject(modelHash, Config.Houses[house].decorations[k].x, Config.Houses[house].decorations[k].y, Config.Houses[house].decorations[k].z, false, false, false)
 				Config.Houses[house].decorations[k].object = decorateObject
@@ -533,15 +533,15 @@ local function enterOwnedHouse(house)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
     openHouseAnim()
     inside = true
-    Citizen.Wait(250)
+    Wait(250)
     local coords = { x = Config.Houses[house].coords.enter.x, y = Config.Houses[house].coords.enter.y, z= Config.Houses[house].coords.enter.z - Config.MinZOffset}
     LoadDecorations(house)
     data = getDataForHouseTier(house, coords)
-    Citizen.Wait(100)
+    Wait(100)
     houseObj = data[1]
     POIOffsets = data[2]
     entering = true
-    Citizen.Wait(500)
+    Wait(500)
     TriggerServerEvent('qb-houses:server:SetInsideMeta', house, true)
     TriggerEvent('qb-weathersync:client:DisableSync')
     TriggerEvent('qb-weed:client:getHousePlants', house)
@@ -554,13 +554,13 @@ local function leaveOwnedHouse(house)
         inside = false
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
         openHouseAnim()
-        Citizen.Wait(250)
+        Wait(250)
         DoScreenFadeOut(250)
-        Citizen.Wait(500)
+        Wait(500)
         exports['qb-interior']:DespawnInterior(houseObj, function()
             UnloadDecorations()
             TriggerEvent('qb-weathersync:client:EnableSync')
-            Citizen.Wait(250)
+            Wait(250)
             DoScreenFadeIn(250)
             SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
             SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
@@ -576,14 +576,14 @@ local function enterNonOwnedHouse(house)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
     openHouseAnim()
     inside = true
-    Citizen.Wait(250)
+    Wait(250)
     local coords = { x = Config.Houses[closesthouse].coords.enter.x, y = Config.Houses[closesthouse].coords.enter.y, z= Config.Houses[closesthouse].coords.enter.z - Config.MinZOffset}
     LoadDecorations(house)
     data = getDataForHouseTier(house, coords)
     houseObj = data[1]
     POIOffsets = data[2]
     entering = true
-    Citizen.Wait(500)
+    Wait(500)
     TriggerServerEvent('qb-houses:server:SetInsideMeta', house, true)
     TriggerEvent('qb-weathersync:client:DisableSync')
     TriggerEvent('qb-weed:client:getHousePlants', house)
@@ -597,13 +597,13 @@ local function leaveNonOwnedHouse(house)
         inside = false
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
         openHouseAnim()
-        Citizen.Wait(250)
+        Wait(250)
         DoScreenFadeOut(250)
-        Citizen.Wait(500)
+        Wait(500)
         exports['qb-interior']:DespawnInterior(houseObj, function()
             UnloadDecorations()
             TriggerEvent('qb-weathersync:client:EnableSync')
-            Citizen.Wait(250)
+            Wait(250)
             DoScreenFadeIn(250)
             SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
             SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
@@ -662,7 +662,7 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     SetClosestHouse()
     TriggerEvent('qb-houses:client:setupHouseBlips')
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
-    Citizen.Wait(100)
+    Wait(100)
     TriggerEvent('qb-garages:client:setHouseGarage', closesthouse, hasKey)
     TriggerServerEvent("qb-houses:server:setHouses")
 end)
@@ -693,7 +693,7 @@ end)
 RegisterNetEvent('qb-houses:client:createHouses', function(price, tier)
     local pos = GetEntityCoords(PlayerPedId())
     local heading = GetEntityHeading(PlayerPedId())
-    local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+	local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
     local street = GetStreetNameFromHashKey(s1)
     local coords = {
         enter 	= { x = pos.x, y = pos.y, z = pos.z, h = heading},
@@ -789,7 +789,7 @@ RegisterNetEvent('qb-houses:client:removeHouseKey', function(data)
 end)
 
 RegisterNetEvent('qb-houses:client:refreshHouse', function(data)
-    Citizen.Wait(100)
+    Wait(100)
     SetClosestHouse()
 end)
 
@@ -821,8 +821,8 @@ RegisterNetEvent('qb-houses:client:LastLocationHouse', function(houseId)
 end)
 
 RegisterNetEvent('qb-houses:client:setupHouseBlips', function() -- Setup owned on load
-    Citizen.CreateThread(function()
-        Citizen.Wait(2000)
+    CreateThread(function()
+        Wait(2000)
         if LocalPlayer.state['isLoggedIn'] then
             QBCore.Functions.TriggerCallback('qb-houses:server:getOwnedHouses', function(ownedHouses)
                 if ownedHouses then
@@ -887,7 +887,7 @@ end)
 
 RegisterNetEvent('qb-houses:client:viewHouse', function(houseprice, brokerfee, bankfee, taxes, firstname, lastname)
     setViewCam(Config.Houses[closesthouse].coords.cam, Config.Houses[closesthouse].coords.cam.h, Config.Houses[closesthouse].coords.yaw)
-    Citizen.Wait(500)
+    Wait(500)
     openContract(true)
     SendNUIMessage({
         type = "setupContract",
@@ -1046,20 +1046,20 @@ end)
 
 -- Threads
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Wait(1000)
     TriggerServerEvent('qb-houses:client:setHouses')
     SetClosestHouse()
     TriggerEvent('qb-houses:client:setupHouseBlips')
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
-    Citizen.Wait(100)
+    Wait(100)
     TriggerEvent('qb-garages:client:setHouseGarage', closesthouse, hasKey)
     TriggerServerEvent("qb-houses:server:setHouses")
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
-        Citizen.Wait(5000)
+        Wait(5000)
         if LocalPlayer.state['isLoggedIn'] then
             if not inside then
                 SetClosestHouse()
@@ -1068,16 +1068,16 @@ Citizen.CreateThread(function()
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
-        Citizen.Wait(1)
+        Wait(1)
         if inHoldersMenu then
             Menu.renderGUI()
         end
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         local pos = GetEntityCoords(PlayerPedId())
         local inRange = false
@@ -1207,7 +1207,7 @@ Citizen.CreateThread(function()
                                 if IsControlJustPressed(0, 38) then -- E
                                     DoScreenFadeOut(250)
                                     while not IsScreenFadedOut() do
-                                        Citizen.Wait(10)
+                                        Wait(10)
                                     end
                                     exports['qb-interior']:DespawnInterior(houseObj, function()
                                         TriggerEvent('qb-weathersync:client:EnableSync')
@@ -1227,9 +1227,9 @@ Citizen.CreateThread(function()
             end
         end
         if not inRange then
-            Citizen.Wait(1500)
+            Wait(1500)
         end
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
