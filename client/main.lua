@@ -1200,7 +1200,7 @@ CreateThread(function()
                                             isMenuHeader = true, -- Set to true to make a nonclickable title
                                         },
                                         {
-                                            header = "Enter You House",
+                                            header = "Enter Your House",
                                             params = {
                                                 event = "qb-houses:client:EnterHouse",
                                             }
