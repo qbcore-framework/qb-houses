@@ -1184,14 +1184,34 @@ CreateThread(function()
                     if not IsInside then
                         if ClosestHouse ~= nil then
                             if #(pos - dist2) <= 1.5 then
-                                houseMenu = {
-                                    {
-                                        header = "/enter to enter house",
-                                        isMenuHeader = true,
-                                        params = {}
+                                if Config.Command == true then 
+                                    houseMenu = {
+                                        {
+                                            header = "/enter to enter house",
+                                            isMenuHeader = true,
+                                            params = {}
+                                        }
                                     }
-                                }
-                                nearLocation = true
+                                    nearLocation = true
+                                else
+                                    houseMenu = {
+                                        {
+                                            header = "House Options",
+                                            isMenuHeader = true, -- Set to true to make a nonclickable title
+                                        },
+                                        {
+                                            header = "Enter You House",
+                                            params = {
+                                                event = "qb-houses:client:EnterHouse",
+                                        }
+                                        {
+                                            header = "Give House Key",
+                                            params = {
+                                                event = "qb-houses:client:giveHouseKey",
+                                        }
+                                    }
+                                    nearLocation = true
+                                end
                             end
                         end
                     else

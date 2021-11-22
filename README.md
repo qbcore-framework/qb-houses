@@ -108,6 +108,7 @@ Config = Config or {} -- Don't touch
 
 Config.MinZOffset = 30 -- Minimum Z Offset houses will be (You don't need to change it:)
 
+Config.Command = true -- How the qb-menu reacts to entering house
 Config.RamsNeeded = 2 -- How many times stormram needs to be used to break the door.
 
 Config.Houses = {} -- Don't touch
