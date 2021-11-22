@@ -1203,11 +1203,13 @@ CreateThread(function()
                                             header = "Enter You House",
                                             params = {
                                                 event = "qb-houses:client:EnterHouse",
-                                        }
+                                            }
+                                        },
                                         {
                                             header = "Give House Key",
                                             params = {
                                                 event = "qb-houses:client:giveHouseKey",
+                                            }
                                         }
                                     }
                                     nearLocation = true
