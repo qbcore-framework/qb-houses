@@ -151,6 +151,7 @@ local function FrontDoorCam(coords)
     cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", coords.x, coords.y, coords.z + 0.5, 0.0, 0.00, coords.h - 180, 80.00, false, 0)
     SetCamActive(cam, true)
     RenderScriptCams(true, true, 500, true, true)
+    TriggerEvent('qb-weathersync:client:EnableSync')
     FrontCam = true
     FreezeEntityPosition(PlayerPedId(), true)
     Wait(500)
@@ -572,7 +573,8 @@ local function enterOwnedHouse(house)
     entering = true
     Wait(500)
     TriggerServerEvent('qb-houses:server:SetInsideMeta', house, true)
-    TriggerEvent('qb-weathersync:client:DisableSync')
+    --TriggerEvent('qb-weathersync:client:DisableSync')
+    TriggerEvent('qb-weathersync:client:EnableSync')
     TriggerEvent('qb-weed:client:getHousePlants', house)
     entering = false
     setHouseLocations()
@@ -615,7 +617,8 @@ local function enterNonOwnedHouse(house)
     entering = true
     Wait(500)
     TriggerServerEvent('qb-houses:server:SetInsideMeta', house, true)
-    TriggerEvent('qb-weathersync:client:DisableSync')
+    --TriggerEvent('qb-weathersync:client:DisableSync')
+    TriggerEvent('qb-weathersync:client:EnableSync')
     TriggerEvent('qb-weed:client:getHousePlants', house)
     entering = false
     InOwnedHouse = true
