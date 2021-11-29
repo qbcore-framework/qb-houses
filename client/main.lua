@@ -1190,9 +1190,21 @@ CreateThread(function()
                             if #(pos - dist2) <= 1.5 then
                                 houseMenu = {
                                     {
-                                        header = "/enter to enter house",
-                                        isMenuHeader = true,
-                                        params = {}
+                                        header = "House Options",
+                                        isMenuHeader = true, -- Set to true to make a nonclickable title
+                                    },
+                                    {
+                                        header = "Enter Your House",
+                                        params = {
+                                            event = "qb-houses:client:EnterHouse",
+
+                                        }
+                                    },
+                                    {
+                                        header = "Give House Key",
+                                        params = {
+                                            event = "qb-houses:client:giveHouseKey",
+                                        }
                                     }
                                 }
                                 nearLocation = true
