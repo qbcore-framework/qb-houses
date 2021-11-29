@@ -22,7 +22,7 @@ local CurrentHouse = nil
 local RamsDone = 0
 local keyholderMenu = {}
 local keyholderOptions = {}
-local p = nil
+local fetchingHouseKeys = false
 
 -- Functions
 
@@ -351,17 +351,21 @@ local function RemoveHouseKey(citizenData)
 end
 
 local function getKeyHolders()
-    if p then return end
-    p = promise.new()
+    if fetchingHouseKeys then return end
+    fetchingHouseKeys = true
+
+    local p = promise.new()
     QBCore.Functions.TriggerCallback('qb-houses:server:getHouseKeyHolders', function(holders)
         p:resolve(holders)
     end,ClosestHouse)
+
     return Citizen.Await(p)
 end
 
 function HouseKeysMenu()
     local holders = getKeyHolders()
-    p = nil
+    fetchingHouseKeys = false
+
     if holders == nil or next(holders) == nil then
         QBCore.Functions.Notify("No key holders found..", "error", 3500)
         CloseMenuFull()
