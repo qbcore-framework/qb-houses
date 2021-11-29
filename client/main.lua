@@ -1265,6 +1265,24 @@ CreateThread(function()
                             end
                         end
                     end
+
+                    if IsInside and CurrentHouse ~= nil and not entering then
+                        if POIOffsets ~= nil then
+                            local exitOffset = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z + 1.0)
+                            if #(pos - exitOffset) <= 1.5 then
+                                houseMenu = {
+                                    {
+                                        header = "Exit Property",
+                                        params = {
+                                            event = 'qb-houses:client:ExitOwnedHouse',
+                                            args = {}
+                                        }
+                                    }
+                                }
+                                nearLocation = true
+                            end
+                        end
+                    end
                 end
 
                 if IsInside and CurrentHouse ~= nil and not entering and isOwned then
