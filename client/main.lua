@@ -22,7 +22,7 @@ local CurrentHouse = nil
 local RamsDone = 0
 local keyholderMenu = {}
 local keyholderOptions = {}
-local p = nil
+local fetchingHouseKeys = false
 
 -- Functions
 
@@ -351,17 +351,21 @@ local function RemoveHouseKey(citizenData)
 end
 
 local function getKeyHolders()
-    if p then return end
-    p = promise.new()
+    if fetchingHouseKeys then return end
+    fetchingHouseKeys = true
+
+    local p = promise.new()
     QBCore.Functions.TriggerCallback('qb-houses:server:getHouseKeyHolders', function(holders)
         p:resolve(holders)
     end,ClosestHouse)
+
     return Citizen.Await(p)
 end
 
 function HouseKeysMenu()
     local holders = getKeyHolders()
-    p = nil
+    fetchingHouseKeys = false
+
     if holders == nil or next(holders) == nil then
         QBCore.Functions.Notify("No key holders found..", "error", 3500)
         CloseMenuFull()
@@ -1186,9 +1190,21 @@ CreateThread(function()
                             if #(pos - dist2) <= 1.5 then
                                 houseMenu = {
                                     {
-                                        header = "/enter to enter house",
-                                        isMenuHeader = true,
-                                        params = {}
+                                        header = "House Options",
+                                        isMenuHeader = true, -- Set to true to make a nonclickable title
+                                    },
+                                    {
+                                        header = "Enter Your House",
+                                        params = {
+                                            event = "qb-houses:client:EnterHouse",
+
+                                        }
+                                    },
+                                    {
+                                        header = "Give House Key",
+                                        params = {
+                                            event = "qb-houses:client:giveHouseKey",
+                                        }
                                     }
                                 }
                                 nearLocation = true
@@ -1262,6 +1278,24 @@ CreateThread(function()
                                         }
                                     }
                                 }
+                            end
+                        end
+                    end
+
+                    if IsInside and CurrentHouse ~= nil and not entering then
+                        if POIOffsets ~= nil then
+                            local exitOffset = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z + 1.0)
+                            if #(pos - exitOffset) <= 1.5 then
+                                houseMenu = {
+                                    {
+                                        header = "Exit Property",
+                                        params = {
+                                            event = 'qb-houses:client:ExitOwnedHouse',
+                                            args = {}
+                                        }
+                                    }
+                                }
+                                nearLocation = true
                             end
                         end
                     end

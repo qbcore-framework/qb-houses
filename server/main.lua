@@ -83,11 +83,6 @@ QBCore.Commands.Add("addgarage", "Add House Garage (Real Estate Only)", {}, fals
     end
 end)
 
-QBCore.Commands.Add("enter", "Enter House", {}, false, function(source)
-    local src = source
-    TriggerClientEvent('qb-houses:client:EnterHouse', src)
-end)
-
 QBCore.Commands.Add("ring", "Ring The Doorbell", {}, false, function(source)
     local src = source
     TriggerClientEvent('qb-houses:client:RequestRing', src)
