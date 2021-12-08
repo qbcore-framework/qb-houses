@@ -563,6 +563,7 @@ end
 
 local function enterOwnedHouse(house)
     CurrentHouse = house
+    ClosestHouse = house
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
     openHouseAnim()
     IsInside = true
@@ -607,6 +608,7 @@ end
 
 local function enterNonOwnedHouse(house)
     CurrentHouse = house
+    ClosestHouse = house
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
     openHouseAnim()
     IsInside = true
