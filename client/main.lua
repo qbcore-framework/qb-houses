@@ -650,6 +650,14 @@ local function LeaveNonOwnedHouse(house)
     end
 end
 
+local function HasHouseKey()
+    if IsInside and HasKey then
+        return true
+    end
+end
+
+exports('HasHouseKey', HasHouseKey)
+
 -- Events
 
 RegisterNetEvent('qb-houses:server:sethousedecorations', function(house, decorations)
