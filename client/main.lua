@@ -23,6 +23,8 @@ local RamsDone = 0
 local keyholderMenu = {}
 local keyholderOptions = {}
 local fetchingHouseKeys = false
+local toggleblips = false
+toggleblipsdata = {}
 
 -- Functions
 
@@ -1154,6 +1156,33 @@ end)
 RegisterNetEvent('qb-houses:client:KeyholderOptions', function(data)
     optionMenu(data.citizenData)
 end)
+
+RegisterNetEvent('qb-houses:server:ToggleHouseBlips', function()
+    if toggleblips then
+        toggleblips = false
+        for k, v in pairs(toggleblipsdata) do
+            RemoveBlip(v)
+        end
+        toggleblipsdata = {}
+    else
+        toggleblips = true
+        CreateThread(function()
+            for k, house in pairs(Config.Houses) do
+                local HouseBlips = AddBlipForCoord(house.coords.enter.x, house.coords.enter.y, house.coords.enter.z)
+                SetBlipSprite (HouseBlips, 40)
+                SetBlipDisplay(HouseBlips, 4)
+                SetBlipScale  (HouseBlips, 0.65)
+                SetBlipAsShortRange(HouseBlips, true)
+                SetBlipColour(HouseBlips, 3)
+                BeginTextCommandSetBlipName("STRING")
+                AddTextComponentSubstringPlayerName(house.adress)
+                EndTextCommandSetBlipName(HouseBlips)
+				toggleblipsdata[#toggleblipsdata+1] = HouseBlips
+            end
+        end)
+    end
+end)
+
 -- NUI Callbacks
 
 RegisterNUICallback('HasEnoughMoney', function(data, cb)
