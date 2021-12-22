@@ -663,6 +663,22 @@ end
 
 exports('HasHouseKey', HasHouseKey)
 
+local function isNearHouses()
+    local ped = PlayerPedId()
+    local pos = GetEntityCoords(ped)
+
+    if ClosestHouse ~= nil then
+        local dist = #(pos - vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z))
+        if dist <= 1.5 then
+            if HasHouseKey then
+                return true
+            end
+        end
+    end
+end
+
+exports('isNearHouses', isNearHouses)
+
 -- Events
 
 RegisterNetEvent('qb-houses:server:sethousedecorations', function(house, decorations)
