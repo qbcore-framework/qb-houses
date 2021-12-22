@@ -110,7 +110,7 @@ local function setViewCam(coords, h, yaw)
 end
 
 local function InstructionButton(ControlButton)
-    N_0xe83a3e3557a56640(ControlButton)
+    ScaleformMovieMethodAddParamPlayerNameString(ControlButton)
 end
 
 local function InstructionButtonMessage(text)
