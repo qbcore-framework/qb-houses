@@ -655,14 +655,6 @@ local function LeaveNonOwnedHouse(house)
     end
 end
 
-local function HasHouseKey()
-    if IsInside and HasHouseKey then
-        return true
-    end
-end
-
-exports('HasHouseKey', HasHouseKey)
-
 local function isNearHouses()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
