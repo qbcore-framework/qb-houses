@@ -1416,3 +1416,11 @@ RegisterCommand('getoffset', function()
         print('Z: '..zdist)
     end
 end)
+
+local function HasHouseKey()
+    if IsInside and HasHouseKey then
+        return true
+    end
+end
+
+exports('HasHouseKey', HasHouseKey)
