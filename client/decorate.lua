@@ -102,27 +102,27 @@ local function CheckObjMovementInput()
     local zVect = speeds[curSpeed]
 
     if IsControlPressed( 1, 27) or IsDisabledControlPressed(1, 27) then -- Up Arrow
-    	SelObjPos.x = SelObjPos.x + xVect
+		SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, 0, -yVect, 0)
     end
 
     if IsControlPressed( 1, 173) or IsDisabledControlPressed(1, 173) then -- Down Arrow
-    	SelObjPos.x = SelObjPos.x - xVect
+		SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, 0, yVect, 0)
     end
 
     if IsControlPressed( 1, 174) or IsDisabledControlPressed(1, 174) then -- Left Arrow
-    	SelObjPos.y = SelObjPos.y + yVect
+		SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, xVect, 0, 0)
     end
 
     if IsControlPressed( 1, 175) or IsDisabledControlPressed(1, 175) then -- Right Arrow
-    	SelObjPos.y = SelObjPos.y - yVect
+		SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, -xVect, 0, 0)
     end
 
     if IsControlPressed( 1, 10) or IsDisabledControlPressed(1, 10) then -- Page Up
-    	SelObjPos.z = SelObjPos.z + zVect
+    	SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, 0, 0, zVect)
     end
 
     if IsControlPressed( 1, 11) or IsDisabledControlPressed(1, 11) then -- Page Down
-    	SelObjPos.z = SelObjPos.z - zVect
+    	SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, 0, 0, -zVect)
     end
 
     SetEntityCoords(SelectedObj, SelObjPos.x, SelObjPos.y, SelObjPos.z)
@@ -452,7 +452,7 @@ CreateThread(function()
 				if IsControlJustReleased(0, 19) then -- Left Alt
 					PlaceObjectOnGroundProperly(SelectedObj)
 					local groundPos = GetEntityCoords(SelectedObj)
-					SelObjPos.z = groundPos.z
+					SelObjPos = groundPos
                 end
 				if IsControlJustReleased(0, 191) then -- Enter
 					SetNuiFocus(true, true)
