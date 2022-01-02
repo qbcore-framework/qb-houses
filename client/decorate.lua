@@ -2,7 +2,7 @@ ObjectList = {}
 local DecoMode = false
 local MainCamera = nil
 local curPos
-local speeds = {0.05, 0.1, 0.2, 0.4, 0.5}
+local speeds = {0.01, 0.05, 0.1, 0.2, 0.4, 0.5}
 local curSpeed = 1
 local cursorEnabled = false
 local SelectedObj = nil
