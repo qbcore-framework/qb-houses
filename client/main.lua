@@ -24,7 +24,7 @@ local keyholderMenu = {}
 local keyholderOptions = {}
 local fetchingHouseKeys = false
 local toggleblips = false
-toggleblipsdata = {}
+local toggleblipsdata = {}
 
 -- Functions
 
