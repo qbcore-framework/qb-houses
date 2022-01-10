@@ -711,7 +711,6 @@ RegisterNetEvent('qb-houses:client:RequestRing', function()
 end)
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
-    TriggerServerEvent('qb-houses:client:setHouses')
     SetClosestHouse()
     TriggerEvent('qb-houses:client:setupHouseBlips')
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
@@ -1171,7 +1170,6 @@ end)
 
 CreateThread(function()
     Wait(1000)
-    TriggerServerEvent('qb-houses:client:setHouses')
     SetClosestHouse()
     TriggerEvent('qb-houses:client:setupHouseBlips')
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
