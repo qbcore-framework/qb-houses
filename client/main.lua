@@ -394,7 +394,7 @@ local function optionMenu(citizenData)
         {
             header = "Remove Key",
             params = {
-                events = "qb-houses:client:RevokeKey",
+                event = "qb-houses:client:RevokeKey",
                 args = {
                     citizenData = citizenData
                 }
