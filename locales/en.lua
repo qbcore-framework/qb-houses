@@ -31,7 +31,7 @@ local Translations = {
     },
     info = {
         ["door_ringing"] = "Someone is ringing the door!",
-        ["speed"] = "Speed is {$value}",
+        ["speed"] = "Speed is %{value}",
         ["added_house"] = "You have added a house: %{value}",
         ["added_garage"] = "You have added a garage: %{value}"
     },
