@@ -132,6 +132,16 @@ local function GetHouseStreetCount(street)
     return count
 end
 
+local function isHouseOwned(house)
+    local result = exports.oxmysql:executeSync('SELECT owned FROM houselocations WHERE name = ?', {house})
+    if result[1] then
+        if result[1].owned then
+            return true
+        end
+    end
+    return false
+end
+
 local function escape_sqli(source)
     local replacements = {
         ['"'] = '\\"',
@@ -209,7 +219,14 @@ RegisterNetEvent('qb-houses:server:buyHouse', function(house)
     local price = Config.Houses[house].price
     local HousePrice = math.ceil(price * 1.21)
     local bankBalance = pData.PlayerData.money["bank"]
-
+        
+    local isOwned = isHouseOwned(house)
+    if isOwned then 
+        TriggerClientEvent('QBCore:Notify', src, "This house is already owned!", "error")
+        CancelEvent()
+        return
+    end
+    
     if (bankBalance >= HousePrice) then
         houseowneridentifier[house] = pData.PlayerData.license
         houseownercid[house] = pData.PlayerData.citizenid
