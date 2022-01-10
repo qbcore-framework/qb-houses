@@ -93,6 +93,10 @@ $('document').ready(function() {
                 selectedObject = null;
             }
         }
+
+        if (data.which == 27) {
+            Decorations.Close();
+        }
     };
 })
 
