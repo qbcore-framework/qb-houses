@@ -878,7 +878,7 @@ end)
 RegisterNetEvent('qb-houses:client:setupHouseBlips', function() -- Setup owned on load
     CreateThread(function()
         Wait(2000)
-        if LocalPlayer.state['isLoggedIn'] then
+        if LocalPlayer.state.isLoggedIn then
             QBCore.Functions.TriggerCallback('qb-houses:server:getOwnedHouses', function(ownedHouses)
                 if ownedHouses then
                     for k, v in pairs(ownedHouses) do
@@ -1182,7 +1182,7 @@ end)
 CreateThread(function()
     while true do
         Wait(5000)
-        if LocalPlayer.state['isLoggedIn'] then
+        if LocalPlayer.state.isLoggedIn then
             if not IsInside then
                 SetClosestHouse()
             end
