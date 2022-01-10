@@ -1,4 +1,3 @@
-QBCore = exports['qb-core']:GetCoreObject()
 IsInside = false
 ClosestHouse = nil
 HasHouseKey = false
@@ -368,7 +367,7 @@ function HouseKeysMenu()
     fetchingHouseKeys = false
 
     if holders == nil or next(holders) == nil then
-        QBCore.Functions.Notify("No key holders found..", "error", 3500)
+        QBCore.Functions.Notify(Lang:t("error.no_key_holders"), "error", 3500)
         CloseMenuFull()
     else
         keyholderMenu = {}
@@ -392,7 +391,7 @@ end
 local function optionMenu(citizenData)
     keyholderOptions = {
         {
-            header = "Remove Key",
+            header = Lang:t("menu.remove_key"),
             params = {
                 event = "qb-houses:client:RevokeKey",
                 args = {
@@ -401,7 +400,7 @@ local function optionMenu(citizenData)
             }
         },
         {
-            header = "Back",
+            header = Lang:t("menu.back"),
             params = {
                 event = "qb-houses:client:removeHouseKey",
                 args = {}
@@ -425,7 +424,7 @@ local function getDataForHouseTier(house, coords)
     }
 
     if not shells[houseTier] then
-        QBCore.Functions.Notify('Invalid House Tier', 'error')
+        QBCore.Functions.Notify(Lang:t("error.invalid_tier"), 'error')
         return nil
     else
         return shells[houseTier](coords)
@@ -558,7 +557,7 @@ end
 --     elseif Config.Houses[house].tier == 61 then
 --         return exports['qb-interior']:CreateMansion3(coords)
 --     else
---         QBCore.Functions.Notify('Invalid House Tier', 'error')
+--         QBCore.Functions.Notify(Lang:t("error.invalid_tier"), 'error')
 --     end
 -- end
 
@@ -711,6 +710,7 @@ RegisterNetEvent('qb-houses:client:RequestRing', function()
 end)
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+    TriggerServerEvent('qb-houses:server:setHouses')
     SetClosestHouse()
     TriggerEvent('qb-houses:client:setupHouseBlips')
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
@@ -768,7 +768,7 @@ RegisterNetEvent('qb-houses:client:addGarage', function()
         }
         TriggerServerEvent('qb-houses:server:addGarage', ClosestHouse, coords)
     else
-        QBCore.Functions.Notify("No house around..", "error")
+        QBCore.Functions.Notify(Lang:t("error.no_house"), "error")
     end
 end)
 
@@ -779,16 +779,16 @@ RegisterNetEvent('qb-houses:client:toggleDoorlock', function()
         if HasHouseKey then
             if Config.Houses[ClosestHouse].locked then
                 TriggerServerEvent('qb-houses:server:lockHouse', false, ClosestHouse)
-                QBCore.Functions.Notify("House is unlocked!", "success", 2500)
+                QBCore.Function.Notify(Lang:t("success.unlocked"), "success", 2500)
             else
                 TriggerServerEvent('qb-houses:server:lockHouse', true, ClosestHouse)
-                QBCore.Functions.Notify("House is locked!", "error", 2500)
+                QBCore.Functions.Notify(Lang:t("error.locked"), "error", 2500)
             end
         else
-            QBCore.Functions.Notify("You don't have the keys of the house...", "error", 3500)
+            QBCore.Functions.Notify(Lang:t("error.no_keys"), "error", 3500)
         end
     else
-        QBCore.Functions.Notify("There is no door nearby", "error", 3500)
+        QBCore.Functions.Notify(Lang:t("error.no_door"), "error", 3500)
     end
 end)
 
@@ -796,7 +796,7 @@ RegisterNetEvent('qb-houses:client:RingDoor', function(player, house)
     if ClosestHouse == house and IsInside then
         CurrentDoorBell = player
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "doorbell", 0.1)
-        QBCore.Functions.Notify("Someone is ringing the door!")
+        QBCore.Functions.Notify(Lang:t("info.door_ringing"))
     end
 end)
 
@@ -809,12 +809,12 @@ RegisterNetEvent('qb-houses:client:giveHouseKey', function()
         if housedist < 10 then
             TriggerServerEvent('qb-houses:server:giveHouseKey', playerId, ClosestHouse)
         else
-            QBCore.Functions.Notify("You're not close enough to the door..", "error")
+            QBCore.Functions.Notify(Lang:t("error.no_door"), "error")
         end
     elseif ClosestHouse == nil then
-        QBCore.Functions.Notify("There is no house near you", "error")
+        QBCore.Functions.Notify(Lang:t("error.no_house"), "error")
     else
-        QBCore.Functions.Notify("No one around!", "error")
+        QBCore.Functions.Notify(Lang:t("error.no_one_near"), "error")
     end
 end)
 
@@ -827,14 +827,14 @@ RegisterNetEvent('qb-houses:client:removeHouseKey', function()
                 if QBCore.Functions.GetPlayerData().citizenid == result then
                     HouseKeysMenu()
                 else
-                    QBCore.Functions.Notify("You're not a house owner..", "error")
+                    QBCore.Functions.Notify(Lang:t("error.not_owner"), "error")
                 end
             end, ClosestHouse)
         else
-            QBCore.Functions.Notify("You're not close enough to the door..", "error")
+            QBCore.Functions.Notify(Lang:t("error.no_door"), "error")
         end
     else
-        QBCore.Functions.Notify("You're not close enough to the door..", "error")
+        QBCore.Functions.Notify(Lang:t("error.no_door"), "error")
     end
 end)
 
@@ -970,10 +970,10 @@ RegisterNetEvent('qb-houses:client:setLocation', function(data)
                 TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 3)
             end
         else
-            QBCore.Functions.Notify('You do not own this house', 'error')
+            QBCore.Functions.Notify(Lang:t("error.not_owner"), "error")
         end
     else
-        QBCore.Functions.Notify('You are not in a house', 'error')
+        QBCore.Functions.Notify(Lang:t("error.not_in_house"), "error")
     end
 end)
 
@@ -1013,9 +1013,8 @@ RegisterNetEvent('qb-houses:client:HomeInvasion', function()
                             }, function()
                                 if RamsDone + 1 >= Config.RamsNeeded then
                                     TriggerServerEvent('qb-houses:server:lockHouse', false, ClosestHouse)
-                                    QBCore.Functions.Notify('It worked the door is now out.', 'success')
+                                    QBCore.Functions.Notify(Lang:t("success.home_invasion"), 'success')
                                     TriggerServerEvent('qb-houses:server:SetHouseRammed', true, ClosestHouse)
-                                    TriggerServerEvent('qb-houses:server:SetRamState', false, ClosestHouse)
                                     DoRamAnimation(false)
                                 else
                                     DoRamAnimation(true)
@@ -1029,25 +1028,25 @@ RegisterNetEvent('qb-houses:client:HomeInvasion', function()
                             end, function()
                                 RamsDone = 0
                                 TriggerServerEvent('qb-houses:server:SetRamState', false, ClosestHouse)
-                                QBCore.Functions.Notify('It failed try again.', 'error')
+                                QBCore.Functions.Notify(Lang:t("error.failed_invasion"), 'error')
                                 DoRamAnimation(false)
                             end)
                             TriggerServerEvent('qb-houses:server:SetRamState', true, ClosestHouse)
                         else
-                            QBCore.Functions.Notify('Someone is already working on the door..', 'error')
+                            QBCore.Functions.Notify(Lang:t("error.inprogress_invasion"), 'error')
                         end
                     else
-                        QBCore.Functions.Notify('19/5000 This house is already open..', 'error')
+                        QBCore.Functions.Notify(Lang:t("error.already_open"), 'error')
                     end
                 else
-                    QBCore.Functions.Notify('You\'re not near a house..', 'error')
+                    QBCore.Functions.Notify(Lang:t("error.no_house"), "error")
                 end
             else
-                QBCore.Functions.Notify('There is no police force present..', 'error')
+                QBCore.Functions.Notify(Lang:t("error.no_police"), 'error')
             end
         end)
     else
-        QBCore.Functions.Notify('You\'re not near a house..', 'error')
+        QBCore.Functions.Notify(Lang:t("error.no_house"), "error")
     end
 end)
 
@@ -1072,9 +1071,9 @@ RegisterNetEvent('qb-houses:client:ResetHouse', function()
             TriggerServerEvent('qb-houses:server:SetRamState', false, ClosestHouse)
             TriggerServerEvent('qb-houses:server:lockHouse', true, ClosestHouse)
             RamsDone = 0
-            QBCore.Functions.Notify('You locked the house again..', 'success')
+            QBCore.Functions.Notify(Lang:t("success.lock_invasion"), 'success')
         else
-            QBCore.Functions.Notify('This door is not broken open ..', 'error')
+            QBCore.Functions.Notify(Lang:t("error.no_invasion"), 'error')
         end
     end
 end)
@@ -1170,6 +1169,7 @@ end)
 
 CreateThread(function()
     Wait(1000)
+    TriggerServerEvent('qb-houses:server:setHouses')
     SetClosestHouse()
     TriggerEvent('qb-houses:client:setupHouseBlips')
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
@@ -1210,18 +1210,18 @@ CreateThread(function()
                             if #(pos - dist2) <= 1.5 then
                                 houseMenu = {
                                     {
-                                        header = "House Options",
+                                        header = Lang:t("menu.house_options"),
                                         isMenuHeader = true, -- Set to true to make a nonclickable title
                                     },
                                     {
-                                        header = "Enter Your House",
+                                        header = Lang:t("menu.enter_house"),
                                         params = {
                                             event = "qb-houses:client:EnterHouse",
 
                                         }
                                     },
                                     {
-                                        header = "Give House Key",
+                                        header = Lang:t("menu.give_house_key"),
                                         params = {
                                             event = "qb-houses:client:giveHouseKey",
                                         }
@@ -1236,14 +1236,14 @@ CreateThread(function()
                             if #(pos - exitOffset) <= 1.5 then
                                 houseMenu = {
                                     {
-                                        header = "Exit Property",
+                                        header = Lang:t("menu.exit_property"),
                                         params = {
                                             event = 'qb-houses:client:ExitOwnedHouse',
                                             args = {}
                                         }
                                     },
                                     {
-                                        header = "Front Camera",
+                                        header = Lang:t("menu.front_camera"),
                                         params = {
                                             event = 'qb-houses:client:FrontDoorCam',
                                             args = {}
@@ -1253,7 +1253,7 @@ CreateThread(function()
 
                                 if CurrentDoorBell ~= 0 then
                                     houseMenu[#houseMenu+1] = {
-                                        header = 'Open Door',
+                                        header = Lang:t("menu.open_door"),
                                         params = {
                                             event = 'qb-houses:client:AnswerDoorbell',
                                             args = {}
@@ -1273,7 +1273,7 @@ CreateThread(function()
                                 if not viewCam and Config.Houses[ClosestHouse].locked then
                                     houseMenu = {
                                         {
-                                            header = "View House",
+                                            header = Lang:t("menu.view_house"),
                                             params = {
                                                 event = 'qb-houses:client:ViewHouse',
                                                 args = {}
@@ -1291,29 +1291,13 @@ CreateThread(function()
                                 nearLocation = true
                                 houseMenu = {
                                     {
-                                        header = "Ring Doorbell",
+                                        header = Lang:t("menu.ring_door"),
                                         params = {
                                             event = 'qb-houses:client:RequestRing',
                                             args = {}
                                         }
                                     }
                                 }
-                                if not Config.Houses[ClosestHouse].locked then
-                                    houseMenu[#houseMenu+1] ={
-                                        header = "Enter Unlocked House",
-                                        params = {
-                                            event = "qb-houses:client:EnterHouse",
-                                        }
-                                    }
-                                    if QBCore.Functions.GetPlayerData().job.name == 'police' then
-                                        houseMenu[#houseMenu+1] ={
-                                            header = "Lock House",
-                                            params = {
-                                                event = "qb-houses:client:ResetHouse",
-                                            }
-                                        }
-                                    end
-                                end
                             end
                         end
                     end
@@ -1324,7 +1308,7 @@ CreateThread(function()
                             if #(pos - exitOffset) <= 1.5 then
                                 houseMenu = {
                                     {
-                                        header = "Exit Property",
+                                        header = Lang:t("menu.exit_door"),
                                         params = {
                                             event = 'qb-houses:client:ExitOwnedHouse',
                                             args = {}
@@ -1343,7 +1327,7 @@ CreateThread(function()
                             nearLocation = true
                             houseMenu = {
                                 {
-                                    header = "Open Stash",
+                                    header = Lang:t("menu.open_stash"),
                                     params = {
                                         event = "qb-houses:client:OpenStash",
                                         args = {}
@@ -1352,7 +1336,7 @@ CreateThread(function()
                             }
 
                         elseif #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z)) <= 3 then
-                            DrawText3Ds(stashLocation.x, stashLocation.y, stashLocation.z, 'Stash')
+                            DrawText3Ds(stashLocation.x, stashLocation.y, stashLocation.z, Lang:t("menu.stash"))
                         end
                     end
 
@@ -1361,7 +1345,7 @@ CreateThread(function()
                             nearLocation = true
                             houseMenu = {
                                 {
-                                    header = "Change Outfit",
+                                    header = Lang:t("menu.change_outfit"),
                                     params = {
                                         event = "qb-houses:client:ChangeOutfit",
                                         args = {}
@@ -1369,7 +1353,7 @@ CreateThread(function()
                                 }
                             }
                         elseif #(pos - vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z)) <= 3 then
-                            DrawText3Ds(outfitLocation.x, outfitLocation.y, outfitLocation.z, 'Outfits')
+                            DrawText3Ds(outfitLocation.x, outfitLocation.y, outfitLocation.z, Lang:t("menu.outfits"))
                         end
                     end
 
@@ -1378,7 +1362,7 @@ CreateThread(function()
                             nearLocation = true
                             houseMenu = {
                                 {
-                                    header = "Change Characters",
+                                    header = Lang:t("menu.change_character"),
                                     params = {
                                         event = "qb-houses:client:ChangeCharacter",
                                         args = {}
@@ -1386,7 +1370,7 @@ CreateThread(function()
                                 }
                             }
                         elseif #(pos - vector3(logoutLocation.x, logoutLocation.y, logoutLocation.z)) < 3 then
-                            DrawText3Ds(logoutLocation.x, logoutLocation.y, logoutLocation.z, 'Change Characters')
+                            DrawText3Ds(logoutLocation.x, logoutLocation.y, logoutLocation.z, Lang:t("menu.characters"))
                         end
                     end
                 end

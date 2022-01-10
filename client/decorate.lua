@@ -191,7 +191,7 @@ local function CheckMovementInput()
 		if curSpeed > getTableLength(speeds) then
 			curSpeed = 1
 		end
-		QBCore.Functions.Notify("Speed is ".. tostring(speeds[curSpeed]))
+		QBCore.Functions.Notify(Lang:t("info.speed").. tostring(speeds[curSpeed]))
 	end
 
 	local xVect = speeds[curSpeed] * math.sin( degToRad( rotation.z ) ) * -1.0
@@ -224,10 +224,10 @@ RegisterNetEvent('qb-houses:client:decorate', function()
 				openDecorateUI()
 			end
 		else
-			QBCore.Functions.Notify("You must have the keys to the house!", "error")
+			QBCore.Functions.Notify(Lang:t("error.no_keys"), "error")
 		end
 	else
-		QBCore.Functions.Notify("You are not in a house!", "error")
+		QBCore.Functions.Notify(Lang:t("error.not_in_house"), "error")
 	end
 end)
 
@@ -493,7 +493,7 @@ CreateThread(function()
 			if dist > 50.0 then
 				DisableEditMode()
 				closeDecorateUI()
-				QBCore.Functions.Notify('You have gone out of range', 'error')
+				QBCore.Functions.Notify(Lang:t("error.out_range"), 'error')
 			end
 		end
 	end
