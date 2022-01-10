@@ -424,7 +424,7 @@ local function getDataForHouseTier(house, coords)
     }
 
     if not shells[houseTier] then
-        QBCore.Functions.Notify(Lang:t("commons.error.invalid_tier"), 'error')
+        QBCore.Functions.Notify(Lang:t("error.invalid_tier"), 'error')
         return nil
     else
         return shells[houseTier](coords)
