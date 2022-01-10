@@ -1,3 +1,4 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local houseowneridentifier = {}
 local houseownercid = {}
 local housekeyholders = {}
@@ -220,7 +221,7 @@ RegisterNetEvent('qb-houses:server:buyHouse', function(house)
     local bankBalance = pData.PlayerData.money["bank"]
 
     local isOwned = isHouseOwned(house)
-    if isOwned then 
+    if isOwned then
         TriggerClientEvent('QBCore:Notify', src, Lang:t("error.already_owned"), "error")
         CancelEvent()
         return
@@ -315,7 +316,7 @@ RegisterNetEvent('qb-houses:server:giveHouseKey', function(target, house)
             housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
             MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
             TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
-           
+
             TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
         else
             local sourceTarget = QBCore.Functions.GetPlayer(src)
