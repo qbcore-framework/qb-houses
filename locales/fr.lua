@@ -35,7 +35,6 @@ local Translations = {
         ["added_house"] = "Vous avez ajouté une propriété: %{value}",
         ["added_garage"] = "Vous avez ajouté un garage: %{value}"
     },
-    warning = {},
     menu = {
         ["house_options"] = "Options de Propriété",
         ["enter_house"] = "Entrer dans votre Propriété",
@@ -54,6 +53,8 @@ local Translations = {
         ["outfits"] = "Tenues",
         ["change_character"] = "Changer de personnage",
         ["characters"] = "Personnages",
+        ["enter_unlocked_house"] = "Entrer dans la propriété ouverte.",
+        ["lock_door_police"] = "Vérouiller la porte"
     }
 }
 Lang = Locale:new({phrases = Translations}) 
