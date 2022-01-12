@@ -1302,14 +1302,14 @@ CreateThread(function()
                                 }
                                 if not Config.Houses[ClosestHouse].locked then
                                     houseMenu[#houseMenu+1] = {
-                                        header = "Enter Unlocked House",
+                                        header = Lang:t("menu.enter_unlocked_house"),
                                         params = {
                                             event = "qb-houses:client:EnterHouse",
                                         }
                                     }
                                     if QBCore.Functions.GetPlayerData().job.name == 'police' then
                                         houseMenu[#houseMenu+1] = {
-                                            header = "Lock House",
+                                            header = Lang:t("menu.lock_door_police"),
                                             params = {
                                                 event = "qb-houses:client:ResetHouse",
                                             }
