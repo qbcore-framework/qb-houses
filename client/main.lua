@@ -780,7 +780,7 @@ RegisterNetEvent('qb-houses:client:toggleDoorlock', function()
         if HasHouseKey then
             if Config.Houses[ClosestHouse].locked then
                 TriggerServerEvent('qb-houses:server:lockHouse', false, ClosestHouse)
-                QBCore.Function.Notify(Lang:t("success.unlocked"), "success", 2500)
+                QBCore.Functions.Notify(Lang:t("success.unlocked"), "success", 2500)
             else
                 TriggerServerEvent('qb-houses:server:lockHouse', true, ClosestHouse)
                 QBCore.Functions.Notify(Lang:t("error.locked"), "error", 2500)
@@ -1016,6 +1016,7 @@ RegisterNetEvent('qb-houses:client:HomeInvasion', function()
                                     TriggerServerEvent('qb-houses:server:lockHouse', false, ClosestHouse)
                                     QBCore.Functions.Notify(Lang:t("success.home_invasion"), 'success')
                                     TriggerServerEvent('qb-houses:server:SetHouseRammed', true, ClosestHouse)
+                                    TriggerServerEvent('qb-houses:server:SetRamState', false, ClosestHouse)
                                     DoRamAnimation(false)
                                 else
                                     DoRamAnimation(true)
@@ -1299,6 +1300,22 @@ CreateThread(function()
                                         }
                                     }
                                 }
+                                if not Config.Houses[ClosestHouse].locked then
+                                    houseMenu[#houseMenu+1] = {
+                                        header = Lang:t("menu.enter_unlocked_house"),
+                                        params = {
+                                            event = "qb-houses:client:EnterHouse",
+                                        }
+                                    }
+                                    if QBCore.Functions.GetPlayerData().job.name == 'police' then
+                                        houseMenu[#houseMenu+1] = {
+                                            header = Lang:t("menu.lock_door_police"),
+                                            params = {
+                                                event = "qb-houses:client:ResetHouse",
+                                            }
+                                        }
+                                    end
+                                end
                             end
                         end
                     end
