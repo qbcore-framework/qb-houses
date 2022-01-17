@@ -33,7 +33,15 @@ local Translations = {
         ["door_ringing"] = "Nogen er ved døren!",
         ["speed"] = "Hastighed er %{value}",
         ["added_house"] = "Du har tilføjet en bolig: %{value}",
-        ["added_garage"] = "Du har tilføjet en garage: %{value}"
+        ["added_garage"] = "Du har tilføjet en garage: %{value}",
+        ["exit_camera"] = "Sluk kameraet",
+        ["house_for_sale"] = "Hus til salg",
+        ["decorate_interior"] = "Indret interiør",
+        ["create_house"] = "Opret hus (kun fast ejendom)",
+        ["price_of_house"] = "Husets pris",
+        ["tier_number"] = "Husets rækkenummer",
+        ["add_garage"] = "Tilføj husgarage (kun fast ejendom)",
+        ["ring_doorbell"] = "Ring på døren"
     },
     menu = {
         ["house_options"] = "Bolig muligheder",
@@ -55,6 +63,13 @@ local Translations = {
         ["characters"] = "Karaktere",
         ["enter_unlocked_house"] = "Tilgå ulåst bolig",
         ["lock_door_police"] = "Lås døren"
+    },
+    log = {
+        ["house_created"] = "Hus skabt:",
+        ["house_address"] = "**Adresse**: %{label}\n\n**Noteringspris**: %{price}\n\n**Tier**: %{tier}\n\n**Listing Agent**: %{agent}",
+        ["house_purchased"] = "Hus købt:",
+        ["house_purchased_by"] = "**Adresse**: %{house}\n\n**Købspris**: %{price}\n\n**Køber**: %{firstname} %{lastname}"
     }
 }
+
 Lang = Locale:new({phrases = Translations})
