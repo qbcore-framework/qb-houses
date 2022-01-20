@@ -57,4 +57,7 @@ local Translations = {
         ["lock_door_police"] = "Vérouiller la porte"
     }
 }
-Lang = Locale:new({phrases = Translations}) 
+Lang = Locale:new({
+    phrases = Translations,
+    warnOnMissing = true
+})
