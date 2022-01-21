@@ -35,13 +35,13 @@ local Translations = {
         ["added_house"] = "Shoma Yek Khane Ezafe Kardid: %{value}",
         ["added_garage"] = "Shoma Yek Garazh Kardid: %{value}",
         ["exit_camera"] = "Derkeve Kamera",
-        ["house_for_sale"] = "Satilik ev",
-        ["decorate_interior"] = "iç dekorasyon",
-        ["create_house"] = "Ev Oluştur (Yalnizca Emlak)",
-        ["price_of_house"] = "evin fiyati",
-        ["tier_number"] = "Ev Katman Numarasi",
-        ["add_garage"] = "Ev Garaji Ekle (Yalnizca Emlak)",
-        ["ring_doorbell"] = "Kapi zilini çal"
+        ["house_for_sale"] = "Khane Furushi",
+        ["decorate_interior"] = "Decorasion Dakheli",
+        ["create_house"] = "Sakht Khane (Fagat Moshaver Amlak)",
+        ["price_of_house"] = "Geymate Khane",
+        ["tier_number"] = "Shomare Tarahi Dakheli Khane",
+        ["add_garage"] = "Sakht Garazh Khane (Fagat Moshaver Amlak)",
+        ["ring_doorbell"] = "Zadane Zang Dar"
     },
     menu = {
         ["house_options"] = "Gozine Haye Khane",
@@ -65,10 +65,10 @@ local Translations = {
         ["lock_door_police"] = "Gofl Kardan Dar"
     },
     log = {
-        ["house_created"] = "Ev Oluşturuldu:",
-        ["house_address"] = "**Adres**: %{label}\n\n**Liste Fiyati**: %{price}\n\n**Katman**: %{tier}\n\n**Liste Temsilcisi**: %{agent}",
-        ["house_purchased"] = "Satin alinan ev:",
-        ["house_purchased_by"] = "**Adres**: %{house}\n\n**Satin Alma Fiyati**: %{price}\n\n**Alici**: %{firstname} %{lastname}"
+        ["house_created"] = "Khane Sakhte Shod:",
+        ["house_address"] = "**Adres**: %{label}\n\n**Geymat Furush**: %{price}\n\n**Tarahi Dakheli**: %{tier}\n\n**Mamur Furush**: %{agent}",
+        ["house_purchased"] = "Khaneye Kharidari Shode:",
+        ["house_purchased_by"] = "**Adres**: %{house}\n\n**Geymat Kharid**: %{price}\n\n**Kharidar**: %{firstname} %{lastname}"
     }
 }
 
