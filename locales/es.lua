@@ -1,0 +1,76 @@
+   error = {
+        ["no_keys"] = "No tienes las llaves de la casa....",
+        ["not_in_house"] = "no estas en una casa!",
+        ["out_range"] = "Te has ido fuera de rango",
+        ["no_key_holders"] = "No se encontraron poseedores de llaves..",
+        ["invalid_tier"] = "Nivel de casa no válido",
+        ["no_house"] = "No hay casa cerca de ti",
+        ["no_door"] = "No estás lo suficientemente cerca de la puerta..",
+        ["locked"] = "la casa está cerrada!",
+        ["no_one_near"] = "nadie alrededor!",
+        ["not_owner"] = "No eres dueño de esta casa.",
+        ["no_police"] = "No hay policía presente...",
+        ["already_open"] = "Esta casa ya está abierta...",
+        ["failed_invasion"] = "Falló inténtalo de nuevo",
+        ["inprogress_invasion"] = "Alguien ya está trabajando en la puerta...",
+        ["no_invasion"] = "Esta puerta no está rota..",
+        ["realestate_only"] = "Solo bienes raíces puede usar este comando",
+        ["emergency_services"] = "Esto solo es posible para los servicios de emergencia.!",
+        ["already_owned"] = "Esta casa ya es propiedad!",
+        ["not_enough_money"] = "no tienes suficiente dinero..",
+        ["remove_key_from"] = "Se han quitado las llaves de %{firstname} %{lastname}",
+        ["already_keys"] = "Esta persona ya tiene las llaves de la casa!",
+        ["something_wrong"] = "Algo salió mal, intenta de nuevo!",
+    },
+    success = {
+        ["unlocked"] = "Casa desbloqueada!",
+        ["home_invasion"] = "La puerta está abierta.",
+        ["lock_invasion"] = "Cerraste la casa otra vez..",
+        ["recieved_key"] = "Tienes las llaves de %{value} recibida!"
+    },
+    info = {
+        ["door_ringing"] = "Alguien está llamando a la puerta!",
+        ["speed"] = "La velocidad es %{value}",
+        ["added_house"] = "Has añadido una casa: %{value}",
+        ["added_garage"] = "Has añadido un garaje.: %{value}",
+        ["exit_camera"] = "Salir de la cámara",
+        ["house_for_sale"] = "Casa en venta",
+        ["decorate_interior"] = "decorar interior",
+        ["create_house"] = "Crear casa (Solo Bienes Raíces)",
+        ["price_of_house"] = "precio de la casa",
+        ["tier_number"] = "Número de nivel de la casa",
+        ["add_garage"] = "Agregar Garaje a la Casa (Solo Bienes Raíces)",
+        ["ring_doorbell"] = "Ring the Doorbell"
+    },
+    menu = {
+        ["house_options"] = "Opciones de casa",
+        ["enter_house"] = "Entrar a la casa",
+        ["give_house_key"] = "Dar llave de la casa",
+        ["exit_property"] = "Salir de la propiedad",
+        ["front_camera"] = "Camara Frontal",
+        ["back"] = "atrás",
+        ["remove_key"] = "Eliminar clave",
+        ["open_door"] = "Puerta abierta",
+        ["view_house"] = "Ver Casa",
+        ["ring_door"] = "Toca el Timbre",
+        ["exit_door"] = "Salir de la propiedad",
+        ["open_stash"] = "Abrir la Reserva",
+        ["stash"] = "Reserva",
+        ["change_outfit"] = "Cambio de atuendo",
+        ["outfits"] = "Atuendos",
+        ["change_character"] = "Cambiar de carácter",
+        ["characters"] = "Caracteres",
+        ["enter_unlocked_house"] = "Entrar en casa desbloqueada",
+        ["lock_door_police"] = "puerta bloqueada"
+    },
+    log = {
+        ["house_created"] = "Casa creada:",
+        ["house_address"] = "**Dirección**: %{label}\n\n**Precio de cotización**: %{price}\n\n**Nivel**: %{tier}\n\n**Agente de cotización**: %{agent}",
+        ["house_purchased"] = "Casa comprada:",
+        ["house_purchased_by"] = "**Dirección**: %{house}\n\n**Precio de compra**: %{price}\n\n**Comprador**: %{firstname} %{lastname}"
+    }
+}
+Lang = Locale:new({
+    phrases = Translations,
+    warnOnMissing = true
+})
