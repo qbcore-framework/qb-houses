@@ -33,7 +33,15 @@ local Translations = {
         ["door_ringing"] = "Kasi Dar Hale Dar Zadan Ast!",
         ["speed"] = "Sorat %{value}",
         ["added_house"] = "Shoma Yek Khane Ezafe Kardid: %{value}",
-        ["added_garage"] = "Shoma Yek Garazh Kardid: %{value}"
+        ["added_garage"] = "Shoma Yek Garazh Kardid: %{value}",
+        ["exit_camera"] = "Derkeve Kamera",
+        ["house_for_sale"] = "Satilik ev",
+        ["decorate_interior"] = "iç dekorasyon",
+        ["create_house"] = "Ev Oluştur (Yalnizca Emlak)",
+        ["price_of_house"] = "evin fiyati",
+        ["tier_number"] = "Ev Katman Numarasi",
+        ["add_garage"] = "Ev Garaji Ekle (Yalnizca Emlak)",
+        ["ring_doorbell"] = "Kapi zilini çal"
     },
     menu = {
         ["house_options"] = "Gozine Haye Khane",
@@ -55,6 +63,16 @@ local Translations = {
         ["characters"] = "Karakter Ha",
         ["enter_unlocked_house"] = "Vared Shodan Be Kaneye Ba Dar Haye Baz",
         ["lock_door_police"] = "Gofl Kardan Dar"
+    },
+    log = {
+        ["house_created"] = "Ev Oluşturuldu:",
+        ["house_address"] = "**Adres**: %{label}\n\n**Liste Fiyati**: %{price}\n\n**Katman**: %{tier}\n\n**Liste Temsilcisi**: %{agent}",
+        ["house_purchased"] = "Satin alinan ev:",
+        ["house_purchased_by"] = "**Adres**: %{house}\n\n**Satin Alma Fiyati**: %{price}\n\n**Alici**: %{firstname} %{lastname}"
     }
 }
-Lang = Locale:new({phrases = Translations})
+
+Lang = Locale:new({
+    phrases = Translations,
+    warnOnMissing = true
+})

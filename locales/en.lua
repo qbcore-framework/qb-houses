@@ -33,7 +33,15 @@ local Translations = {
         ["door_ringing"] = "Someone is ringing the door!",
         ["speed"] = "Speed is %{value}",
         ["added_house"] = "You have added a house: %{value}",
-        ["added_garage"] = "You have added a garage: %{value}"
+        ["added_garage"] = "You have added a garage: %{value}",
+        ["exit_camera"] = "Exit Camera",
+        ["house_for_sale"] = "House For Sale",
+        ["decorate_interior"] = "Decorate Interior",
+        ["create_house"] = "Create House (Real Estate Only)",
+        ["price_of_house"] = "Price of the house",
+        ["tier_number"] = "House Tier Number",
+        ["add_garage"] = "Add House Garage (Real Estate Only)",
+        ["ring_doorbell"] = "Ring the Doorbell"
     },
     menu = {
         ["house_options"] = "House Options",
@@ -55,6 +63,15 @@ local Translations = {
         ["characters"] = "Characters",
         ["enter_unlocked_house"] = "Enter Unlocked House",
         ["lock_door_police"] = "Lock Door"
+    },
+    log = {
+        ["house_created"] = "House Created:",
+        ["house_address"] = "**Address**: %{label}\n\n**Listing Price**: %{price}\n\n**Tier**: %{tier}\n\n**Listing Agent**: %{agent}",
+        ["house_purchased"] = "House Purchased:",
+        ["house_purchased_by"] = "**Address**: %{house}\n\n**Purchase Price**: %{price}\n\n**Purchaser**: %{firstname} %{lastname}"
     }
 }
-Lang = Locale:new({phrases = Translations})
+Lang = Locale:new({
+    phrases = Translations,
+    warnOnMissing = true
+})

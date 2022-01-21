@@ -56,12 +56,12 @@ end)
 
 -- Commands
 
-QBCore.Commands.Add("decorate", "Decorate Interior", {}, false, function(source)
+QBCore.Commands.Add("decorate", Lang:t("info.decorate_interior"), {}, false, function(source)
     local src = source
     TriggerClientEvent("qb-houses:client:decorate", src)
 end)
 
-QBCore.Commands.Add("createhouse", "Create House (Real Estate Only)", {{name = "price", help = "Price of the house"}, {name = "tier", help = "Name of the item(no label)"}}, true, function(source, args)
+QBCore.Commands.Add("createhouse", Lang:t("info.create_house"), {{name = "price", help = Lang:t("info.price_of_house")}, {name = "tier", help = Lang:t("info.tier_number")}}, true, function(source, args)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local price = tonumber(args[1])
@@ -73,7 +73,7 @@ QBCore.Commands.Add("createhouse", "Create House (Real Estate Only)", {{name = "
     end
 end)
 
-QBCore.Commands.Add("addgarage", "Add House Garage (Real Estate Only)", {}, false, function(source)
+QBCore.Commands.Add("addgarage", Lang:t('info.add_garage'), {}, false, function(source)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "realestate" then
@@ -83,7 +83,7 @@ QBCore.Commands.Add("addgarage", "Add House Garage (Real Estate Only)", {}, fals
     end
 end)
 
-QBCore.Commands.Add("ring", "Ring The Doorbell", {}, false, function(source)
+QBCore.Commands.Add("ring", Lang:t("info.ring_doorbell"), {}, false, function(source)
     local src = source
     TriggerClientEvent('qb-houses:client:RequestRing', src)
 end)
@@ -186,7 +186,7 @@ RegisterNetEvent('qb-houses:server:addNewHouse', function(street, coords, price,
     }
     TriggerClientEvent("qb-houses:client:setHouseConfig", -1, Config.Houses)
     TriggerClientEvent('QBCore:Notify', src, Lang:t("info.added_house", {value = label}))
-    TriggerEvent('qb-log:server:CreateLog', 'house', 'House Created:', 'green', '**Address**:\n'..label..'\n\n**Listing Price**:\n$'..price..'\n\n**Tier**:\n'..tier..'\n\n**Listing Agent**:\n'..GetPlayerName(src))
+    TriggerEvent('qb-log:server:CreateLog', 'house', Lang:t("log.house_created"), 'green', Lang:t("log.house_address", {label = label, price = price, tier = tier, agent = GetPlayerName(src)}))
 end)
 
 RegisterNetEvent('qb-houses:server:addGarage', function(house, coords)
@@ -238,7 +238,7 @@ RegisterNetEvent('qb-houses:server:buyHouse', function(house)
         TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
         pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
         TriggerEvent('qb-bossmenu:server:addAccountMoney', "realestate", (HousePrice / 100) * math.random(18, 25))
-        TriggerEvent('qb-log:server:CreateLog', 'house', 'House Purchased:', 'green', '**Address**:\n'..house:upper()..'\n\n**Purchase Price**:\n$'..HousePrice..'\n\n**Purchaser**:\n'..pData.PlayerData.charinfo.firstname..' '..pData.PlayerData.charinfo.lastname)
+        TriggerEvent('qb-log:server:CreateLog', 'house', Lang:t("log.house_purchased"), 'green', Lang:t("log.house_purchased_by", {house = house:upper(), price = HousePrice, firstname = pData.PlayerData.charinfo.firstname, lastname = pData.PlayerData.charinfo.lastname}))
     else
         TriggerClientEvent('QBCore:Notify', source, Lang:t("error.not_enough_money"), "error")
     end
@@ -309,7 +309,7 @@ RegisterNetEvent('qb-houses:server:giveHouseKey', function(target, house)
         if housekeyholders[house] then
             for _, cid in pairs(housekeyholders[house]) do
                 if cid == tPlayer.PlayerData.citizenid then
-                    TriggerClientEvent('QBCore:Notify', src, 'This person already has the keys of the house!', 'error', 3500)
+                    TriggerClientEvent('QBCore:Notify', src, Lang:t("error.already_keys"), 'error', 3500)
                     return
                 end
             end

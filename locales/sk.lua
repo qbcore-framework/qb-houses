@@ -33,7 +33,15 @@ local Translations = {
         ["door_ringing"] = "Niekto zvoní!",
         ["speed"] = "Rýchlosť je %{value}",
         ["added_house"] = "Do domu si pridal: %{value}",
-        ["added_garage"] = "Do garáže si pridal: %{value}"
+        ["added_garage"] = "Do garáže si pridal: %{value}",
+        ["exit_camera"] = "Ukončiť kameru",
+        ["house_for_sale"] = "Dom na predaj",
+        ["decorate_interior"] = "Ozdobte interiér",
+        ["create_house"] = "Vytvoriť dom (iba nehnuteľnosti)",
+        ["price_of_house"] = "Cena domu",
+        ["tier_number"] = "Číslo radu domu",
+        ["add_garage"] = "Pridať garáž (iba nehnuteľnosti)",
+        ["ring_doorbell"] = "Zazvoňte na zvonček"
     },
     menu = {
         ["house_options"] = "Možnosti domu",
@@ -55,6 +63,15 @@ local Translations = {
         ["characters"] = "Charaktery",
         ["enter_unlocked_house"] = "Vstúpiť do otvoreného domu",
         ["lock_door_police"] = "Zatvoriť dvere"
+    },
+    log = {
+        ["house_created"] = "Dom vytvorený:",
+        ["house_address"] = "**Adresa**: %{label}\n\n**Katalógová cena**: %{price}\n\n**Tier**: %{tier}\n\n**Záznamový agent**: %{agent}",
+        ["house_purchased"] = "Dom odkúpený:",
+        ["house_purchased_by"] = "**Adresa**: %{house}\n\n**Kúpna cena**: %{price}\n\n**Kupujúci**: %{firstname} %{lastname}"
     }
 }
-Lang = Locale:new({phrases = Translations})
+Lang = Locale:new({
+    phrases = Translations,
+    warnOnMissing = true
+})
