@@ -24,6 +24,7 @@ local Translations = {
         ["something_wrong"] = "Qualcosa è andato storto riprova!",
     },
     success = {
+        ["bought_house"] = "Casa acquistata!",
         ["unlocked"] = "La casa è aperta!",
         ["home_invasion"] = "La porta è aperta.",
         ["lock_invasion"] = "Hai chiuso di nuovo la casa..",
