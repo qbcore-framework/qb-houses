@@ -239,8 +239,9 @@ RegisterNetEvent('qb-houses:server:buyHouse', function(house)
         pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
         TriggerEvent('qb-bossmenu:server:addAccountMoney', "realestate", (HousePrice / 100) * math.random(18, 25))
         TriggerEvent('qb-log:server:CreateLog', 'house', 'House Purchased:', 'green', '**Address**:\n'..house:upper()..'\n\n**Purchase Price**:\n$'..HousePrice..'\n\n**Purchaser**:\n'..pData.PlayerData.charinfo.firstname..' '..pData.PlayerData.charinfo.lastname)
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("success.bought_house"), "success")
     else
-        TriggerClientEvent('QBCore:Notify', source, Lang:t("error.not_enough_money"), "error")
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough_money"), "error")
     end
 end)
 
