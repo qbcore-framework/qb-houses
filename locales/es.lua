@@ -33,6 +33,12 @@ local Translations = {
 	["door_ringing"] = "¡Alguien está tocando la puerta!",
         ["speed"] = "La velocidad es %{valor}",
         ["added_house"] = "Has agregado una casa: %{value}",
+	["decorate_interior"] = "Decorar Interior",
+        ["create_house"] = "Crear casa (Solo bienes raices)",
+        ["price_of_house"] = "precio de la casa",
+        ["tier_number"] = "Número de nivel de la casa",
+        ["add_garage"] = "Agregar garaje de la casa (solo bienes raices)",
+        ["ring_doorbell"] = "Tocar el timbre",
         ["added_garage"] = "Has agregado un garaje: %{value}" 
     },
     warning = {},
