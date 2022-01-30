@@ -33,17 +33,17 @@ local Translations = {
 	["door_ringing"] = "¡Alguien está tocando la puerta!",
         ["speed"] = "La velocidad es %{valor}",
         ["added_house"] = "Has agregado una casa: %{value}",
+	["added_garage"] = "Has agregado un garaje: %{value}",
+	["exit_camera"] = "Salir de la camara",
+	["house_for_sale"] = "Casa en venta",
 	["decorate_interior"] = "Decorar Interior",
         ["create_house"] = "Crear casa (Solo bienes raices)",
         ["price_of_house"] = "precio de la casa",
         ["tier_number"] = "Número de nivel de la casa",
         ["add_garage"] = "Agregar garaje de la casa (solo bienes raices)",
-        ["ring_doorbell"] = "Tocar el timbre",
-        ["added_garage"] = "Has agregado un garaje: %{value}" 
+        ["ring_doorbell"] = "Tocar el timbre"
     },
-    warning = {},
     menu = {
-
 	["house_options"] = "Opciones de casa",
         ["enter_house"] = "Entra en tu casa",
         ["give_house_key"] = "Dar llave de casa",
@@ -60,7 +60,15 @@ local Translations = {
         ["change_outfit"] = "Cambiar atuendo",
         ["outfits"] = "Atuendos",
         ["change_character"] = "Cambiar personaje",
-        ["characters"] = "Personajes", 
+        ["characters"] = "Personajes",
+	["enter_unlocked_house"] = "Entrar en casa abierta",
+        ["lock_door_police"] = "Cerrar puerta"
+    },
+    log = {
+        ["house_created"] = "Casa creada:",
+        ["house_address"] = "**Address**: %{label}\n\n**Listado de Precio**: %{price}\n\n**Tier**: %{tier}\n\n**Listing Agent**: %{agent}",
+        ["house_purchased"] = "Casa comprada:",
+        ["house_purchased_by"] = "**Address**: %{house}\n\n**Precio de compra**: %{price}\n\n**Purchaser**: %{firstname} %{lastname}"
     }
 }
 Lang = Locale:new({phrases = Translations})
