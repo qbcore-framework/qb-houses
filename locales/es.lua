@@ -21,7 +21,7 @@ local Translations = {
         ["not_enough_money"] = "No tienes suficiente dinero..",
         ["remove_key_from"] = "Se han eliminado las llaves de %{firstname} %{lastname}",
         ["already_keys"] = "¡Esta persona ya tiene las llaves de la casa!",
-        ["something_wrong"] = "¡Algo salió mal, inténtalo de nuevo!", 
+        ["something_wrong"] = "¡Algo salió mal, inténtalo de nuevo!",
     },
     success = {
 	["unlocked"] = "¡La casa está desbloqueada!",
@@ -33,7 +33,7 @@ local Translations = {
 	["door_ringing"] = "¡Alguien está tocando la puerta!",
         ["speed"] = "La velocidad es %{valor}",
         ["added_house"] = "Has agregado una casa: %{value}",
-        ["added_garage"] = "Has agregado un garaje: %{value}" 
+        ["added_garage"] = "Has agregado un garaje: %{value}",
         ["exit_camera"] = "Salir",
         ["house_for_sale"] = "Casa A La Venta",
         ["decorate_interior"] = "Decorar Interior",
@@ -44,7 +44,6 @@ local Translations = {
         ["ring_doorbell"] = "Tocar el timbre"
     },
     menu = {
-
 	["house_options"] = "Opciones de casa",
         ["enter_house"] = "Entra en tu casa",
         ["give_house_key"] = "Dar llave de casa",
