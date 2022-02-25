@@ -305,28 +305,37 @@ end)
 RegisterNetEvent('qb-houses:server:giveHouseKey', function(target, house)
     local src = source
     local tPlayer = QBCore.Functions.GetPlayer(target)
+	local Player = QBCore.Functions.GetPlayer(src)
     if tPlayer then
-        if housekeyholders[house] then
-            for _, cid in pairs(housekeyholders[house]) do
-                if cid == tPlayer.PlayerData.citizenid then
-                    TriggerClientEvent('QBCore:Notify', src, Lang:t("error.already_keys"), 'error', 3500)
-                    return
-                end
-            end
-            housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
-            MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
-            TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
+        if houseowneridentifier[house] ~= nil and houseownercid[house] ~= nil then
+            if houseownercid[house] == Player.PlayerData.citizenid then   
+                if housekeyholders[house] then
+                    for _, cid in pairs(housekeyholders[house]) do
+                        if cid == tPlayer.PlayerData.citizenid then
+                            TriggerClientEvent('QBCore:Notify', src, Lang:t("error.already_keys"), 'error', 3500)
+                            return
+                        end
+                    end
+                    housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
+                    MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
+                    TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
 
-            TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
+                    TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
+                else
+                    local sourceTarget = QBCore.Functions.GetPlayer(src)
+                    housekeyholders[house] = {
+                        [1] = sourceTarget.PlayerData.citizenid
+                    }
+                    housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
+                    MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
+                    TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
+                    TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
+                end
+            else
+                TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_owner"), 'error', 2500)
+            end
         else
-            local sourceTarget = QBCore.Functions.GetPlayer(src)
-            housekeyholders[house] = {
-                [1] = sourceTarget.PlayerData.citizenid
-            }
-            housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
-            MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
-            TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
-            TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
+            TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_owner"), 'error', 2500)
         end
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t("error.something_wrong"), 'error', 2500)
