@@ -53,16 +53,16 @@ local function RegisterHouseExitTarget(id, isOwned)
     }
 
     if isOwned then
-        table.insert(options, {
+        options[#options+1] = {
             type = "client",
             event = "qb-houses:client:FrontDoorCam",
             label = Lang:t("menu.front_camera"),
-        })
-        table.insert(options, {
+        }
+        options[#options+1] = {
             type = "client",
             event = "qb-houses:client:AnswerDoorbell",
             label = Lang:t("menu.open_door"),
-        })
+        }
     end
 
     exports['qb-target']:AddBoxZone(boxName, coords, 2, 1, {
@@ -124,18 +124,18 @@ local function RegisterHouseEntranceTarget(id, house)
                         }
                     }
                     if not house.locked then
-                        table.insert(options, {
+                        options[#options+1] = {
                             type = "client",
                             event = "qb-houses:client:EnterHouse",
                             label = Lang:t("menu.enter_unlocked_house"),
-                        })
+                        }
                     end
                     if QBCore.Functions.GetPlayerData().job.name == 'police' then
-                        table.insert(options, {
+                        options[#options+1] = {
                             type = "client",
                             event = "qb-houses:client:ResetHouse",
                             label = Lang:t("menu.lock_door_police"),
-                        })
+                        }
                     end
                 else
                     options = {}
