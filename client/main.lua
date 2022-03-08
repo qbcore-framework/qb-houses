@@ -163,7 +163,7 @@ local function RegisterHouseEntranceTarget(id, house)
     Config.Targets[boxName] = {created = true}
 end
 
-local function DeleteHousesEntranceTargets()
+local function DeleteHousesTargets()
     if Config.Targets and next(Config.Targets) then
         for id, _ in pairs(Config.Targets) do
             exports['qb-target']:RemoveZone(id)
@@ -184,8 +184,9 @@ end
 
 RegisterNetEvent('qb-houses:client:setHouseConfig', function(houseConfig)
     Config.Houses = houseConfig
+    QBCore.Debug(Config.Houses)
     if Config.UseTarget then
-        DeleteHousesEntranceTargets()
+        DeleteHousesTargets()
         SetHousesEntranceTargets()
     end
 end)
@@ -887,6 +888,9 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
             RemoveBlip(v)
         end
     end
+    if Config.UseTarget then
+        DeleteHousesTargets()
+    end
 end)
 
 RegisterNetEvent('qb-houses:client:lockHouse', function(bool, house)
@@ -1084,6 +1088,10 @@ RegisterNetEvent('qb-houses:client:refreshBlips', function() -- Refresh unowned 
     for k,v in pairs(UnownedHouseBlips) do RemoveBlip(v) end
     Wait(250)
     TriggerEvent('qb-houses:client:setupHouseBlips2')
+    if Config.UseTarget then
+        DeleteHousesTargets()
+        SetHousesEntranceTargets()
+    end
 end)
 
 RegisterNetEvent('qb-houses:client:SetClosestHouse', function()
@@ -1205,7 +1213,7 @@ end)
 RegisterNetEvent('qb-houses:client:SetRamState', function(bool, house)
     Config.Houses[house].IsRaming = bool
     if Config.UseTarget then
-        DeleteHousesEntranceTargets()
+        DeleteHousesTargets()
         SetHousesEntranceTargets()
     end
 end)
@@ -1213,7 +1221,7 @@ end)
 RegisterNetEvent('qb-houses:client:SetHouseRammed', function(bool, house)
     Config.Houses[house].IsRammed = bool
     if Config.UseTarget then
-        DeleteHousesEntranceTargets()
+        DeleteHousesTargets()
         SetHousesEntranceTargets()
     end
 end)
@@ -1309,6 +1317,16 @@ end)
 RegisterNetEvent('qb-houses:client:KeyholderOptions', function(data)
     optionMenu(data.citizenData)
 end)
+
+RegisterNetEvent('qb-house:client:RefreshHouseTargets', function ()
+    if not Config.UseTarget then
+        return
+    end
+
+    DeleteHousesTargets()
+    SetHousesEntranceTargets()
+end)
+
 -- NUI Callbacks
 
 RegisterNUICallback('HasEnoughMoney', function(data, cb)

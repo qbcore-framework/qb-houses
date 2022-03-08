@@ -28,7 +28,8 @@ local Translations = {
         ["unlocked"] = "House is unlocked!",
         ["home_invasion"] = "The door is now open.",
         ["lock_invasion"] = "You locked the house again..",
-        ["recieved_key"] = "You have the keys of %{value} recieved!"
+        ["recieved_key"] = "You have the keys of %{value} recieved!",
+        ["house_purchased"] = "You have successfully bought the house!"
     },
     info = {
         ["door_ringing"] = "Someone is ringing the door!",
