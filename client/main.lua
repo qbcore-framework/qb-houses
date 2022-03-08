@@ -184,7 +184,6 @@ end
 
 RegisterNetEvent('qb-houses:client:setHouseConfig', function(houseConfig)
     Config.Houses = houseConfig
-    QBCore.Debug(Config.Houses)
     if Config.UseTarget then
         DeleteHousesTargets()
         SetHousesEntranceTargets()
