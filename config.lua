@@ -8,7 +8,7 @@ Config.Houses = {}
 
 -- **** IMPORTANT ****
 -- UseTarget should only be set to true when using qb-target
-Config.UseTarget = false
+Config.UseTarget = GetConvar('UseTarget', 'false') == 'true'
 Config.Targets = {}
 
 Config.Furniture = {
