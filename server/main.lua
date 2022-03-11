@@ -433,7 +433,7 @@ end)
 QBCore.Functions.CreateCallback('qb-houses:server:isOwned', function(source, cb, house)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    if Player.PlayerData.job.name == "realestate" then
+    if Player and Player.PlayerData and Player.PlayerData.job and Player.PlayerData.job.name == "realestate" then
         cb(true)
     elseif houseowneridentifier[house] and houseownercid[house] then
         cb(true)

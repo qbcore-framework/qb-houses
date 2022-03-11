@@ -215,7 +215,7 @@ local function RegisterHouseEntranceTarget(id, house)
                             label = Lang:t("menu.enter_unlocked_house"),
                         }
                     end
-                    if QBCore.Functions.GetPlayerData().job.name == 'police' then
+                    if QBCore.Functions.GetPlayerData().job and QBCore.Functions.GetPlayerData().job.name == 'police' then
                         options[#options+1] = {
                             type = "client",
                             event = "qb-houses:client:ResetHouse",
