@@ -66,6 +66,11 @@ local Translations = {
         ["enter_unlocked_house"] = "Enter Unlocked House",
         ["lock_door_police"] = "Lock Door"
     },
+    target = {
+        ["open_stash"] = "[E] Open Stash",
+        ["outfits"] = "[E] Change Outfits",
+        ["change_character"] = "[E] Change Character",
+    },
     log = {
         ["house_created"] = "House Created:",
         ["house_address"] = "**Address**: %{label}\n\n**Listing Price**: %{price}\n\n**Tier**: %{tier}\n\n**Listing Agent**: %{agent}",
