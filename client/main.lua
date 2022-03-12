@@ -1231,25 +1231,10 @@ RegisterNetEvent('qb-houses:client:setLocation', function(data)
         if HasHouseKey then
             if data.id == 'setstash' then
                 TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 1)
-                if Config.UseTarget then
-                    DeleteBoxTarget(stashTargetBox)
-                    isInsideStashTarget = false
-                    RegisterStashTarget()
-                end
             elseif data.id == 'setoutift' then
                 TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 2)
-                if Config.UseTarget then
-                    DeleteBoxTarget(outfitsTargetBox)
-                    isInsideOutfitsTarget = false
-                    RegisterOutfitsTarget()
-                end
             elseif data.id == 'setlogout' then
                 TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 3)
-                if Config.UseTarget then
-                    DeleteBoxTarget(charactersTargetBox)
-                    isInsiteCharactersTarget = false
-                    RegisterCharactersTarget()
-                end
             end
         else
             QBCore.Functions.Notify(Lang:t("error.not_owner"), "error")
@@ -1264,10 +1249,25 @@ RegisterNetEvent('qb-houses:client:refreshLocations', function(house, location, 
         if IsInside then
             if type == 1 then
                 stashLocation = json.decode(location)
+                if Config.UseTarget then
+                    DeleteBoxTarget(stashTargetBox)
+                    isInsideStashTarget = false
+                    RegisterStashTarget()
+                end
             elseif type == 2 then
                 outfitLocation = json.decode(location)
+                if Config.UseTarget then
+                    DeleteBoxTarget(outfitsTargetBox)
+                    isInsideOutfitsTarget = false
+                    RegisterOutfitsTarget()
+                end
             elseif type == 3 then
                 logoutLocation = json.decode(location)
+                if Config.UseTarget then
+                    DeleteBoxTarget(charactersTargetBox)
+                    isInsiteCharactersTarget = false
+                    RegisterCharactersTarget()
+                end
             end
         end
     end
