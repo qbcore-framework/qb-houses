@@ -421,7 +421,17 @@ local function getDataForHouseTier(house, coords)
         [3] = function(coords) return exports['qb-interior']:CreateTrevorsShell(coords) end,
         [4] = function(coords) return exports['qb-interior']:CreateCaravanShell(coords) end,
         [5] = function(coords) return exports['qb-interior']:CreateLesterShell(coords) end,
-        [6] = function(coords) return exports['qb-interior']:CreateRanchShell(coords) end
+        [6] = function(coords) return exports['qb-interior']:CreateRanchShell(coords) end,
+        [7] = function(coords) return exports['qb-interior']:CreateContainer(coords) end,
+        [8] = function(coords) return exports['qb-interior']:CreateFurniMid(coords) end,
+        [9] = function(coords) return exports['qb-interior']:CreateFurniMotelModern(coords) end,
+        [10] = function(coords) return exports['qb-interior']:CreateFranklinAunt(coords) end,
+        [11] = function(coords) return exports['qb-interior']:CreateGarageMed(coords) end,
+        [12] = function(coords) return exports['qb-interior']:CreateMichael(coords) end,
+        [13] = function(coords) return exports['qb-interior']:CreateOffice1(coords) end,
+        [14] = function(coords) return exports['qb-interior']:CreateStore1(coords) end,
+        [15] = function(coords) return exports['qb-interior']:CreateWarehouse1(coords) end,
+        [16] = function(coords) return exports['qb-interior']:CreateFurniMotelStandard(coords) end
     }
 
     if not shells[houseTier] then
@@ -432,7 +442,7 @@ local function getDataForHouseTier(house, coords)
     end
 end
 
--- If you are using paid shells the comment function above and uncomment this or grab the ones you need
+-- If you are using paid shells then comment function above and uncomment this or grab the ones you need
 
 -- local function getDataForHouseTier(house, coords)
 --     if Config.Houses[house].tier == 1 then
