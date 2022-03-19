@@ -3,6 +3,7 @@ Config = Config or {}
 Config.MinZOffset = 30
 Config.RamsNeeded = 2
 Config.UnownedBlips = false
+Config.UnownedBlipsPrices = false -- True = Show the price of unowned properties | False = Don't show the price of unowned properties
 
 Config.Houses = {}
 
