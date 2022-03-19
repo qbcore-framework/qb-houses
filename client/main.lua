@@ -919,8 +919,12 @@ RegisterNetEvent('qb-houses:client:setupHouseBlips2', function() -- Setup unowne
             SetBlipScale  (HouseBlip2, 0.65)
             SetBlipAsShortRange(HouseBlip2, true)
             SetBlipColour(HouseBlip2, 3)
-            AddTextEntry('UnownedHouse', Lang:t("info.house_for_sale"))
-            BeginTextCommandSetBlipName('UnownedHouse')
+	    if Config.UnownedBlipsPrices then
+            	AddTextEntry('UnownedHouse', Lang:t("info.house_for_sale").. " $".. v.price)
+            else
+		AddTextEntry('UnownedHouse', Lang:t("info.house_for_sale"))
+            end		
+	    BeginTextCommandSetBlipName('UnownedHouse')
             EndTextCommandSetBlipName(HouseBlip2)
             UnownedHouseBlips[#UnownedHouseBlips+1] = HouseBlip2
         end
