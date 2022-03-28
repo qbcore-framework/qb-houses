@@ -2,7 +2,8 @@ QBCore = exports['qb-core']:GetCoreObject()
 IsInside = false
 ClosestHouse = nil
 HasHouseKey = false
-contractOpen = false
+ContractOpen = false
+
 local isOwned = false
 local cam = nil
 local viewCam = false
@@ -24,22 +25,444 @@ local keyholderMenu = {}
 local keyholderOptions = {}
 local fetchingHouseKeys = false
 
+-- zone check
+local isInsideEntranceZone = false
+local isInsideExitZone = false
+
+local stashTargetBoxID = 'stashTarget'
+local stashTargetBox = nil
+local isInsideStashTarget = false
+
+local outfitsTargetBoxID = 'outfitsTarget'
+local outfitsTargetBox = nil
+local isInsideOutfitsTarget = false
+
+local charactersTargetBoxID = 'charactersTarget'
+local charactersTargetBox = nil
+local isInsiteCharactersTarget = false
+
 -- Functions
 
-local function DrawText3Ds(x, y, z, text)
-	SetTextScale(0.35, 0.35)
-    SetTextFont(4)
-    SetTextProportional(1)
-    SetTextColour(255, 255, 255, 215)
-    SetTextEntry("STRING")
-    SetTextCentre(true)
-    AddTextComponentString(text)
-    SetDrawOrigin(x,y,z, 0)
-    DrawText(0.0, 0.0)
-    local factor = (string.len(text)) / 370
-    DrawRect(0.0, 0.0+0.0125, 0.017+ factor, 0.03, 0, 0, 0, 75)
-    ClearDrawOrigin()
+local function RegisterStashTarget()
+    if not stashLocation then
+        return
+    end
+
+    stashTargetBox = BoxZone:Create(vector3(stashLocation.x, stashLocation.y, stashLocation.z), 1.5, 1.5, {
+        name = stashTargetBoxID,
+        heading = 0.0,
+        minZ = stashLocation.z - 1.0,
+        maxZ = stashLocation.z + 1.0,
+        debugPoly = false
+    })
+
+    stashTargetBox:onPlayerInOut(function (isPointInside)
+        if isPointInside and not entering and isOwned then
+            exports['qb-core']:DrawText(Lang:t("target.open_stash"), 'left')
+        else
+            exports['qb-core']:HideText()
+        end
+
+        isInsideStashTarget = isPointInside
+    end)
 end
+
+local function RegisterOutfitsTarget()
+    if not outfitLocation then
+        return
+    end
+
+    outfitsTargetBox = BoxZone:Create(vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z), 1.5, 1.5, {
+        name = outfitsTargetBoxID,
+        heading = 0.0,
+        minZ = outfitLocation.z - 1.0,
+        maxZ = outfitLocation.z + 1.0,
+        debugPoly = false
+    })
+
+    outfitsTargetBox:onPlayerInOut(function (isPointInside)
+        if isPointInside and not entering and isOwned then
+            exports['qb-core']:DrawText(Lang:t("target.outfits"), 'left')
+        else
+            exports['qb-core']:HideText()
+        end
+
+        isInsideOutfitsTarget = isPointInside
+    end)
+end
+
+local function RegisterCharactersTarget()
+    if not logoutLocation then
+        return
+    end
+
+    charactersTargetBox = BoxZone:Create(vector3(logoutLocation.x, logoutLocation.y, logoutLocation.z), 1.5, 1.5, {
+        name = charactersTargetBoxID,
+        heading = 0.0,
+        minZ = logoutLocation.z - 1.0,
+        maxZ = logoutLocation.z + 1.0,
+        debugPoly = false
+    })
+
+    charactersTargetBox:onPlayerInOut(function (isPointInside)
+        if isPointInside and not entering and isOwned then
+            exports['qb-core']:DrawText(Lang:t("target.change_character"), 'left')
+        else
+            exports['qb-core']:HideText()
+        end
+
+        isInsiteCharactersTarget = isPointInside
+    end)
+end
+
+local function RegisterHouseExitZone(id)
+    if not Config.Houses[id] then
+        return
+    end
+
+    local boxName = 'houseExit_' .. id
+    local boxData = Config.Targets[boxName] or {}
+    if boxData and boxData.created then
+        return
+    end
+
+    if not POIOffsets then
+        return
+    end
+
+    local house = Config.Houses[id]
+    local coords = vector3(house.coords['enter'].x + POIOffsets.exit.x, house.coords['enter'].y + POIOffsets.exit.y, house.coords['enter'].z  - Config.MinZOffset + POIOffsets.exit.z + 1.0)
+
+    local zone = BoxZone:Create(coords, 2, 1, {
+        name = boxName,
+        heading = 0.0,
+        debugPoly = false,
+        minZ = coords.z - 2.0,
+        maxZ = coords.z + 1.0,
+    })
+
+    zone:onPlayerInOut(function (isPointInside)
+        if isPointInside then
+            exports['qb-core']:DrawText("[E] " .. Lang:t("menu.house_options"), 'left')
+        else
+            exports['qb-core']:HideText()
+            CloseMenuFull()
+        end
+
+        isInsideExitZone = isPointInside
+    end)
+
+    Config.Targets[boxName] = {created = true, zone = zone}
+end
+
+local function RegisterHouseExitTarget(id, isOwned)
+    if not Config.Houses[id] then
+        return
+    end
+
+    local boxName = 'houseExit_' .. id
+    local boxData = Config.Targets[boxName] or {}
+    if boxData and boxData.created then
+        return
+    end
+
+    if not POIOffsets then
+        return
+    end
+
+    local house = Config.Houses[id]
+    local coords = vector3(house.coords['enter'].x + POIOffsets.exit.x, house.coords['enter'].y + POIOffsets.exit.y, house.coords['enter'].z  - Config.MinZOffset + POIOffsets.exit.z + 1.0)
+
+    local options = {
+        {
+            type = "client",
+            event = "qb-houses:client:ExitOwnedHouse",
+            label = Lang:t("menu.exit_property"),
+        },
+    }
+
+    if isOwned then
+        options[#options+1] = {
+            type = "client",
+            event = "qb-houses:client:FrontDoorCam",
+            label = Lang:t("menu.front_camera"),
+        }
+        options[#options+1] = {
+            type = "client",
+            event = "qb-houses:client:AnswerDoorbell",
+            label = Lang:t("menu.open_door"),
+        }
+    end
+
+    exports['qb-target']:AddBoxZone(boxName, coords, 2, 1, {
+        name = boxName,
+        heading = 0.0,
+        debugPoly = false,
+    }, {
+        options = options,
+        distance = 1.0
+    })
+
+    Config.Targets[boxName] = {created = true}
+end
+
+local function RegisterHouseEntranceZone(id, house)
+    local coords = vector3(house.coords['enter'].x, house.coords['enter'].y, house.coords['enter'].z)
+    local boxName = 'houseEntrance_' .. id
+    local boxData = Config.Targets[boxName] or {}
+
+    if boxData and boxData.created then
+        return
+    end
+
+    local zone = BoxZone:Create(coords, 2, 1, {
+        name = boxName,
+        heading = house.coords['enter'].h,
+        debugPoly = false,
+        minZ = house.coords['enter'].z - 1.0,
+        maxZ = house.coords['enter'].z + 1.0,
+    })
+
+    zone:onPlayerInOut(function (isPointInside)
+        if isPointInside then
+            exports['qb-core']:DrawText("[E] " .. Lang:t("menu.house_options"), 'left')
+        else
+            exports['qb-core']:HideText()
+            CloseMenuFull()
+        end
+
+        isInsideEntranceZone = isPointInside
+    end)
+
+    Config.Targets[boxName] = {created = true, zone = zone}
+end
+
+local function RegisterHouseEntranceTarget(id, house)
+    local coords = vector3(house.coords['enter'].x, house.coords['enter'].y, house.coords['enter'].z)
+    local boxName = 'houseEntrance_' .. id
+    local boxData = Config.Targets[boxName] or {}
+
+    if boxData and boxData.created then
+        return
+    end
+
+    local options = nil
+    isOwned = false
+
+    QBCore.Functions.TriggerCallback('qb-houses:server:isOwned', function(owned)
+        isOwned = owned
+
+        if not isOwned then
+            options = {
+                {
+                    type = "client",
+                    event = "qb-houses:client:ViewHouse",
+                    label = Lang:t("menu.view_house"),
+                }
+            }
+        else
+            QBCore.Functions.TriggerCallback('qb-houses:server:hasKey', function(hasKey)
+                if isOwned and hasKey then
+                    options = {
+                        {
+                            type = "client",
+                            event = "qb-houses:client:EnterHouse",
+                            label = Lang:t("menu.enter_house"),
+                        },
+                        {
+                            type = "client",
+                            event = "qb-houses:client:giveHouseKey",
+                            label = Lang:t("menu.give_house_key"),
+                        }
+                    }
+                elseif isOwned and not hasKey then
+                    options = {
+                        {
+                            type = "client",
+                            event = "qb-houses:client:RequestRing",
+                            label = Lang:t("menu.ring_door"),
+                        }
+                    }
+                    if not house.locked then
+                        options[#options+1] = {
+                            type = "client",
+                            event = "qb-houses:client:EnterHouse",
+                            label = Lang:t("menu.enter_unlocked_house"),
+                        }
+                    end
+                    if QBCore.Functions.GetPlayerData().job and QBCore.Functions.GetPlayerData().job.name == 'police' then
+                        options[#options+1] = {
+                            type = "client",
+                            event = "qb-houses:client:ResetHouse",
+                            label = Lang:t("menu.lock_door_police"),
+                        }
+                    end
+                else
+                    options = {}
+                end
+            end, id)
+        end
+    end, id)
+
+    while not options do
+        -- wait for the target options to be initiated
+        Wait(1000)
+    end
+
+    exports['qb-target']:AddBoxZone(boxName, coords, 2, 1, {
+        name = boxName,
+        heading = house.coords['enter'].h,
+        debugPoly = false,
+        minZ = house.coords['enter'].z - 1.0,
+        maxZ = house.coords['enter'].z + 1.0,
+    }, {
+        options = options,
+        distance = 2.0
+    })
+
+    Config.Targets[boxName] = {created = true}
+end
+
+local function DeleteBoxTarget(box)
+    if not box then
+        return
+    end
+
+    box:destroy();
+    box = nil;
+end
+
+local function DeleteHousesTargets()
+    if Config.Targets and next(Config.Targets) then
+        for id, target in pairs(Config.Targets) do
+            if Config.UseTarget then
+                exports['qb-target']:RemoveZone(id)
+            else
+                target.zone:destroy()
+            end
+            Config.Targets[id] = nil
+        end
+    end
+end
+
+local function SetHousesEntranceTargets()
+    if Config.Houses and next(Config.Houses) then
+        for id, house in pairs(Config.Houses) do
+            if house and house.coords and house.coords['enter'] then
+                if Config.UseTarget then
+                    RegisterHouseEntranceTarget(id, house)
+                else
+                    RegisterHouseEntranceZone(id, house)
+                end
+                
+            end
+        end
+    end
+end
+
+local function showEntranceHeaderMenu(house)
+    local headerMenu = {}
+
+    if QBCore.Functions.GetPlayerData().job and QBCore.Functions.GetPlayerData().job.name == 'realestate' then
+        isOwned = true
+    end
+
+    if not isOwned then
+        headerMenu[#headerMenu+1] = {
+            header = Lang:t("menu.view_house"),
+            params = {
+                event = "qb-houses:client:ViewHouse",
+                args = {}
+            }
+        }
+    else
+        if isOwned and HasHouseKey then
+            headerMenu[#headerMenu+1] = {
+                header = Lang:t("menu.enter_house"),
+                params = {
+                    event = "qb-houses:client:EnterHouse",
+                    args = {}
+                }
+            }
+            headerMenu[#headerMenu+1] = {
+                header = Lang:t("menu.give_house_key"),
+                params = {
+                    event = "qb-houses:client:giveHouseKey",
+                    args = {}
+                }
+            }
+        elseif isOwned and not HasHouseKey then
+            headerMenu[#headerMenu+1] = {
+                header = Lang:t("menu.ring_door"),
+                params = {
+                    event = "qb-houses:client:RequestRing",
+                    args = {}
+                }
+            }
+            if not house.locked then
+                headerMenu[#headerMenu+1] = {
+                    header = Lang:t("menu.enter_unlocked_house"),
+                    params = {
+                        event = "qb-houses:client:EnterHouse",
+                        args = {}
+                    }
+                }
+            end
+            if QBCore.Functions.GetPlayerData().job and QBCore.Functions.GetPlayerData().job.name == 'police' then
+                headerMenu[#headerMenu+1] = {
+                    header = Lang:t("menu.lock_door_police"),
+                    params = {
+                        event = "qb-houses:client:ResetHouse",
+                        args = {}
+                    }
+                }
+            end
+        else
+            headerMenu = {}
+        end
+    end
+   
+    if headerMenu and next(headerMenu) then
+        exports['qb-menu']:showHeader(headerMenu)
+    end
+end
+
+local function showExitHeaderMenu()
+    local headerMenu = {}
+    headerMenu[#headerMenu+1] = {
+        header = Lang:t("menu.exit_property"),
+        params = {
+            event = "qb-houses:client:ExitOwnedHouse",
+            args = {}
+        }
+    }
+    if isOwned then
+        headerMenu[#headerMenu+1] = {
+            header = Lang:t("menu.front_camera"),
+            params = {
+                event = "qb-houses:client:FrontDoorCam",
+                args = {}
+            }
+        }
+        headerMenu[#headerMenu+1] = {
+            header = Lang:t("menu.open_door"),
+            params = {
+                event = "qb-houses:client:AnswerDoorbell",
+                args = {}
+            }
+        }
+    end
+
+    if headerMenu and next(headerMenu) then
+        exports['qb-menu']:showHeader(headerMenu)
+    end
+end
+
+RegisterNetEvent('qb-houses:client:setHouseConfig', function(houseConfig)
+    Config.Houses = houseConfig
+    DeleteHousesTargets()
+    SetHousesEntranceTargets()
+end)
 
 local function loadAnimDict(dict)
     while (not HasAnimDictLoaded(dict)) do
@@ -61,7 +484,7 @@ local function openContract(bool)
         type = "toggle",
         status = bool,
     })
-    contractOpen = bool
+    ContractOpen = bool
 end
 
 local function GetClosestPlayer()
@@ -259,14 +682,15 @@ local function setHouseLocations()
             if result ~= nil then
                 if result.stash ~= nil then
                     stashLocation = json.decode(result.stash)
+                    RegisterStashTarget()
                 end
-
                 if result.outfit ~= nil then
                     outfitLocation = json.decode(result.outfit)
+                    RegisterOutfitsTarget()
                 end
-
                 if result.logout ~= nil then
                     logoutLocation = json.decode(result.logout)
+                    RegisterCharactersTarget()
                 end
             end
         end, ClosestHouse)
@@ -594,9 +1018,15 @@ local function enterOwnedHouse(house)
     entering = false
     setHouseLocations()
     CloseMenuFull()
+
+    if Config.UseTarget then
+        RegisterHouseExitTarget(house, true)
+    else
+        RegisterHouseExitZone(house)
+    end
 end
 
-local function LeaveOwnedHouse(house)
+local function LeaveHouse(house)
     if not FrontCam then
         IsInside = false
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
@@ -615,6 +1045,22 @@ local function LeaveOwnedHouse(house)
             TriggerServerEvent('qb-houses:server:SetInsideMeta', house, false)
             CurrentHouse = nil
         end)
+
+        DeleteBoxTarget(stashTargetBox)
+        DeleteBoxTarget(outfitsTargetBox)
+        DeleteBoxTarget(charactersTargetBox)
+        isInsideEntranceZone = false
+        isInsideExitZone = false
+        isInsideStashTarget = false
+        isInsideOutfitsTarget = false
+        isInsiteCharactersTarget = false
+
+        if Config.UseTarget then
+            exports['qb-target']:RemoveZone('houseExit_' .. house)
+        else
+            DeleteBoxTarget(Config.Targets['houseExit_' .. house].zone)
+        end
+        Config.Targets['houseExit_' .. house] = nil
     end
 end
 
@@ -639,29 +1085,12 @@ local function enterNonOwnedHouse(house)
     entering = false
     InOwnedHouse = true
     setHouseLocations()
-end
+    CloseMenuFull()
 
--- Is there a purpose to this?
-local function LeaveNonOwnedHouse(house)
-    if not FrontCam then
-        IsInside = false
-        TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
-        openHouseAnim()
-        Wait(250)
-        DoScreenFadeOut(250)
-        Wait(500)
-        exports['qb-interior']:DespawnInterior(houseObj, function()
-            UnloadDecorations()
-            TriggerEvent('qb-weathersync:client:EnableSync')
-            Wait(250)
-            DoScreenFadeIn(250)
-            SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
-            SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
-            InOwnedHouse = false
-            TriggerEvent('qb-weed:client:leaveHouse')
-            TriggerServerEvent('qb-houses:server:SetInsideMeta', house, false)
-            CurrentHouse = nil
-        end)
+    if Config.UseTarget then
+        RegisterHouseExitTarget(house, false)
+    else
+        RegisterHouseExitZone(house)
     end
 end
 
@@ -743,10 +1172,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
             RemoveBlip(v)
         end
     end
-end)
-
-RegisterNetEvent('qb-houses:client:setHouseConfig', function(houseConfig)
-    Config.Houses = houseConfig
+    DeleteHousesTargets()
 end)
 
 RegisterNetEvent('qb-houses:client:lockHouse', function(bool, house)
@@ -944,6 +1370,8 @@ RegisterNetEvent('qb-houses:client:refreshBlips', function() -- Refresh unowned 
     for k,v in pairs(UnownedHouseBlips) do RemoveBlip(v) end
     Wait(250)
     TriggerEvent('qb-houses:client:setupHouseBlips2')
+    DeleteHousesTargets()
+    SetHousesEntranceTargets()
 end)
 
 RegisterNetEvent('qb-houses:client:SetClosestHouse', function()
@@ -993,10 +1421,19 @@ RegisterNetEvent('qb-houses:client:refreshLocations', function(house, location, 
         if IsInside then
             if type == 1 then
                 stashLocation = json.decode(location)
+                DeleteBoxTarget(stashTargetBox)
+                isInsideStashTarget = false
+                RegisterStashTarget()
             elseif type == 2 then
                 outfitLocation = json.decode(location)
+                DeleteBoxTarget(outfitsTargetBox)
+                isInsideOutfitsTarget = false
+                RegisterOutfitsTarget()
             elseif type == 3 then
                 logoutLocation = json.decode(location)
+                DeleteBoxTarget(charactersTargetBox)
+                isInsiteCharactersTarget = false
+                RegisterCharactersTarget()
             end
         end
     end
@@ -1064,10 +1501,14 @@ end)
 
 RegisterNetEvent('qb-houses:client:SetRamState', function(bool, house)
     Config.Houses[house].IsRaming = bool
+    DeleteHousesTargets()
+    SetHousesEntranceTargets()
 end)
 
 RegisterNetEvent('qb-houses:client:SetHouseRammed', function(bool, house)
     Config.Houses[house].IsRammed = bool
+    DeleteHousesTargets()
+    SetHousesEntranceTargets()
 end)
 
 RegisterNetEvent('qb-houses:client:ResetHouse', function()
@@ -1093,7 +1534,7 @@ end)
 RegisterNetEvent('qb-houses:client:ExitOwnedHouse', function()
     local door = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z)
     if CheckDistance(door, 1.5) then
-        LeaveOwnedHouse(CurrentHouse)
+        LeaveHouse(CurrentHouse)
     end
 end)
 
@@ -1105,6 +1546,10 @@ RegisterNetEvent('qb-houses:client:FrontDoorCam', function()
 end)
 
 RegisterNetEvent('qb-houses:client:AnswerDoorbell', function()
+    if not CurrentDoorBell or CurrentDoorBell == 0 then
+        QBCore.Functions.Notify(Lang:t('error.nobody_at_door'))
+        return
+    end
     local door = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z)
     if CheckDistance(door, 1.5) and CurrentDoorBell ~= 0 then
         TriggerServerEvent("qb-houses:server:OpenDoor", CurrentDoorBell, ClosestHouse)
@@ -1157,6 +1602,12 @@ end)
 RegisterNetEvent('qb-houses:client:KeyholderOptions', function(data)
     optionMenu(data.citizenData)
 end)
+
+RegisterNetEvent('qb-house:client:RefreshHouseTargets', function ()
+    DeleteHousesTargets()
+    SetHousesEntranceTargets()
+end)
+
 -- NUI Callbacks
 
 RegisterNUICallback('HasEnoughMoney', function(data, cb)
@@ -1179,251 +1630,71 @@ end)
 
 -- Threads
 
-CreateThread(function()
-    Wait(1000)
+CreateThread(function ()
+    local wait = 500
+    while not LocalPlayer.state.isLoggedIn do
+        -- do nothing
+        Wait(wait)
+    end
+
     TriggerServerEvent('qb-houses:server:setHouses')
-    SetClosestHouse()
     TriggerEvent('qb-houses:client:setupHouseBlips')
-    if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
-    Wait(100)
+    if Config.UnownedBlips then 
+        TriggerEvent('qb-houses:client:setupHouseBlips2') 
+    end
+    Wait(wait)
     TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
     TriggerServerEvent("qb-houses:server:setHouses")
-end)
-
-CreateThread(function()
-    while true do
-        Wait(5000)
-        if LocalPlayer.state['isLoggedIn'] then
-            if not IsInside then
-                SetClosestHouse()
-            end
-        end
-    end
-end)
-
-CreateThread(function()
-    local shownMenu = false
 
     while true do
-        local pos = GetEntityCoords(PlayerPedId())
-        local inRange = false
-        local nearLocation = false
-        local houseMenu = {}
+        wait = 500
 
-        if ClosestHouse ~= nil then
-            local dist2 = vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z)
-            if #(pos.xy - dist2.xy) < 30 then
-                inRange = true
-                if HasHouseKey then
-                    -- ENTER HOUSE
+        if not IsInside then
+            SetClosestHouse()
 
-                    if not IsInside then
-                        if ClosestHouse ~= nil then
-                            if #(pos - dist2) <= 1.5 then
-                                houseMenu = {
-                                    {
-                                        header = Lang:t("menu.house_options"),
-                                        isMenuHeader = true, -- Set to true to make a nonclickable title
-                                    },
-                                    {
-                                        header = Lang:t("menu.enter_house"),
-                                        params = {
-                                            event = "qb-houses:client:EnterHouse",
-
-                                        }
-                                    },
-                                    {
-                                        header = Lang:t("menu.give_house_key"),
-                                        params = {
-                                            event = "qb-houses:client:giveHouseKey",
-                                        }
-                                    }
-                                }
-                                nearLocation = true
-                            end
-                        end
-                    else
-                        if not entering and POIOffsets ~= nil then
-                            local exitOffset = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z + 1.0)
-                            if #(pos - exitOffset) <= 1.5 then
-                                houseMenu = {
-                                    {
-                                        header = Lang:t("menu.exit_property"),
-                                        params = {
-                                            event = 'qb-houses:client:ExitOwnedHouse',
-                                            args = {}
-                                        }
-                                    },
-                                    {
-                                        header = Lang:t("menu.front_camera"),
-                                        params = {
-                                            event = 'qb-houses:client:FrontDoorCam',
-                                            args = {}
-                                        }
-                                    }
-                                }
-
-                                if CurrentDoorBell ~= 0 then
-                                    houseMenu[#houseMenu+1] = {
-                                        header = Lang:t("menu.open_door"),
-                                        params = {
-                                            event = 'qb-houses:client:AnswerDoorbell',
-                                            args = {}
-                                        }
-                                    }
-                                end
-                                nearLocation = true
-                            end
-                        end
-                    end
-                else
-
-                    if ClosestHouse ~= nil and not IsInside  then
-                        if not isOwned then
-                            local houseCoords = vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z)
-                            if #(pos - houseCoords) <= 1.5 then
-                                if not viewCam and Config.Houses[ClosestHouse].locked then
-                                    houseMenu = {
-                                        {
-                                            header = Lang:t("menu.view_house"),
-                                            params = {
-                                                event = 'qb-houses:client:ViewHouse',
-                                                args = {}
-                                            }
-                                        }
-                                    }
-                                    nearLocation = true
-                                end
-                            end
-                        end
-
-                        if isOwned then
-                            local houseCoords = vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z)
-                            if #(pos - houseCoords) <= 1.5 then
-                                nearLocation = true
-                                houseMenu = {
-                                    {
-                                        header = Lang:t("menu.ring_door"),
-                                        params = {
-                                            event = 'qb-houses:client:RequestRing',
-                                            args = {}
-                                        }
-                                    }
-                                }
-                                if not Config.Houses[ClosestHouse].locked then
-                                    houseMenu[#houseMenu+1] = {
-                                        header = Lang:t("menu.enter_unlocked_house"),
-                                        params = {
-                                            event = "qb-houses:client:EnterHouse",
-                                        }
-                                    }
-                                    if QBCore.Functions.GetPlayerData().job.name == 'police' then
-                                        houseMenu[#houseMenu+1] = {
-                                            header = Lang:t("menu.lock_door_police"),
-                                            params = {
-                                                event = "qb-houses:client:ResetHouse",
-                                            }
-                                        }
-                                    end
-                                end
-                            end
-                        end
-                    end
-
-                    if IsInside and CurrentHouse ~= nil and not entering then
-                        if POIOffsets ~= nil then
-                            local exitOffset = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z + 1.0)
-                            if #(pos - exitOffset) <= 1.5 then
-                                houseMenu = {
-                                    {
-                                        header = Lang:t("menu.exit_door"),
-                                        params = {
-                                            event = 'qb-houses:client:ExitOwnedHouse',
-                                            args = {}
-                                        }
-                                    }
-                                }
-                                nearLocation = true
-                            end
-                        end
-                    end
-                end
-
-                if IsInside and CurrentHouse ~= nil and not entering and isOwned then
-                    if stashLocation ~= nil then
-                        if #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z)) <= 1.5 then
-                            nearLocation = true
-                            houseMenu = {
-                                {
-                                    header = Lang:t("menu.open_stash"),
-                                    params = {
-                                        event = "qb-houses:client:OpenStash",
-                                        args = {}
-                                    }
-                                }
-                            }
-
-                        elseif #(pos - vector3(stashLocation.x, stashLocation.y, stashLocation.z)) <= 3 then
-                            DrawText3Ds(stashLocation.x, stashLocation.y, stashLocation.z, Lang:t("menu.stash"))
-                        end
-                    end
-
-                    if outfitLocation ~= nil then
-                        if #(pos - vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z)) <= 1.5 then
-                            nearLocation = true
-                            houseMenu = {
-                                {
-                                    header = Lang:t("menu.change_outfit"),
-                                    params = {
-                                        event = "qb-houses:client:ChangeOutfit",
-                                        args = {}
-                                    }
-                                }
-                            }
-                        elseif #(pos - vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z)) <= 3 then
-                            DrawText3Ds(outfitLocation.x, outfitLocation.y, outfitLocation.z, Lang:t("menu.outfits"))
-                        end
-                    end
-
-                    if logoutLocation ~= nil then
-                        if #(pos - vector3(logoutLocation.x, logoutLocation.y, logoutLocation.z)) <= 1.5 then
-                            nearLocation = true
-                            houseMenu = {
-                                {
-                                    header = Lang:t("menu.change_character"),
-                                    params = {
-                                        event = "qb-houses:client:ChangeCharacter",
-                                        args = {}
-                                    }
-                                }
-                            }
-                        elseif #(pos - vector3(logoutLocation.x, logoutLocation.y, logoutLocation.z)) < 3 then
-                            DrawText3Ds(logoutLocation.x, logoutLocation.y, logoutLocation.z, Lang:t("menu.characters"))
-                        end
-                    end
-                end
-
-                if nearLocation and not shownMenu then
-                    exports['qb-menu']:showHeader(houseMenu)
-                    shownMenu = true
-                end
-
-                if not nearLocation and shownMenu then
-                    CloseMenuFull()
-                    shownMenu = false
+            if isInsideEntranceZone then
+                wait = 0
+                if IsControlJustPressed(0, 38) then
+                    showEntranceHeaderMenu(Config.Houses[ClosestHouse])
+                    exports['qb-core']:HideText()
                 end
             end
         end
 
-        if not inRange then
-            Wait(1500)
+        if IsInside then
+            if isInsideExitZone then
+                wait = 0
+                if IsControlJustPressed(0, 38) then
+                    showExitHeaderMenu()
+                    exports['qb-core']:HideText()
+                end
+            end
 
-            if shownMenu then
-                CloseMenuFull()
-                shownMenu = false
+            if isInsideStashTarget then
+                wait = 0
+                if IsControlJustPressed(0, 38) then
+                    TriggerEvent('qb-houses:client:OpenStash')
+                    exports['qb-core']:HideText()
+                end
+            end
+
+            if isInsideOutfitsTarget then
+                wait = 0
+                if IsControlJustPressed(0, 38) then
+                    TriggerEvent('qb-houses:client:ChangeOutfit')
+                    exports['qb-core']:HideText()
+                end
+            end
+
+            if isInsiteCharactersTarget then
+                wait = 0
+                if IsControlJustPressed(0, 38) then
+                    TriggerEvent('qb-houses:client:ChangeCharacter')
+                    exports['qb-core']:HideText()
+                end
             end
         end
-        Wait(3)
+        Wait(wait)
     end
 end)
 
