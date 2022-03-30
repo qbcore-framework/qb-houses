@@ -47,6 +47,7 @@ local Translations = {
     },
     menu = {
         ["house_options"] = "House Options",
+        ["close_menu"] = "⬅ Close Menu",
         ["enter_house"] = "Enter Your House",
         ["give_house_key"] = "Give House Key",
         ["exit_property"] = "Exit Property",
