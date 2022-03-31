@@ -79,15 +79,13 @@ local function showEntranceHeaderMenu(house)
                     args = {}
                 }
             }
-            if not house.locked then
-                headerMenu[#headerMenu+1] = {
-                    header = Lang:t("menu.enter_unlocked_house"),
-                    params = {
-                        event = "qb-houses:client:EnterHouse",
-                        args = {}
-                    }
+            headerMenu[#headerMenu+1] = {
+                header = Lang:t("menu.enter_unlocked_house"),
+                params = {
+                    event = "qb-houses:client:EnterHouse",
+                    args = {}
                 }
-            end
+            }
             if QBCore.Functions.GetPlayerData().job and QBCore.Functions.GetPlayerData().job.name == 'police' then
                 headerMenu[#headerMenu+1] = {
                     header = Lang:t("menu.lock_door_police"),
