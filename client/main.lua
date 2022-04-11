@@ -1239,24 +1239,48 @@ RegisterNetEvent('qb-houses:client:viewHouse', function(houseprice, brokerfee, b
     })
 end)
 
-RegisterNetEvent('qb-houses:client:setLocation', function(data)
-    local ped = PlayerPedId()
-    local pos = GetEntityCoords(ped)
-    local coords = {x = pos.x, y = pos.y, z = pos.z}
+RegisterNetEvent('qb-houses:client:setStash', function()
     if IsInside then
         if HasHouseKey then
-            if data.id == 'setstash' then
-                TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 1)
-            elseif data.id == 'setoutift' then
-                TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 2)
-            elseif data.id == 'setlogout' then
-                TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 3)
-            end
+            local ped = PlayerPedId()
+            local pos = GetEntityCoords(ped)
+            local coords = {x = pos.x, y = pos.y, z = pos.z}
+            TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 1)
         else
-            QBCore.Functions.Notify(Lang:t("error.not_owner"), "error")
+            QBCore.Functions.Notify('You do not own this house', 'error')
         end
     else
-        QBCore.Functions.Notify(Lang:t("error.not_in_house"), "error")
+        QBCore.Functions.Notify('You are not in a house', 'error')
+    end
+end)
+
+RegisterNetEvent('qb-houses:client:setOutfit', function()
+    if IsInside then
+        if HasHouseKey then
+            local ped = PlayerPedId()
+            local pos = GetEntityCoords(ped)
+            local coords = {x = pos.x, y = pos.y, z = pos.z}
+            TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 2)
+        else
+            QBCore.Functions.Notify('You do not own this house', 'error')
+        end
+    else
+        QBCore.Functions.Notify('You are not in a house', 'error')
+    end
+end)
+
+RegisterNetEvent('qb-houses:client:setLogout', function()
+    if IsInside then
+        if HasHouseKey then
+            local ped = PlayerPedId()
+            local pos = GetEntityCoords(ped)
+            local coords = {x = pos.x, y = pos.y, z = pos.z}
+            TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 3)
+        else
+            QBCore.Functions.Notify('You do not own this house', 'error')
+        end
+    else
+        QBCore.Functions.Notify('You are not in a house', 'error')
     end
 end)
 
