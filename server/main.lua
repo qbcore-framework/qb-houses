@@ -121,15 +121,17 @@ end
 exports('hasKey', hasKey)
 
 local function GetHouseStreetCount(street)
-    local count = 1
-    local query = '%' .. street .. '%'
-    local result = MySQL.Sync.fetchAll('SELECT * FROM houselocations WHERE name LIKE ?', {query})
-    if result[1] then
-        for i = 1, #result, 1 do
-            count = count + 1
-        end
-    end
-    return count
+   local housenumber = 1
+	local query = '%' .. street .. '%'
+	local result = MySQL.single.await('SELECT id,label FROM houselocations WHERE label LIKE ? ORDER BY id DESC', {query})
+	if result then
+		local label = result.label
+		local split = QBCore.Shared.SplitStr(label, " ")
+		housenumber = split[#split]+1
+		return housenumber
+	else
+		return housenumber
+	end
 end
 
 local function isHouseOwned(house)
