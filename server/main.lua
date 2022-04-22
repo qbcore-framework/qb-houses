@@ -242,7 +242,7 @@ RegisterNetEvent('qb-houses:server:buyHouse', function(house)
         TriggerEvent('qb-log:server:CreateLog', 'house', Lang:t("log.house_purchased"), 'green', Lang:t("log.house_purchased_by", {house = house:upper(), price = HousePrice, firstname = pData.PlayerData.charinfo.firstname, lastname = pData.PlayerData.charinfo.lastname}))
         TriggerClientEvent('QBCore:Notify', src, Lang:t("success.house_purchased"), 'success', 5000)
     else
-        TriggerClientEvent('QBCore:Notify', source, Lang:t("error.not_enough_money"), "error")
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough_money"), "error")
     end
 end)
 
