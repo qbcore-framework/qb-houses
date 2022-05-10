@@ -10,7 +10,7 @@ CreateThread(function()
     local HouseGarages = {}
     local result = MySQL.Sync.fetchAll('SELECT * FROM houselocations', {})
     if result[1] then
-        for k, v in pairs(result) do
+        for _, v in pairs(result) do
             local owned = false
             if tonumber(v.owned) == 1 then
                 owned = true
@@ -18,7 +18,7 @@ CreateThread(function()
             local garage = json.decode(v.garage) or {}
             Config.Houses[v.name] = {
                 coords = json.decode(v.coords),
-                owned = v.owned,
+                owned = owned,
                 price = v.price,
                 locked = true,
                 adress = v.label,
@@ -90,7 +90,7 @@ end)
 
 -- Item
 
-QBCore.Functions.CreateUseableItem("police_stormram", function(source, item)
+QBCore.Functions.CreateUseableItem("police_stormram", function(source, _)
     local Player = QBCore.Functions.GetPlayer(source)
     if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
         TriggerClientEvent("qb-houses:client:HomeInvasion", source)
@@ -125,7 +125,7 @@ local function GetHouseStreetCount(street)
     local query = '%' .. street .. '%'
     local result = MySQL.Sync.fetchAll('SELECT * FROM houselocations WHERE name LIKE ?', {query})
     if result[1] then
-        for i = 1, #result, 1 do
+        for _ = 1, #result, 1 do
             count = count + 1
         end
     end
@@ -166,9 +166,9 @@ end)
 
 RegisterNetEvent('qb-houses:server:addNewHouse', function(street, coords, price, tier)
     local src = source
-    local street = street:gsub("%'", "")
-    local price = tonumber(price)
-    local tier = tonumber(tier)
+    street = street:gsub("%'", "")
+    price = tonumber(price)
+    tier = tonumber(tier)
     local houseCount = GetHouseStreetCount(street)
     local name = street:lower() .. tostring(houseCount)
     local label = street .. " " .. tostring(houseCount)
@@ -266,7 +266,7 @@ RegisterNetEvent('qb-houses:server:removeHouseKey', function(house, citizenData)
     local src = source
     local newHolders = {}
     if housekeyholders[house] then
-        for k, v in pairs(housekeyholders[house]) do
+        for k, _ in pairs(housekeyholders[house]) do
             if housekeyholders[house][k] ~= citizenData.citizenid then
                 newHolders[#newHolders+1] = housekeyholders[house][k]
             end
@@ -388,7 +388,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:ProximityKO', function(source,
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local retvalK = false
-    local retvalO = false
+    local retvalO
 
     if Player then
         local identifier = Player.PlayerData.license
@@ -442,7 +442,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:isOwned', function(source, cb,
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-houses:server:getHouseOwner', function(source, cb, house)
+QBCore.Functions.CreateCallback('qb-houses:server:getHouseOwner', function(_, cb, house)
     cb(houseownercid[house])
 end)
 
@@ -470,7 +470,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, cb, NewCid, house)
+QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(_, cb, NewCid, house)
     local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?', {NewCid})
     if result[1] then
         local HouseName = house.name
@@ -487,7 +487,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(source, 
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function(source, cb, house)
+QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function(_, cb, house)
     local retval = nil
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE house = ?', {house})
     if result[1] then
@@ -498,19 +498,13 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function
     cb(retval)
 end)
 
-QBCore.Functions.CreateCallback('qb-houses:server:getHouseLocations', function(source, cb, house)
+QBCore.Functions.CreateCallback('qb-houses:server:getHouseLocations', function(_, cb, house)
     local retval = nil
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE house = ?', {house})
     if result[1] then
         retval = result[1]
     end
     cb(retval)
-end)
-
-QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeys', function(source, cb)
-    local src = source
-    local pData = QBCore.Functions.GetPlayer(src)
-    local cid = pData.PlayerData.citizenid
 end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getOwnedHouses', function(source, cb)
@@ -568,7 +562,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
             if v.keyholders ~= "null" then
                 v.keyholders = json.decode(v.keyholders)
                 if v.keyholders then
-                    for f, data in pairs(v.keyholders) do
+                    for _, data in pairs(v.keyholders) do
                         local keyholderdata = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?',
                             {data})
                         if keyholderdata[1] then
@@ -621,10 +615,10 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
     local MyKeys = {}
 
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses', {})
-    for k, v in pairs(result) do
+    for _, v in pairs(result) do
         if v.keyholders ~= "null" then
             v.keyholders = json.decode(v.keyholders)
-            for s, p in pairs(v.keyholders) do
+            for _, p in pairs(v.keyholders) do
                 if p == Player.PlayerData.citizenid and (v.citizenid ~= Player.PlayerData.citizenid) then
                     MyKeys[#MyKeys+1] = {
                         HouseData = Config.Houses[v.house]
@@ -642,7 +636,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
     cb(MyKeys)
 end)
 
-QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(source, cb, input)
+QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(_, cb, input)
     if input then
         local search = escape_sqli(input)
         local searchData = {}
@@ -653,7 +647,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
             local houses = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE citizenid = ?',
                 {result[1].citizenid})
             if houses[1] then
-                for k, v in pairs(houses) do
+                for _, v in pairs(houses) do
                     searchData[#searchData+1] = {
                         name = v.house,
                         keyholders = v.keyholders,
