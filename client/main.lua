@@ -2,7 +2,6 @@ QBCore = exports['qb-core']:GetCoreObject()
 IsInside = false
 ClosestHouse = nil
 HasHouseKey = false
-ContractOpen = false
 
 local isOwned = false
 local cam = nil
@@ -40,7 +39,7 @@ local isInsiteCharactersTarget = false
 
 -- Functions
 
-local function showEntranceHeaderMenu(house)
+local function showEntranceHeaderMenu()
     local headerMenu = {}
 
     if QBCore.Functions.GetPlayerData().job and QBCore.Functions.GetPlayerData().job.name == 'realestate' then
@@ -278,7 +277,7 @@ local function RegisterHouseEntranceZone(id, house)
 
     zone:onPlayerInOut(function (isPointInside)
         if isPointInside then
-            showEntranceHeaderMenu(Config.Houses[ClosestHouse])
+            showEntranceHeaderMenu()
         else
             CloseMenuFull()
         end
@@ -292,8 +291,7 @@ local function DeleteBoxTarget(box)
         return
     end
 
-    box:destroy();
-    box = nil;
+    box:destroy()
 end
 
 local function DeleteHousesTargets()
@@ -341,7 +339,6 @@ local function openContract(bool)
         type = "toggle",
         status = bool,
     })
-    ContractOpen = bool
 end
 
 local function GetClosestPlayer()
@@ -400,7 +397,7 @@ local function InstructionButtonMessage(text)
 end
 
 local function CreateInstuctionScaleform(scaleform)
-    local scaleform = RequestScaleformMovie(scaleform)
+    scaleform = RequestScaleformMovie(scaleform)
     while not HasScaleformMovieLoaded(scaleform) do
         Wait(0)
     end
@@ -510,7 +507,7 @@ local function SetClosestHouse()
     local current = nil
     local dist = nil
     if not IsInside then
-        for id, house in pairs(Config.Houses) do
+        for id, _ in pairs(Config.Houses) do
             local distcheck = #(pos - vector3(Config.Houses[id].coords.enter.x, Config.Houses[id].coords.enter.y, Config.Houses[id].coords.enter.z))
             if current ~= nil then
                 if distcheck < dist then
@@ -556,7 +553,7 @@ end
 
 local function UnloadDecorations()
 	if ObjectList ~= nil then
-		for k, v in pairs(ObjectList) do
+		for _, v in pairs(ObjectList) do
 			if DoesEntityExist(v.object) then
 				DeleteObject(v.object)
 			end
@@ -570,7 +567,7 @@ local function LoadDecorations(house)
 			Config.Houses[house].decorations = result
 			if Config.Houses[house].decorations ~= nil then
 				ObjectList = {}
-				for k, v in pairs(Config.Houses[house].decorations) do
+				for k, _ in pairs(Config.Houses[house].decorations) do
 					if Config.Houses[house].decorations[k] ~= nil then
 						if Config.Houses[house].decorations[k].object ~= nil then
 							if DoesEntityExist(Config.Houses[house].decorations[k].object) then
@@ -592,7 +589,7 @@ local function LoadDecorations(house)
 		end, house)
 	elseif Config.Houses[house].decorations ~= nil then
 		ObjectList = {}
-		for k, v in pairs(Config.Houses[house].decorations) do
+		for k, _ in pairs(Config.Houses[house].decorations) do
 			if Config.Houses[house].decorations[k] ~= nil then
 				if Config.Houses[house].decorations[k].object ~= nil then
 					if DoesEntityExist(Config.Houses[house].decorations[k].object) then
@@ -654,7 +651,7 @@ function HouseKeysMenu()
     else
         keyholderMenu = {}
 
-        for k, v in pairs(holders) do
+        for k, _ in pairs(holders) do
             keyholderMenu[#keyholderMenu+1] = {
                 header = holders[k].firstname .. " " .. holders[k].lastname,
                 params = {
@@ -1026,11 +1023,11 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     ClosestHouse = nil
     HasHouseKey = false
     isOwned = false
-    for k, v in pairs(OwnedHouseBlips) do
+    for _, v in pairs(OwnedHouseBlips) do
         RemoveBlip(v)
     end
     if Config.UnownedBlips then
-        for k,v in pairs(UnownedHouseBlips) do
+        for _, v in pairs(UnownedHouseBlips) do
             RemoveBlip(v)
         end
     end
@@ -1044,7 +1041,7 @@ end)
 RegisterNetEvent('qb-houses:client:createHouses', function(price, tier)
     local pos = GetEntityCoords(PlayerPedId())
     local heading = GetEntityHeading(PlayerPedId())
-	local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
+	local s1, _ = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
     local street = GetStreetNameFromHashKey(s1)
     local coords = {
         enter 	= { x = pos.x, y = pos.y, z = pos.z, h = heading},
@@ -1137,11 +1134,11 @@ RegisterNetEvent('qb-houses:client:removeHouseKey', function()
     end
 end)
 
-RegisterNetEvent('qb-houses:client:RevokeKey', function(data)
-    RemoveHouseKey(data.citizenData)
+RegisterNetEvent('qb-houses:client:RevokeKey', function(cData)
+    RemoveHouseKey(cData.citizenData)
 end)
 
-RegisterNetEvent('qb-houses:client:refreshHouse', function(data)
+RegisterNetEvent('qb-houses:client:refreshHouse', function()
     Wait(100)
     SetClosestHouse()
 end)
@@ -1179,9 +1176,9 @@ RegisterNetEvent('qb-houses:client:setupHouseBlips', function() -- Setup owned o
         if LocalPlayer.state['isLoggedIn'] then
             QBCore.Functions.TriggerCallback('qb-houses:server:getOwnedHouses', function(ownedHouses)
                 if ownedHouses then
-                    for k, v in pairs(ownedHouses) do
+                    for k, _ in pairs(ownedHouses) do
                         local house = Config.Houses[ownedHouses[k]]
-                        HouseBlip = AddBlipForCoord(house.coords.enter.x, house.coords.enter.y, house.coords.enter.z)
+                        local HouseBlip = AddBlipForCoord(house.coords.enter.x, house.coords.enter.y, house.coords.enter.z)
                         SetBlipSprite (HouseBlip, 40)
                         SetBlipDisplay(HouseBlip, 4)
                         SetBlipScale  (HouseBlip, 0.65)
@@ -1199,9 +1196,9 @@ RegisterNetEvent('qb-houses:client:setupHouseBlips', function() -- Setup owned o
 end)
 
 RegisterNetEvent('qb-houses:client:setupHouseBlips2', function() -- Setup unowned on load
-    for k,v in pairs(Config.Houses) do
+    for _, v in pairs(Config.Houses) do
         if not v.owned then
-            HouseBlip2 = AddBlipForCoord(v.coords.enter.x, v.coords.enter.y, v.coords.enter.z)
+            local HouseBlip2 = AddBlipForCoord(v.coords.enter.x, v.coords.enter.y, v.coords.enter.z)
             SetBlipSprite (HouseBlip2, 40)
             SetBlipDisplay(HouseBlip2, 4)
             SetBlipScale  (HouseBlip2, 0.65)
@@ -1216,7 +1213,7 @@ RegisterNetEvent('qb-houses:client:setupHouseBlips2', function() -- Setup unowne
 end)
 
 RegisterNetEvent('qb-houses:client:createBlip', function(coords) -- Create unowned on command
-    NewHouseBlip = AddBlipForCoord(coords.x, coords.y, coords.z)
+    local NewHouseBlip = AddBlipForCoord(coords.x, coords.y, coords.z)
     SetBlipSprite (NewHouseBlip, 40)
     SetBlipDisplay(NewHouseBlip, 4)
     SetBlipScale  (NewHouseBlip, 0.65)
@@ -1229,7 +1226,7 @@ RegisterNetEvent('qb-houses:client:createBlip', function(coords) -- Create unown
 end)
 
 RegisterNetEvent('qb-houses:client:refreshBlips', function() -- Refresh unowned on buy
-    for k,v in pairs(UnownedHouseBlips) do RemoveBlip(v) end
+    for _, v in pairs(UnownedHouseBlips) do RemoveBlip(v) end
     Wait(250)
     TriggerEvent('qb-houses:client:setupHouseBlips2')
     DeleteHousesTargets()
@@ -1257,17 +1254,17 @@ RegisterNetEvent('qb-houses:client:viewHouse', function(houseprice, brokerfee, b
     })
 end)
 
-RegisterNetEvent('qb-houses:client:setLocation', function(data)
+RegisterNetEvent('qb-houses:client:setLocation', function(cData)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local coords = {x = pos.x, y = pos.y, z = pos.z}
     if IsInside then
         if HasHouseKey then
-            if data.id == 'setstash' then
+            if cData.id == 'setstash' then
                 TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 1)
-            elseif data.id == 'setoutift' then
+            elseif cData.id == 'setoutift' then
                 TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 2)
-            elseif data.id == 'setlogout' then
+            elseif cData.id == 'setlogout' then
                 TriggerServerEvent('qb-houses:server:setLocation', coords, ClosestHouse, 3)
             end
         else
@@ -1461,8 +1458,8 @@ RegisterNetEvent('qb-houses:client:ViewHouse', function()
     end
 end)
 
-RegisterNetEvent('qb-houses:client:KeyholderOptions', function(data)
-    optionMenu(data.citizenData)
+RegisterNetEvent('qb-houses:client:KeyholderOptions', function(cData)
+    optionMenu(cData.citizenData)
 end)
 
 RegisterNetEvent('qb-house:client:RefreshHouseTargets', function ()
@@ -1472,9 +1469,10 @@ end)
 
 -- NUI Callbacks
 
-RegisterNUICallback('HasEnoughMoney', function(data, cb)
-    QBCore.Functions.TriggerCallback('qb-houses:server:HasEnoughMoney', function(hasEnough)
-    end, data.objectData)
+RegisterNUICallback('HasEnoughMoney', function(cData, cb)
+    QBCore.Functions.TriggerCallback('qb-houses:server:HasEnoughMoney', function(_)
+    end, cData.objectData)
+    cb("ok")
 end)
 
 RegisterNUICallback('buy', function()
