@@ -67,7 +67,7 @@ local function SaveDecorations()
 				end
 			end
 
-			for k, v in pairs(ObjectList) do
+			for _, v in pairs(ObjectList) do
 				DeleteObject(v.object)
 			end
 		end
@@ -118,14 +118,14 @@ local function CheckObjMovementInput()
     end
 
     if IsControlPressed( 1, 10) or IsDisabledControlPressed(1, 10) then -- Page Up
-    	SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, 0, 0, zVect)
+		SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, 0, 0, zVect)
     end
 
     if IsControlPressed( 1, 11) or IsDisabledControlPressed(1, 11) then -- Page Down
-    	SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, 0, 0, -zVect)
+		SelObjPos = GetOffsetFromEntityInWorldCoords(SelectedObj, 0, 0, -zVect)
     end
 
-    SetEntityCoords(SelectedObj, SelObjPos.x, SelObjPos.y, SelObjPos.z)
+	SetEntityCoords(SelectedObj, SelObjPos.x, SelObjPos.y, SelObjPos.z)
 end
 
 local function CheckObjRotationInput()
@@ -134,27 +134,27 @@ local function CheckObjRotationInput()
     local zVect = speeds[curSpeed] * 5.5
 
 	if IsControlPressed( 1, 27) or IsDisabledControlPressed(1, 27) then -- Up Arrow
-    	SelObjRot.x = SelObjRot.x + xVect
+		SelObjRot.x = SelObjRot.x + xVect
     end
 
     if IsControlPressed( 1, 173) or IsDisabledControlPressed(1, 173) then -- Down Arrow
-    	SelObjRot.x = SelObjRot.x - xVect
+		SelObjRot.x = SelObjRot.x - xVect
     end
 
     if IsControlPressed( 1, 174) or IsDisabledControlPressed(1, 174) then -- Left Arrow
-    	SelObjRot.z = SelObjRot.z + zVect
+		SelObjRot.z = SelObjRot.z + zVect
     end
 
     if IsControlPressed( 1, 175) or IsDisabledControlPressed(1, 175) then -- Right Arrow
-    	SelObjRot.z = SelObjRot.z - zVect
+		SelObjRot.z = SelObjRot.z - zVect
     end
 
     if IsControlPressed( 1, 10) or IsDisabledControlPressed(1, 10) then -- Page Up
-    	SelObjRot.y = SelObjRot.y + yVect
+		SelObjRot.y = SelObjRot.y + yVect
     end
 
     if IsControlPressed( 1, 11) or IsDisabledControlPressed(1, 11) then -- Page Down
-    	SelObjRot.y = SelObjRot.y - yVect
+		SelObjRot.y = SelObjRot.y - yVect
     end
 
 	SetEntityRotation(SelectedObj, SelObjRot.x, SelObjRot.y, SelObjRot.z)
@@ -165,8 +165,8 @@ local function CheckRotationInput()
 	local rightAxisY = GetDisabledControlNormal(0, 221)
 	local rotation = GetCamRot(MainCamera, 2)
 	if rightAxisX ~= 0.0 or rightAxisY ~= 0.0 then
-		new_z = rotation.z + rightAxisX*-1.0*(2.0)*(4.0+0.1)
-		new_x = math.max(math.min(20.0, rotation.x + rightAxisY*-1.0*(2.0)*(4.0+0.1)), -20.5)
+		local new_z = rotation.z + rightAxisX*-1.0*(2.0)*(4.0+0.1)
+		local new_x = math.max(math.min(20.0, rotation.x + rightAxisY*-1.0*(2.0)*(4.0+0.1)), -20.5)
 		SetCamRot(MainCamera, new_x, 0.0, new_z, 2)
 	end
 end
@@ -199,13 +199,13 @@ local function CheckMovementInput()
     local zVect = speeds[curSpeed] * math.tan( degToRad( rotation.x ) - degToRad( rotation.y ))
 
     if IsControlPressed( 1, 32) or IsDisabledControlPressed(1, 32) then -- W
-    	curPos.x = curPos.x + xVect
-        curPos.y = curPos.y + yVect
-        curPos.z = curPos.z + zVect
+		curPos.x = curPos.x + xVect
+		curPos.y = curPos.y + yVect
+		curPos.z = curPos.z + zVect
     end
 
     if IsControlPressed( 1, 33) or IsDisabledControlPressed(1, 33) then -- S
-    	curPos.x = curPos.x - xVect
+		curPos.x = curPos.x - xVect
         curPos.y = curPos.y - yVect
         curPos.z = curPos.z - zVect
 	end
@@ -233,16 +233,17 @@ end)
 
 -- NUI Callbacks
 
-RegisterNUICallback("closedecorations", function(data, cb)
+RegisterNUICallback("closedecorations", function(_, cb)
 	if previewObj then
 		DeleteObject(previewObj)
 	end
 	DisableEditMode()
     SetNuiFocus(false, false)
 	cursorEnabled = false
+	cb("ok")
 end)
 
-RegisterNUICallback("deleteSelectedObject", function(data, cb)
+RegisterNUICallback("deleteSelectedObject", function(_, cb)
 	DeleteObject(SelectedObj)
 	SelectedObj = nil
 	table.remove(ObjectList, SelObjId)
@@ -250,13 +251,15 @@ RegisterNUICallback("deleteSelectedObject", function(data, cb)
 	SaveDecorations()
 	SelObjId = 0
 	peanut = false
+	cb("ok")
 end)
 
-RegisterNUICallback("cancelSelectedObject", function(data, cb)
+RegisterNUICallback("cancelSelectedObject", function(_, cb)
 	DeleteObject(SelectedObj)
 	SelectedObj = nil
 	SelObjId = 0
 	peanut = false
+	cb("ok")
 end)
 
 RegisterNUICallback("buySelectedObject", function(data, cb)
@@ -274,10 +277,11 @@ RegisterNUICallback("buySelectedObject", function(data, cb)
             SelObjId = 0
             peanut = false
         end
+		cb("ok")
     end, data.price)
 end)
 
-RegisterNUICallback('setupMyObjects', function(data, cb)
+RegisterNUICallback('setupMyObjects', function(_, cb)
 	local Objects = {}
 	for k, v in pairs(ObjectList) do
 		if ObjectList[k] then
@@ -377,6 +381,7 @@ RegisterNUICallback("spawnobject", function(data, cb)
 	PlaceObjectOnGroundProperly(SelectedObj)
 	SetEntityCompletelyDisableCollision(SelectedObj, true) -- Prevents crazy physics when collidin with other entitys
     peanut = true
+	cb("ok")
 end)
 
 RegisterNUICallback("chooseobject", function(data, cb)
@@ -406,6 +411,7 @@ RegisterNUICallback("chooseobject", function(data, cb)
     local yVect = 2.5 * math.cos( degToRad( rotation.z ) )
     previewObj = CreateObject(modelHash, curPos.x + xVect, curPos.y + yVect, curPos.z, false, false, false)
     PlaceObjectOnGroundProperly(previewObj)
+	cb("ok")
 end)
 
 -- Threads
