@@ -277,7 +277,7 @@ RegisterNUICallback("buySelectedObject", function(data, cb)
             SelObjId = 0
             peanut = false
         end
-		cb("ok")
+		cb('ok')
     end, data.price)
 end)
 
@@ -303,20 +303,21 @@ RegisterNUICallback('setupMyObjects', function(_, cb)
 	cb(Objects)
 end)
 
-RegisterNUICallback('removeObject', function()
+RegisterNUICallback('removeObject', function(_, cb)
 	if previewObj then
 		DeleteObject(previewObj)
 	end
+	cb("ok")
 end)
 
-RegisterNUICallback('toggleCursor', function()
+RegisterNUICallback('toggleCursor', function(_, cb)
 	cursorEnabled = not cursorEnabled
 	SetNuiFocus(cursorEnabled, cursorEnabled)
+	cb("ok")
 end)
 
-RegisterNUICallback('selectOwnedObject', function(data)
+RegisterNUICallback('selectOwnedObject', function(data, cb)
 	local objectData = data.objectData
-
 	local ownedObject = GetClosestObjectOfType(objectData.x, objectData.y, objectData.z, 1.5, GetHashKey(objectData.hashname), false, 6, 7)
 	local pos = GetEntityCoords(ownedObject, true)
     local rot = GetEntityRotation(ownedObject)
@@ -327,13 +328,13 @@ RegisterNUICallback('selectOwnedObject', function(data)
 	SelectedObj = ownedObject
 	FreezeEntityPosition(SelectedObj, true)
 	peanut = true
+	cb("ok")
 end)
 
-RegisterNUICallback('editOwnedObject', function(data)
+RegisterNUICallback('editOwnedObject', function(data, cb)
 	SetNuiFocus(false, false)
 	cursorEnabled = false
 	local objectData = data.objectData
-
 	local ownedObject = GetClosestObjectOfType(objectData.x, objectData.y, objectData.z, 1.5, GetHashKey(objectData.hashname), false, 6, 7)
 	local pos = GetEntityCoords(ownedObject, true)
 	local rot = GetEntityRotation(ownedObject)
@@ -345,16 +346,19 @@ RegisterNUICallback('editOwnedObject', function(data)
 	isEdit = true
 	FreezeEntityPosition(SelectedObj, true)
 	peanut = true
+	cb("ok")
 end)
 
-RegisterNUICallback('deselectOwnedObject', function()
+RegisterNUICallback('deselectOwnedObject', function(_, cb)
 	SelectedObj = nil
 	peanut = false
+	cb("ok")
 end)
 
-RegisterNUICallback('ResetSelectedProp', function()
+RegisterNUICallback('ResetSelectedProp', function(_, cb)
 	SelectedObj = nil
 	peanut = false
+	cb("ok")
 end)
 
 RegisterNUICallback("spawnobject", function(data, cb)
@@ -371,7 +375,6 @@ RegisterNUICallback("spawnobject", function(data, cb)
 	local rotation = GetCamRot(MainCamera, 2)
 	local xVect = 2.5 * math.sin( degToRad( rotation.z ) ) * -1.0
 	local yVect = 2.5 * math.cos( degToRad( rotation.z ) )
-
     SelectedObj = CreateObject(modelHash, curPos.x + xVect, curPos.y + yVect, curPos.z, false, false, false)
     local pos = GetEntityCoords(SelectedObj, true)
     local rot = GetEntityRotation(SelectedObj)

@@ -1473,21 +1473,23 @@ end)
 
 RegisterNUICallback('HasEnoughMoney', function(cData, cb)
     QBCore.Functions.TriggerCallback('qb-houses:server:HasEnoughMoney', function(_)
+        cb('ok')
     end, cData.objectData)
-    cb("ok")
 end)
 
-RegisterNUICallback('buy', function()
+RegisterNUICallback('buy', function(_, cb)
     openContract(false)
     disableViewCam()
     Config.Houses[ClosestHouse].owned = true
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:refreshBlips') end
     TriggerServerEvent('qb-houses:server:buyHouse', ClosestHouse)
+    cb("ok")
 end)
 
-RegisterNUICallback('exit', function()
+RegisterNUICallback('exit', function(_, cb)
     openContract(false)
     disableViewCam()
+    cb("ok")
 end)
 
 -- Threads

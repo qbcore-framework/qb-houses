@@ -8,7 +8,7 @@ local housesLoaded = false
 
 CreateThread(function()
     local HouseGarages = {}
-    local result = MySQL.Sync.fetchAll('SELECT * FROM houselocations', {})
+    local result = MySQL.query.await('SELECT * FROM houselocations', {})
     if result[1] then
         for _, v in pairs(result) do
             local owned = false
@@ -39,7 +39,7 @@ end)
 CreateThread(function()
     while true do
         if not housesLoaded then
-            MySQL.Async.fetchAll('SELECT * FROM player_houses', {}, function(houses)
+            MySQL.query('SELECT * FROM player_houses', {}, function(houses)
                 if houses then
                     for _, house in pairs(houses) do
                         houseowneridentifier[house.house] = house.identifier
@@ -123,7 +123,7 @@ exports('hasKey', hasKey)
 local function GetHouseStreetCount(street)
     local count = 1
     local query = '%' .. street .. '%'
-    local result = MySQL.Sync.fetchAll('SELECT * FROM houselocations WHERE name LIKE ?', {query})
+    local result = MySQL.query.await('SELECT * FROM houselocations WHERE name LIKE ?', {query})
     if result[1] then
         for _ = 1, #result, 1 do
             count = count + 1
@@ -133,7 +133,7 @@ local function GetHouseStreetCount(street)
 end
 
 local function isHouseOwned(house)
-    local result = MySQL.Sync.fetchAll('SELECT owned FROM houselocations WHERE name = ?', {house})
+    local result = MySQL.query.await('SELECT owned FROM houselocations WHERE name = ?', {house})
     if result[1] then
         if result[1].owned == 1 then
             return true
@@ -172,7 +172,7 @@ RegisterNetEvent('qb-houses:server:addNewHouse', function(street, coords, price,
     local houseCount = GetHouseStreetCount(street)
     local name = street:lower() .. tostring(houseCount)
     local label = street .. " " .. tostring(houseCount)
-    MySQL.Async.insert('INSERT INTO houselocations (name, label, coords, owned, price, tier) VALUES (?, ?, ?, ?, ?, ?)',
+    MySQL.insert('INSERT INTO houselocations (name, label, coords, owned, price, tier) VALUES (?, ?, ?, ?, ?, ?)',
         {name, label, json.encode(coords), 0, price, tier})
     Config.Houses[name] = {
         coords = coords,
@@ -191,7 +191,7 @@ end)
 
 RegisterNetEvent('qb-houses:server:addGarage', function(house, coords)
     local src = source
-    MySQL.Async.execute('UPDATE houselocations SET garage = ? WHERE name = ?', {json.encode(coords), house})
+    MySQL.update('UPDATE houselocations SET garage = ? WHERE name = ?', {json.encode(coords), house})
     local garageInfo = {
         label = Config.Houses[house].adress,
         takeVehicle = coords
@@ -233,8 +233,8 @@ RegisterNetEvent('qb-houses:server:buyHouse', function(house)
         housekeyholders[house] = {
             [1] = pData.PlayerData.citizenid
         }
-        MySQL.Async.insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)',{house, pData.PlayerData.license, pData.PlayerData.citizenid, json.encode(housekeyholders[house])})
-        MySQL.Async.execute('UPDATE houselocations SET owned = ? WHERE name = ?', {1, house})
+        MySQL.insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)',{house, pData.PlayerData.license, pData.PlayerData.citizenid, json.encode(housekeyholders[house])})
+        MySQL.update('UPDATE houselocations SET owned = ? WHERE name = ?', {1, house})
         TriggerClientEvent('qb-houses:client:SetClosestHouse', src)
         TriggerClientEvent('qb-house:client:RefreshHouseTargets', src)
         pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
@@ -258,7 +258,7 @@ end)
 RegisterNetEvent('qb-houses:server:giveKey', function(house, target)
     local pData = QBCore.Functions.GetPlayer(target)
     housekeyholders[house][#housekeyholders[house]+1] = pData.PlayerData.citizenid
-    MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?',
+    MySQL.update('UPDATE player_houses SET keyholders = ? WHERE house = ?',
         {json.encode(housekeyholders[house]), house})
 end)
 
@@ -274,7 +274,7 @@ RegisterNetEvent('qb-houses:server:removeHouseKey', function(house, citizenData)
     end
     housekeyholders[house] = newHolders
     TriggerClientEvent('QBCore:Notify', src, Lang:t("error.remove_key_from", {firstname = citizenData.firstname, lastname = citizenData.lastname}), 'error')
-    MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
+    MySQL.update('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
 end)
 
 RegisterNetEvent('qb-houses:server:OpenDoor', function(target, house)
@@ -290,7 +290,7 @@ RegisterNetEvent('qb-houses:server:RingDoor', function(house)
 end)
 
 RegisterNetEvent('qb-houses:server:savedecorations', function(house, decorations)
-    MySQL.Async.execute('UPDATE player_houses SET decorations = ? WHERE house = ?', {json.encode(decorations), house})
+    MySQL.update('UPDATE player_houses SET decorations = ? WHERE house = ?', {json.encode(decorations), house})
     TriggerClientEvent("qb-houses:server:sethousedecorations", -1, house, decorations)
 end)
 
@@ -298,7 +298,7 @@ RegisterNetEvent('qb-houses:server:LogoutLocation', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local MyItems = Player.PlayerData.items
-    MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?',
+    MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?',
         {json.encode(MyItems), Player.PlayerData.citizenid})
     QBCore.Player.Logout(src)
     TriggerClientEvent('qb-multicharacter:client:chooseChar', src)
@@ -316,7 +316,7 @@ RegisterNetEvent('qb-houses:server:giveHouseKey', function(target, house)
                 end
             end
             housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
-            MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
+            MySQL.update('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
             TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
 
             TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
@@ -326,7 +326,7 @@ RegisterNetEvent('qb-houses:server:giveHouseKey', function(target, house)
                 [1] = sourceTarget.PlayerData.citizenid
             }
             housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
-            MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
+            MySQL.update('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
             TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
             TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
         end
@@ -337,11 +337,11 @@ end)
 
 RegisterNetEvent('qb-houses:server:setLocation', function(coords, house, type)
     if type == 1 then
-        MySQL.Async.execute('UPDATE player_houses SET stash = ? WHERE house = ?', {json.encode(coords), house})
+        MySQL.update('UPDATE player_houses SET stash = ? WHERE house = ?', {json.encode(coords), house})
     elseif type == 2 then
-        MySQL.Async.execute('UPDATE player_houses SET outfit = ? WHERE house = ?', {json.encode(coords), house})
+        MySQL.update('UPDATE player_houses SET outfit = ? WHERE house = ?', {json.encode(coords), house})
     elseif type == 3 then
-        MySQL.Async.execute('UPDATE player_houses SET logout = ? WHERE house = ?', {json.encode(coords), house})
+        MySQL.update('UPDATE player_houses SET logout = ? WHERE house = ?', {json.encode(coords), house})
     end
     TriggerClientEvent('qb-houses:client:refreshLocations', -1, house, json.encode(coords), type)
 end)
@@ -453,7 +453,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
     if housekeyholders[house] then
         for i = 1, #housekeyholders[house], 1 do
             if Player.PlayerData.citizenid ~= housekeyholders[house][i] then
-                local result = MySQL.Sync.fetchAll('SELECT charinfo FROM players WHERE citizenid = ?', {housekeyholders[house][i]})
+                local result = MySQL.query.await('SELECT charinfo FROM players WHERE citizenid = ?', {housekeyholders[house][i]})
                 if result[1] then
                     local charinfo = json.decode(result[1].charinfo)
                     retval[#retval+1] = {
@@ -471,14 +471,14 @@ QBCore.Functions.CreateCallback('qb-houses:server:getHouseKeyHolders', function(
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:TransferCid', function(_, cb, NewCid, house)
-    local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?', {NewCid})
+    local result = MySQL.query.await('SELECT * FROM players WHERE citizenid = ?', {NewCid})
     if result[1] then
         local HouseName = house.name
         housekeyholders[HouseName] = {}
         housekeyholders[HouseName][1] = NewCid
         houseownercid[HouseName] = NewCid
         houseowneridentifier[HouseName] = result[1].license
-        MySQL.Async.execute(
+        MySQL.update(
             'UPDATE player_houses SET citizenid = ?, keyholders = ?, identifier = ? WHERE house = ?',
             {NewCid, json.encode(housekeyholders[HouseName]), result[1].license, HouseName})
         cb(true)
@@ -489,7 +489,7 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseDecorations', function(_, cb, house)
     local retval = nil
-    local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE house = ?', {house})
+    local result = MySQL.query.await('SELECT * FROM player_houses WHERE house = ?', {house})
     if result[1] then
         if result[1].decorations then
             retval = json.decode(result[1].decorations)
@@ -500,7 +500,7 @@ end)
 
 QBCore.Functions.CreateCallback('qb-houses:server:getHouseLocations', function(_, cb, house)
     local retval = nil
-    local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE house = ?', {house})
+    local result = MySQL.query.await('SELECT * FROM player_houses WHERE house = ?', {house})
     if result[1] then
         retval = result[1]
     end
@@ -511,7 +511,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getOwnedHouses', function(sour
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     if pData then
-        MySQL.Async.fetchAll('SELECT * FROM player_houses WHERE identifier = ? AND citizenid = ?', {pData.PlayerData.license, pData.PlayerData.citizenid}, function(houses)
+        MySQL.query('SELECT * FROM player_houses WHERE identifier = ? AND citizenid = ?', {pData.PlayerData.license, pData.PlayerData.citizenid}, function(houses)
             local ownedHouses = {}
             for i = 1, #houses, 1 do
                 ownedHouses[#ownedHouses+1] = houses[i].house
@@ -530,7 +530,7 @@ QBCore.Functions.CreateCallback('qb-houses:server:getSavedOutfits', function(sou
     local pData = QBCore.Functions.GetPlayer(src)
 
     if pData then
-        MySQL.Async.fetchAll('SELECT * FROM player_outfits WHERE citizenid = ?', {pData.PlayerData.citizenid},
+        MySQL.query('SELECT * FROM player_outfits WHERE citizenid = ?', {pData.PlayerData.citizenid},
             function(result)
                 if result[1] then
                     cb(result)
@@ -545,7 +545,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local MyHouses = {}
-    local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE citizenid = ?',
+    local result = MySQL.query.await('SELECT * FROM player_houses WHERE citizenid = ?',
         {Player.PlayerData.citizenid})
     if result and result[1] then
         for k, v in pairs(result) do
@@ -563,7 +563,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerHouses', function(sour
                 v.keyholders = json.decode(v.keyholders)
                 if v.keyholders then
                     for _, data in pairs(v.keyholders) do
-                        local keyholderdata = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?',
+                        local keyholderdata = MySQL.query.await('SELECT * FROM players WHERE citizenid = ?',
                             {data})
                         if keyholderdata[1] then
                             keyholderdata[1].charinfo = json.decode(keyholderdata[1].charinfo)
@@ -614,7 +614,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetHouseKeys', function(source,
     local Player = QBCore.Functions.GetPlayer(src)
     local MyKeys = {}
 
-    local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses', {})
+    local result = MySQL.query.await('SELECT * FROM player_houses', {})
     for _, v in pairs(result) do
         if v.keyholders ~= "null" then
             v.keyholders = json.decode(v.keyholders)
@@ -641,10 +641,10 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
         local search = escape_sqli(input)
         local searchData = {}
         local query = '%' .. search .. '%'
-        local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ? OR charinfo LIKE ?',
+        local result = MySQL.query.await('SELECT * FROM players WHERE citizenid = ? OR charinfo LIKE ?',
             {search, query})
         if result[1] then
-            local houses = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE citizenid = ?',
+            local houses = MySQL.query.await('SELECT * FROM player_houses WHERE citizenid = ?',
                 {result[1].citizenid})
             if houses[1] then
                 for _, v in pairs(houses) do
