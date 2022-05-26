@@ -297,8 +297,10 @@ end
 local function DeleteHousesTargets()
     if Config.Targets and next(Config.Targets) then
         for id, target in pairs(Config.Targets) do
-            target.zone:destroy()
-            Config.Targets[id] = nil
+            if not string.find(id, "Exit") then
+                target.zone:destroy()
+                Config.Targets[id] = nil
+            end
         end
     end
 end
