@@ -1555,9 +1555,9 @@ RegisterCommand('getoffset', function()
         Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset
     )
     if IsInside then
-        local xdist = coords.x - houseCoords.x
-        local ydist = coords.y - houseCoords.y
-        local zdist = coords.z - houseCoords.z
+        local xdist = houseCoords.x - coords.x
+        local ydist = houseCoords.y - coords.y
+        local zdist = houseCoords.z - coords.z
         print('X: '..xdist)
         print('Y: '..ydist)
         print('Z: '..zdist)
