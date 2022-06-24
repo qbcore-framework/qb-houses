@@ -22,12 +22,14 @@ local Translations = {
         ["remove_key_from"] = "Die Schlüssel wurden entfernt von %{firstname} %{lastname}",
         ["already_keys"] = "Diese Person hat bereits die Schlüssel des Hauses!",
         ["something_wrong"] = "Etwas ist schief gelaufen, versuchen Sie es noch einmal!",
+        ["nobody_at_door"] = 'Niemand ist an der Tür...'
     },
     success = {
         ["unlocked"] = "Das Haus ist unverschlossen!",
         ["home_invasion"] = "Die Tür ist jetzt offen.",
         ["lock_invasion"] = "Du hast das Haus wieder abgeschlossen...",
-        ["recieved_key"] = "Sie haben die Schlüssel von %{Wert} erhalten!"
+        ["recieved_key"] = "Sie haben die Schlüssel von %{Wert} erhalten!",
+        ["house_purchased"] = "Du hast erfolgreich das Haus gekauft!"
     },
     info = {
         ["door_ringing"] = "Jemand klingelt an der Tür!",
@@ -63,6 +65,11 @@ local Translations = {
         ["characters"] = "Charaktere",
         ["enter_unlocked_house"] = "Unverschlossenes Haus betreten",
         ["lock_door_police"] = "Tür abschließen"
+    },
+    target = {
+        ["open_stash"] = "[E] Schrank Öffnen",
+        ["outfits"] = "[E] Outfit Ändern",
+        ["change_character"] = "[E] Charakter Ändern",
     },
     log = {
         ["house_created"] = "Haus erstellt:",
