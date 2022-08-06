@@ -603,6 +603,7 @@ local function LoadDecorations(house)
 					Wait(10)
 				end
 				local decorateObject = CreateObject(modelHash, Config.Houses[house].decorations[k].x, Config.Houses[house].decorations[k].y, Config.Houses[house].decorations[k].z, false, false, false)
+				PlaceObjectOnGroundProperly(decorateObject)
 				FreezeEntityPosition(decorateObject, true)
 				SetEntityCoordsNoOffset(decorateObject, Config.Houses[house].decorations[k].x, Config.Houses[house].decorations[k].y, Config.Houses[house].decorations[k].z)
 				Config.Houses[house].decorations[k].object = decorateObject
