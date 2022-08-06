@@ -121,15 +121,14 @@ end
 exports('hasKey', hasKey)
 
 local function GetHouseStreetCount(street)
-    local count = 1
+    local count = 0
     local query = '%' .. street .. '%'
-    local result = MySQL.query.await('SELECT * FROM houselocations WHERE name LIKE ?', {query})
-    if result[1] then
-        for _ = 1, #result, 1 do
-            count = count + 1
-        end
+    local result = MySQL.Sync.fetchSingle('SELECT * FROM houselocations WHERE name LIKE ? ORDER BY LENGTH(`name`) desc, `name` DESC', {query})
+    if result then
+        local houseAddress = result.name
+        count = tonumber(string.match(houseAddress, '%d[%d.,]*'))
     end
-    return count
+    return (count + 1)
 end
 
 local function isHouseOwned(house)
