@@ -7,7 +7,7 @@ local Translations = {
         ["invalid_tier"] = "Tier Invalide",
         ["no_house"] = "Il n'y a pas de propriété proche de vous",
         ["no_door"] = "Vous n'êtes pas assez proche de la porte..",
-        ["locked"] = "La propriété est vérouillée!",
+        ["locked"] = "La propriété est verrouillée!",
         ["no_one_near"] = "Personne n'est proche!",
         ["not_owner"] = "Vous n'êtes pas le propriétaire.",
         ["no_police"] = "Aucun policier présent..",
@@ -26,7 +26,7 @@ local Translations = {
     success = {
         ["unlocked"] = "Propriété dévérouillée!",
         ["home_invasion"] = "La porte est ouverte.",
-        ["lock_invasion"] = "Vous avez vérouillé la porte..",
+        ["lock_invasion"] = "Vous avez verrouillé la porte..",
         ["recieved_key"] = "Vous avez reçu les clés de %{value}!"
     },
     info = {
@@ -45,6 +45,7 @@ local Translations = {
     },
     menu = {
         ["house_options"] = "Options de Propriété",
+        ["close_menu"] = "⬅ Fermer le Menu",
         ["enter_house"] = "Entrer dans votre Propriété",
         ["give_house_key"] = "Donner les clées",
         ["exit_property"] = "Sortir de la Propriété",
