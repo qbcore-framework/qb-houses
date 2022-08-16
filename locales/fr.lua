@@ -1,6 +1,6 @@
 local Translations = {
     error = {
-        ["no_keys"] = "Vous n\'avez aps les clées...",
+        ["no_keys"] = "Vous n\'avez aps les clés...",
         ["not_in_house"] = "Vous n\'êtes pas dans une propriété!",
         ["out_range"] = "Hors de portée",
         ["no_key_holders"] = "Aucun propriétaire trouvé..",
@@ -19,8 +19,8 @@ local Translations = {
         ["emergency_services"] = "Cela est réservé aux véhicules d'urgence!",
         ["already_owned"] = "Cette propriété est déjà ouverte!",
         ["not_enough_money"] = "Vous n'avez pas assez d'argent..",
-        ["remove_key_from"] = "Les clées de %{firstname} %{lastname} ont été reprise",
-        ["already_keys"] = "Cette personne a déjà les clées!",
+        ["remove_key_from"] = "Les clés de %{firstname} %{lastname} ont été reprise",
+        ["already_keys"] = "Cette personne a déjà les clés!",
         ["something_wrong"] = "Quelque chose ne va pas!",
     },
     success = {
@@ -48,7 +48,7 @@ local Translations = {
         ["house_options"] = "Options de Propriété",
         ["close_menu"] = "⬅ Fermer le Menu",
         ["enter_house"] = "Entrer dans votre Propriété",
-        ["give_house_key"] = "Donner les clées",
+        ["give_house_key"] = "Donner les clés",
         ["exit_property"] = "Sortir de la Propriété",
         ["front_camera"] = "Visiophone",
         ["back"] = "Retour",
