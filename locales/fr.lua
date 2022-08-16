@@ -27,7 +27,7 @@ local Translations = {
         ["unlocked"] = "Propriété dévérouillée!",
         ["home_invasion"] = "La porte est ouverte.",
         ["lock_invasion"] = "Vous avez verrouillé la porte..",
-        ["recieved_key"] = "Vous avez reçu les clés de %{value}!"
+        ["recieved_key"] = "Vous avez reçu les clés de %{value}!",
         ["house_purchased"] = "Vous avez acheté la maison avec succès!"
     },
     info = {
