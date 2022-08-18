@@ -1,10 +1,10 @@
 local Translations = {
     error = {
-        ["no_keys"] = "Vous n\'avez aps les clés...",
+        ["no_keys"] = "Vous n\'avez pas les clés...",
         ["not_in_house"] = "Vous n\'êtes pas dans une propriété!",
         ["out_range"] = "Hors de portée",
         ["no_key_holders"] = "Aucun propriétaire trouvé..",
-        ["invalid_tier"] = "Tier Invalide",
+        ["invalid_tier"] = "Tier invalide",
         ["no_house"] = "Il n'y a pas de propriété proche de vous",
         ["no_door"] = "Vous n'êtes pas assez proche de la porte..",
         ["locked"] = "La propriété est verrouillée!",
