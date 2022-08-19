@@ -673,7 +673,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:MeosGetPlayerHouses', function(
     end
 end)
 
-local function getKeyHolderData() 
+local function getKeyHolderData()
     return housekeyholders
 end
 
