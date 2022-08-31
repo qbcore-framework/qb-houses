@@ -64,7 +64,7 @@ local Translations = {
         ["outfits"] = "Outfits",
         ["change_character"] = "Alterar personagem",
         ["characters"] = "Personagens",
-        ["enter_unlocked_house"] = "Entrar na casa,
+        ["enter_unlocked_house"] = "Entrar na casa",
         ["lock_door_police"] = "Trancar porta"
     },
     target = {
