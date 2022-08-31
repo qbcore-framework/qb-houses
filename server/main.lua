@@ -678,3 +678,10 @@ local function getKeyHolderData()
 end
 
 exports("getKeyHolderData", getKeyHolderData)
+
+if GetResourceState('ox_inventory') ~= 'missing' then
+	local ox_inventory = exports.ox_inventory
+	RegisterNetEvent('qb-houses:server:RegisterStash', function(currentHouseId)
+		ox_inventory:RegisterStash(currentHouseId, Config.Houses[currentHouseId] and 'Stash - '..Config.Houses[currentHouseId].adress..' House' or 'House Stash', 100, 1000000)
+	end)
+end 
