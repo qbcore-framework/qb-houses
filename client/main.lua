@@ -40,7 +40,7 @@ local isInsiteCharactersTarget = false
 -- ox_inventory compatibility
 local ox_inventory = nil
 if GetResourceState('ox_inventory') ~= 'missing' then
-	ox_inventory = exports.ox_inventory
+    ox_inventory = exports.ox_inventory
 end
 
 -- Functions
@@ -1430,16 +1430,16 @@ end)
 RegisterNetEvent('qb-houses:client:OpenStash', function()
     local stashLoc = vector3(stashLocation.x, stashLocation.y, stashLocation.z)
     if CheckDistance(stashLoc, 1.5) then
-		TriggerServerEvent("InteractSound_SV:PlayOnSource", "StashOpen", 0.4)
-		if not ox_inventory then
-			TriggerServerEvent("inventory:server:OpenInventory", "stash", CurrentHouse)
-			TriggerEvent("inventory:client:SetCurrentStash", CurrentHouse)
-		else
-			if not ox_inventory:openInventory('stash', CurrentHouse) then
-				TriggerServerEvent('qb-houses:server:RegisterStash', CurrentHouse)
-				ox_inventory:openInventory('stash', CurrentHouse)
-			end
-		end
+        TriggerServerEvent("InteractSound_SV:PlayOnSource", "StashOpen", 0.4)
+        if not ox_inventory then
+            TriggerServerEvent("inventory:server:OpenInventory", "stash", CurrentHouse)
+            TriggerEvent("inventory:client:SetCurrentStash", CurrentHouse)
+        else
+            if not ox_inventory:openInventory('stash', CurrentHouse) then
+                TriggerServerEvent('qb-houses:server:RegisterStash', CurrentHouse)
+                ox_inventory:openInventory('stash', CurrentHouse)
+            end
+        end
     end
 end)
 
