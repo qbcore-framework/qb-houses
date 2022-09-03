@@ -61,8 +61,13 @@ local Translations = {
         ["outfits"] = "Atuendos",
         ["change_character"] = "Cambiar personaje",
         ["characters"] = "Personajes",
-	["enter_unlocked_house"] = "Entrar a la casa.",
+	    ["enter_unlocked_house"] = "Entrar a la casa.",
         ["lock_door_police"] = "Puerta cerrada."
+    },
+    target = {
+        ["open_stash"] = "[E] Abrir Stash",
+        ["outfits"] = "[E] Cambiar de traje",
+        ["change_character"] = "[E] Cambiar de personaje",
     },
     log = {
         ["house_created"] = "Casa Creada:",
