@@ -64,6 +64,11 @@ local Translations = {
 	["enter_unlocked_house"] = "Entrar a la casa.",
         ["lock_door_police"] = "Puerta cerrada."
     },
+    target = {
+        ["open_stash"] = "[E] Abrir Stash",
+        ["outfits"] = "[E] Cambiar de traje",
+        ["change_character"] = "[E] Cambiar de personaje",
+    },
     log = {
         ["house_created"] = "Casa Creada:",
         ["house_address"] = "**Dirección**: %{label}\n\n**Precio**: %{price}\n\n**Nivel**: %{tier}\n\n**Agente**: %{agent}",
