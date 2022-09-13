@@ -79,7 +79,8 @@ local Translations = {
         ["house_purchased_by"] = "**Address**: %{house}\n\n**Purchase Price**: %{price}\n\n**Purchaser**: %{firstname} %{lastname}"
     }
 }
-Lang = Locale:new({
+
+Lang = Lang or Locale:new({
     phrases = Translations,
     warnOnMissing = true
 })
