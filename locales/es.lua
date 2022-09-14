@@ -76,7 +76,11 @@ local Translations = {
         ["house_purchased_by"] = "**Dirección**: %{house}\n\n**Precio De Compra**: %{price}\n\n**Comprador**: %{firstname} %{lastname}"
     }
 }
-Lang = Locale:new({
-    phrases = Translations,
-    warnOnMissing = true
-})
+
+if GetConvar('qb_locale', 'en') == 'es' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true,
+        fallbackLang = Lang,
+    })
+end
