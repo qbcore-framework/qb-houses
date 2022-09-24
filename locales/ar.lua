@@ -22,21 +22,32 @@ local Translations = {
         ["remove_key_from"] = "%{firstname} %{lastname} تمت إزالة المفاتيح من",
         ["already_keys"] = "هذا الشخص لديه بالفعل مفاتيح المنزل",
         ["something_wrong"] = "حدث خطأ ما حاول مرة أخرى",
+        ["nobody_at_door"] = 'لايوجد احد امام الباب...'
     },
     success = {
         ["unlocked"] = "البيت مفتوح",
         ["home_invasion"] = "الباب مفتوح الآن",
         ["lock_invasion"] = "لقد أغلقت المنزل مرة أخرى",
-        ["recieved_key"] = "%{value} لديك مفاتيح"
+        ["recieved_key"] = "%{value} لديك مفاتيح",
+        ["house_purchased"] = "لقد قمت بشراء المنزل!"
     },
     info = {
         ["door_ringing"] = "شخص ما يدق الباب",
         ["speed"] = "%{value} السرعة الان",
         ["added_house"] = "%{value} لقد قمت بإضافة منزل:",
-        ["added_garage"] = "%{value} لقد قمت بإضافة مرآب لتصليح السيارات:"
+        ["added_garage"] = "%{value} لقد قمت بإضافة مرآب لتصليح السيارات:",
+        ["exit_camera"] = "غلق الكامرا",
+        ["house_for_sale"] = "منزل للبيع",
+        ["decorate_interior"] = "تزيين المنزل من الداخل",
+        ["create_house"] = "إنشاء منزل جديد (مسؤول العقارات فقط)",
+        ["price_of_house"] = "سعر المنزل",
+        ["tier_number"] = "رقم نوعية المنزل",
+        ["add_garage"] = "إضافة كراج سيارات للمنزل (مسؤول العقارات فقط)",
+        ["ring_doorbell"] = "قرع الجرس"
     },
     menu = {
         ["house_options"] = "خيارات المنزل",
+        ["close_menu"] = "⬅ غلق القائمة",
         ["enter_house"] = "أدخل منزلك",
         ["give_house_key"] = "إعطاء المفتاح",
         ["exit_property"] = "الخروج",
@@ -55,6 +66,17 @@ local Translations = {
         ["characters"] = "ﻡﻮﻨﻟﺍ",
         ["enter_unlocked_house"] = "أدخل البيت المفتوح",
         ["lock_door_police"] = "قفل الباب"
+    },
+    target = {
+        ["open_stash"] = "[E] فتح الخزنة",
+        ["outfits"] = "[E] فتح دوولاب الملابس",
+        ["change_character"] = "[E] تغيير الشخصية",
+    },
+    log = {
+        ["house_created"] = "انشاء منزل جديد:",
+        ["house_address"] = "**العنوان**: %{label}\n\n**السعر**: %{price}\n\n**درجة المنزل**: %{tier}\n\n**مسؤول العقارات**: %{agent}",
+        ["house_purchased"] = "شراء منزل:",
+        ["house_purchased_by"] = "**العنوان**: %{house}\n\n**سعر الشراء**: %{price}\n\n**المشتري**: %{firstname} %{lastname}"
     }
 }
 
