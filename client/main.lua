@@ -868,6 +868,36 @@ local function getDataForHouseTier(house, coords)
         return exports['qb-interior']:CreateV2Modern2(coords)
     elseif Config.Houses[house].tier == 85 then
         return exports['qb-interior']:CreateV2Modern3(coords)
+    elseif Config.Houses[house].tier == 86 then
+        return exports['qb-interior']:VineWoodHouse1(coords)
+    elseif Config.Houses[house].tier == 87 then
+        return exports['qb-interior']:VineWoodHouse2(coords)
+    elseif Config.Houses[house].tier == 88 then
+        return exports['qb-interior']:VineWoodHouse3(coords)
+    elseif Config.Houses[house].tier == 89 then
+        return exports['qb-interior']:CreateK4GunWarehouse(coords)
+    elseif Config.Houses[house].tier == 90 then
+        return exports['qb-interior']:CreateK4LuxuryHouse1(coords)
+    elseif Config.Houses[house].tier == 91 then
+        return exports['qb-interior']:CreateK4LuxuryHouse2(coords)
+    elseif Config.Houses[house].tier == 92 then
+        return exports['qb-interior']:CreateK4LuxuryHouse3(coords)
+    elseif Config.Houses[house].tier == 93 then
+        return exports['qb-interior']:CreateK4LuxuryHouse4(coords)
+    elseif Config.Houses[house].tier == 94 then
+        return exports['qb-interior']:CreateK4ManorHouse(coords)
+    elseif Config.Houses[house].tier == 95 then
+        return exports['qb-interior']:CreateK4Garage1(coords)
+    elseif Config.Houses[house].tier == 96 then
+        return exports['qb-interior']:CreateK4Garage2(coords)
+    elseif Config.Houses[house].tier == 97 then
+        return exports['qb-interior']:CreateK4Garage3(coords)
+    elseif Config.Houses[house].tier == 98 then
+        return exports['qb-interior']:CreateK4Garage4(coords)
+    elseif Config.Houses[house].tier == 99 then
+        return exports['qb-interior']:CreateK4Safehouse(coords)
+    elseif Config.Houses[house].tier == 100 then
+        return exports['qb-interior']:CreateK4Warehouse(coords)
     else
         QBCore.Functions.Notify(Lang:t("error.invalid_tier"), 'error')
     end
