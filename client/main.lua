@@ -1108,10 +1108,12 @@ RegisterNetEvent('qb-houses:client:giveHouseKey', function()
         local pedpos = GetEntityCoords(PlayerPedId())
         local housedist = #(pedpos - vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z))
         if housedist < 10 then
+	if HasHouseKey then
             TriggerServerEvent('qb-houses:server:giveHouseKey', playerId, ClosestHouse)
         else
             QBCore.Functions.Notify(Lang:t("error.no_door"), "error")
         end
+	end
     elseif ClosestHouse == nil then
         QBCore.Functions.Notify(Lang:t("error.no_house"), "error")
     else
