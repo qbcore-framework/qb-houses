@@ -317,7 +317,7 @@ RegisterNetEvent('qb-houses:server:giveHouseKey', function(target, house)
             housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
             MySQL.update('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
             TriggerClientEvent('qb-houses:client:refreshHouse', tPlayer.PlayerData.source)
-
+            TriggerEvent("qb-log:server:CreateLog", "houses", "", "red", "**  House keys handed from: " ..GetPlayerName(src).. " ID: "   ..src.. " House: " ..house.. "** To player: " ..GetPlayerName(target).. " ID: "   ..target)
             TriggerClientEvent('QBCore:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
         else
             local sourceTarget = QBCore.Functions.GetPlayer(src)
