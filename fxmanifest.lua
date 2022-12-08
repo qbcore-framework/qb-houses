@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 description 'QB-Houses'
-version '2.1.0'
+version '2.2.0'
 
 ui_page 'html/index.html'
 
