@@ -6,6 +6,12 @@ Config.UnownedBlips = false
 
 Config.Houses = {}
 Config.Targets = {}
+Config.StashWeights = { -- Please follow by tiers!
+	[1] = {
+		maxweight = 1000000,
+		slots = 50,
+	}
+}
 
 Config.Furniture = {
 	["sofas"] = {
