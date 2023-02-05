@@ -42,7 +42,7 @@ local Translations = {
         ["create_house"] = "Crear casa (solo bienes raíces)",
         ["price_of_house"] = "Precio de la casa",
         ["tier_number"] = "Nivel de la casa",
-        ["add_garage"] = "Agregar Garaje (solo bienes raíces)",
+        ["add_garage"] = "Agregar garaje (solo bienes raíces)",
         ["ring_doorbell"] = "Tocar timbre"
     },
     menu = {
@@ -54,7 +54,7 @@ local Translations = {
         ["front_camera"] = "Cámara frontal",
         ["back"] = "Atrás",
         ["remove_key"] = "Quitar llave prestada",
-        ["open_door"] = "Abrir puerta",
+        ["open_door"] = "Abrir la puerta",
         ["view_house"] = "Ver casa",
         ["ring_door"] = "Tocar timbre",
         ["exit_door"] = "Salir de la propiedad",
