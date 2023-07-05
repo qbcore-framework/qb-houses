@@ -1071,7 +1071,7 @@ RegisterNetEvent('qb-houses:client:addGarage', function()
             x = pos.x,
             y = pos.y,
             z = pos.z,
-            h = heading,
+            w = heading,
         }
         TriggerServerEvent('qb-houses:server:addGarage', ClosestHouse, coords)
     else
