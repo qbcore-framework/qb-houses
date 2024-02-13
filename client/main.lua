@@ -19,7 +19,6 @@ local POIOffsets = nil
 local entering = false
 local data = nil
 local CurrentHouse = nil
-local RamsDone = 0
 local keyholderMenu = {}
 local keyholderOptions = {}
 local fetchingHouseKeys = false
