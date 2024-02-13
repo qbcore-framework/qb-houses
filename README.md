@@ -30,7 +30,7 @@ Real Estate for QB-Core Framework :house_with_garden:
 - [qb-clothing](https://github.com/qbcore-framework/qb-clothing) - Outfits
 - [qb-weathersync](https://github.com/qbcore-framework/qb-weathersync) - Desync weather inside house
 - [qb-weed](https://github.com/qbcore-framework/qb-weed) - Weed plant
-- [qb-skillbar](https://github.com/qbcore-framework/qb-skillbar) - Skills
+- [qb-minigames](https://github.com/qbcore-framework/qb-minigames) - Skills
 
 ## Screenshots
 ![Buy House](https://imgur.com/4eQnRqA.png)
