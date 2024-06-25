@@ -210,14 +210,29 @@ end)
 RegisterNetEvent('qb-houses:server:viewHouse', function(house)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-
     local houseprice = Config.Houses[house].price
     local brokerfee = (houseprice / 100 * 5)
     local bankfee = (houseprice / 100 * 10)
     local taxes = (houseprice / 100 * 6)
+    TriggerClientEvent('qb-houses:client:viewHouse', src, houseprice, brokerfee, bankfee, taxes, pData.PlayerData.charinfo.firstname, pData.PlayerData.charinfo.lastname)
+end)
 
-    TriggerClientEvent('qb-houses:client:viewHouse', src, houseprice, brokerfee, bankfee, taxes,
-        pData.PlayerData.charinfo.firstname, pData.PlayerData.charinfo.lastname)
+RegisterNetEvent('qb-houses:server:openStash', function(CurrentHouse)
+    local src = source
+    local houseData = Config.Houses[CurrentHouse]
+    if not houseData then return end
+    local houseTier = houseData.tier
+    local stashSlots = Config.StashWeights[houseTier].slots
+    local stashWeight = Config.StashWeights[houseTier].maxweight
+    if stashSlots and stashWeight then
+        exports['qb-inventory']:OpenInventory(src, CurrentHouse, {
+            maxweight = stashWeight,
+            slots = stashSlots,
+            label = houseData.adress
+        })
+    else
+        exports['qb-inventory']:OpenInventory(src, CurrentHouse)
+    end
 end)
 
 RegisterNetEvent('qb-houses:server:buyHouse', function(house)
