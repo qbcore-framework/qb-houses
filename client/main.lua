@@ -528,6 +528,8 @@ local function SetClosestHouse()
             end, ClosestHouse)
         end
     end
+    
+    if next(Config.Houses[ClosestHouse].garage) == nil then return end
     TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
 end
 
