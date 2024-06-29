@@ -1085,8 +1085,9 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     TriggerEvent('qb-houses:client:setupHouseBlips')
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
     Wait(100)
-    TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
     TriggerServerEvent('qb-houses:server:setHouses')
+    if next(Config.Houses[ClosestHouse].garage) == nil then return end
+    TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
@@ -1525,7 +1526,9 @@ CreateThread(function()
         TriggerEvent('qb-houses:client:setupHouseBlips2')
     end
     Wait(wait)
-    TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
+    if ClosestHouse and next(Config.Houses[ClosestHouse].garage) ~= nil then
+        TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
+    end
     TriggerServerEvent('qb-houses:server:setHouses')
 
     while true do
