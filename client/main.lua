@@ -529,7 +529,7 @@ local function SetClosestHouse()
         end
     end
     
-    if next(Config.Houses[ClosestHouse].garage) == nil then return end
+    if ClosestHouse and next(Config.Houses[ClosestHouse].garage) == nil then return end
     TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
 end
 
@@ -1086,7 +1086,7 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     if Config.UnownedBlips then TriggerEvent('qb-houses:client:setupHouseBlips2') end
     Wait(100)
     TriggerServerEvent('qb-houses:server:setHouses')
-    if next(Config.Houses[ClosestHouse].garage) == nil then return end
+    if ClosestHouse and next(Config.Houses[ClosestHouse].garage) == nil then return end
     TriggerEvent('qb-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
 end)
 
