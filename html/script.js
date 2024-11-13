@@ -21,13 +21,14 @@ $('document').ready(function() {
         }
 
         if (item.type == "setupContract") {
+            const formatPrice = (price) => "$ " + price.toLocaleString('en');
             $("#welcome-name").html(item.firstname + " " + item.lastname)
             $("#property-adress").html(item.street)
-            $("#property-price").html("$ " + item.houseprice);
-            $("#property-brokerfee").html("$ " + item.brokerfee);
-            $("#property-bankfee").html("$ " + item.bankfee);
-            $("#property-taxes").html("$ " + item.taxes);
-            $("#property-totalprice").html("$ " + item.totalprice);
+            $("#property-price").html(formatPrice(item.houseprice));
+            $("#property-brokerfee").html(formatPrice(item.brokerfee));
+            $("#property-bankfee").html(formatPrice(item.bankfee));
+            $("#property-taxes").html(formatPrice(item.taxes));
+            $("#property-totalprice").html(formatPrice(item.totalprice));
         }
 
         if (item.type == "openObjects") {
@@ -166,7 +167,7 @@ $(document).on('click', '.footer-btn', function(){
     if (selectedCategory != "remove-owned-obj") {
         $('.decorate-items').html("");
         $.each(houseCategorys[selectedCategory].items, function(i, item){
-            var elem = '<div class="decorate-item" id="object-'+i+'" data-type="newObject"><span id="decorate-item-name"><b>Object: </b>'+(item.label).charAt(0).toUpperCase() +''+(item.label).substr(1).toLowerCase()+'</span><span id="decorate-item-category"><strong>Price: </strong><span id="item-price" style="color: green;">$'+item.price+'</span></span></div>';
+            var elem = '<div class="decorate-item" id="object-'+i+'" data-type="newObject"><span id="decorate-item-name"><b>Object: </b>'+(item.label).charAt(0).toUpperCase() +''+(item.label).substr(1).toLowerCase()+'</span><span id="decorate-item-category"><strong>Price: </strong><span id="item-price" style="color: green;">$'+item.price.toLocaleString('en')+'</span></span></div>';
             $('.decorate-items').append(elem);
             $('#object-'+i).data('objectData', item);
         });
